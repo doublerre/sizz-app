@@ -1,0 +1,55 @@
+name: Deploy frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sizz-frontend-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+      - run: tar -C dist -czf sizz-frontend.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sizz-frontend
+          path: sizz-frontend.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, sizz-deploy]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sizz-frontend
+      - name: Deploy app-01, then app-02
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          release="${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}"
+          archive="/tmp/sizz-frontend-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.tar.gz"
+          ssh_options=(-o BatchMode=yes -o ConnectTimeout=10 -i /home/actions/.ssh/sizz_deploy)
+
+          for host in 10.10.10.20 10.10.10.21; do
+            scp "${ssh_options[@]}" sizz-frontend.tar.gz "deploy@${host}:${archive}"
+            ssh "${ssh_options[@]}" "deploy@${host}" \
+              "set -eu; mkdir -p '/var/www/sizz/releases/${release}'; tar -xzf '${archive}' -C '/var/www/sizz/releases/${release}'; test -s '/var/www/sizz/releases/${release}/index.html'; ln -sfn 'releases/${release}' /var/www/sizz/current; rm -f '${archive}'; test -s /var/www/sizz/current/index.html"
+          done
