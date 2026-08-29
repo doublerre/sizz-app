@@ -1,0 +1,48 @@
+/* Estilos del login*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /*Fuente aún no definida*/
+}
+
+/*Bloque del contenedor principal*/
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    flex-direction:row;
+}
+
+/*Bloque izquierdo*/
+.login-banner {
+    background-color: #0065B3;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem;
+    color: #fff;
+}
+.banner-content{
+    max-width: 480px;
+}
+
+.logo {
+    max-width: 350px;
+    margin-bottom:2.5rem;
+}
+
+.login-banner h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.login-banner p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.5;
+    
+}
