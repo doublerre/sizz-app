@@ -111,6 +111,22 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+:root {
+  /* Primitivos */
+  --brand-blue: #0065b3;
+  --brand-green: #58b72b;
+  --brand-yellow: #ffc400;
+  --brand-red: #e60012;
+  --neutral-ink: #172536;
+  --neutral-canvas: #F4f8fb;
+  --neutral-surface: #ffffff;
+  --neutral-border: #d7e1e8;
+  /* Semanticos */
+  --bg-brand-default: var(--brand-blue);
+  --bg-canvas: var(--neutral-canvas);
+  --bg-surface: var(--neutral-surface);
+  --text-primary: var(--neutral-ink);
+  --border-default: var(--neutral-border);
 }
 
 body {
