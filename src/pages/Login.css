@@ -10,39 +10,56 @@
 .login-wrapper {
     display: flex;
     min-height: 100vh;
-    width: 100vw;
-    flex-direction:row;
+    width: 100%;
+    flex-direction: row;
+    text-align: left;
 }
 
 /*Bloque izquierdo*/
 .login-banner {
     background-color: #0065B3;
+    flex: 0 0 40%;
+    max-width: 40%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 4rem;
+    color: #fff;
+    text-align: left;
+}
+
+.login-form-container {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4rem;
-    color: #fff;
 }
 .banner-content{
     max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
 }
 
 .logo {
-    max-width: 350px;
-    margin-bottom:2.5rem;
+    max-width: 300px;
+    margin-bottom: 0.75rem;
 }
 
 .login-banner h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
-    margin-bottom: 1.5rem;
+    margin: 0 0 0.75rem;
+    text-align: left;
 }
 
 .login-banner p {
     font-size: 0.95rem;
     opacity: 0.9;
     line-height: 1.5;
-    
+    margin: 0;
+    text-align: left;
 }
