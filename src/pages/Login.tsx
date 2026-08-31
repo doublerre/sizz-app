@@ -18,7 +18,7 @@ e.preventDefault();
 setError(null);
 
 if (!identifier || !password) {
-    setError('No se puedo guardar');
+    setError('No se pudo guardar');
     return;
 }
 
@@ -32,7 +32,7 @@ setLoading(false);
 };
 
 
-//Bloque derecho
+//Bloque izquierdo
 return (
     <div className="login-wrapper">
     <div className="login-banner">
@@ -43,12 +43,12 @@ return (
     </div>
     </div>
 
-{/*Bloque izquierdo - Formulario*/}
+{/*Bloque derecho - Formulario*/}
      <div className="login-form-container">
      <form onSubmit={handleSubmit} className="login-card">
         <span className="subtitle">SISTEMA INTEGRAL ZIGZAG</span>
         <h2>Bienvenido</h2>
-        <p className="description">Ingresa tus credenciales para iniciar sesión</p>
+        <p className="description">Ingresa tus credenciales para continuar.</p>
         
         {error && <p className="login-error">{error}</p>}
 
