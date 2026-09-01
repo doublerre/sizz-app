@@ -118,10 +118,12 @@ function AppLayout() {
         </div>
       </nav>
 
-      <main className="content">
+
+            <main className="content">
+                <main className="content">
         <Outlet />
-      </main>
-    </div>
+            </main>
+        </div>
   );
 }
 export default AppLayout;
