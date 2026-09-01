@@ -10,6 +10,7 @@
   --neutral-canvas: #F4f8fb;
   --neutral-surface: #ffffff;
   --neutral-border: #d7e1e8;
+
   /* Semanticos */
   --bg-brand-default: var(--brand-blue);
   --bg-canvas: var(--neutral-canvas);
