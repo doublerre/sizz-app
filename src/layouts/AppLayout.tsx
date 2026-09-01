@@ -18,23 +18,28 @@ const adminMenu = [
 
 function AppLayout() {
     return (
-        <>
-            <p>MENÚ PRINCIPAL</p>
-            {mainMenu.map((item) =>
-                item.available ? <NavLink key={item.label} to={item.to}>
-                    {item.label}
-                </NavLink> : <span key={item.label}>{item.label}</span>)}
+        <div className="layout">
+            <nav className="sidebar">
+                <h2 className="sidebar-group">MENÚ PRINCIPAL</h2>
+                {mainMenu.map((item) =>
+                    item.available ? <NavLink className="sidebar-item" key={item.label} to={item.to}>
+                        {item.label}
+                    </NavLink> : <span className="sidebar-item sidebar-item-disabled" key={item.label}>{item.label}</span>)}
 
-            <p>ADMINISTRACIÓN</p>
-            {adminMenu.map((item) =>
-                item.available ? <NavLink key={item.label} to={item.to}>
-                    {item.label}
-                </NavLink> : <span key={item.label}>{item.label}</span>
+                <h2 className="sidebar-group">ADMINISTRACIÓN</h2>
+                {adminMenu.map((item) =>
+                    item.available ? <NavLink className="sidebar-item" key={item.label} to={item.to}>
+                        {item.label}
+                    </NavLink> : <span className="sidebar-item sidebar-item-disabled" key={item.label}>{item.label}</span>
 
-            )}
+                )}
+            </nav>
 
-            <Outlet />
-        </>
+
+            <main className="content">
+                <Outlet />
+            </main>
+        </div>
     )
 }
 export default AppLayout

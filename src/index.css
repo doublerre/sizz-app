@@ -2,6 +2,7 @@
 
 :root {
   /* Primitivos */
+  /*Algunos salieron de la versión anterior del diseño */
   --brand-blue: #0065b3;
   --brand-green: #58b72b;
   --brand-yellow: #ffc400;
@@ -10,6 +11,12 @@
   --neutral-canvas: #F4f8fb;
   --neutral-surface: #ffffff;
   --neutral-border: #d7e1e8;
+  /* X */
+  --brand-blue-soft: #EAF4FC;
+  /* X */
+  --neutral-muted: #708096;
+
+
 
   /* Semanticos */
   --bg-brand-default: var(--brand-blue);
@@ -17,6 +24,9 @@
   --bg-surface: var(--neutral-surface);
   --text-primary: var(--neutral-ink);
   --border-default: var(--neutral-border);
+  --bg-item-active: var(--brand-blue-soft);
+  --text-item-active: var(--brand-blue);
+  --text-muted: var(--neutral-muted);
 }
 
 body {
