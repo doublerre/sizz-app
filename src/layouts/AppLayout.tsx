@@ -58,8 +58,8 @@ function AppLayout() {
         </div>
         <h2 className="sidebar-group">MENÚ PRINCIPAL</h2>
         {mainMenu.map((item) =>
-          item.available && user?.role === "ADMIN" ? (
-            <NavLink className="sidebar-item" key={item.label} to={item.to}>
+          item.available && user?.role === "ADMIN" ? ( <NavLink className="sidebar-item" key={item.label} to={item.to}>
+                        <span className="sidebar-dot" style={{ backgroundColor: item.color }}></span>
               <span
                 className="sidebar-dot"
                 style={{ backgroundColor: item.color }}
@@ -70,15 +70,11 @@ function AppLayout() {
             <span
               className="sidebar-item sidebar-item-disabled"
               key={item.label}
-            >
-              <span
-                className="sidebar-dot"
-                style={{ backgroundColor: item.color }}
-              />
+            ><span className="sidebar-dot" style={{ backgroundColor: item.color }} />
               {item.label}
             </span>
-          ),
-        )}
+          ),)
+                }
 
         <h2 className="sidebar-group">ADMINISTRACIÓN</h2>
         {adminMenu.map((item) =>
@@ -117,7 +113,6 @@ function AppLayout() {
           </div>
         </div>
       </nav>
-
 
             <main className="content">
                 <main className="content">
