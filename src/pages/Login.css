@@ -1,0 +1,190 @@
+/* Estilos del login */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /*Fuente no definida para las letras*/
+}
+
+body {
+    background-color: #f4f6f9;
+}
+
+/* Contenedor principal */
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: row;
+}
+
+/* Bloque izquierdo (banner azul) */
+.login-banner {
+    background-color: #0065B3;
+    flex: 0 0 40%; /*Tamaño del banner azul*/
+    max-width: 40%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 4rem;
+    color: #fff;
+}
+
+.banner-content {
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.logo {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 0.75rem;
+}
+
+.login-banner h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 3.5rem; /*Espaciado entre el título y el párrafo*/
+    text-align: left;
+}
+
+.login-banner p {
+    font-size: 0.65rem;
+    opacity: 0.9;
+    line-height: 1.5;
+    margin: 0;
+    text-align: left;
+}
+
+/*Lado derecho - Formulario de inicio de sesión*/
+.login-form-container {
+    flex: 0 0 60%; /*Tamaño del formulario*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F4F8FB;
+}
+
+/*Tarjeta blanca para el formulario*/
+.login-card {
+    background-color:#fff;
+    border-radius: 16px;
+    padding: 3rem 2.75rem;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+/*Titulo del formulario*/
+.login-card .subtitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing:0.05em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    color: #0065B3;
+}
+
+/*Bienvenido*/
+.login-card h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color:#172536;
+}
+
+/*Credeciales*/
+.login-card p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    color:#58626E;
+}
+
+/*Bloque de formulario*/
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.input-group label { /*Color y tamaño de las letras de los campos de texto*/
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+    color:#34404F;
+    font-weight: 600;
+}
+.input-group input {/*Color y tamaño de los campos de texto*/
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #D1D9E6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background-color: #ffffff; 
+    color: #1e293b;
+}
+/*Bloque de botones*/
+.btn-submit { /*Botón de inicio de sesión*/
+    width: 100%;
+    background-color: #0065B3;
+    color: #fff;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.btn-submit:hover { /*Efecto hover del botón de inicio de sesión*/
+    background-color: #00509E;
+}
+
+.btn-submit:disabled { /*Efecto hover del botón de inicio de sesión*/
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/*Bloque del link*/
+.register-link:hover { /*Efecto hover del link de registro*/
+    text-decoration: underline;
+}
+
+.register-link {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-decoration: none;
+    margin-top: 1.25rem;
+    display: block;
+    text-align: center;
+}
+
+/*Bloque responsive*/
+@media (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+    }
+
+    .login-banner {
+        flex: 0 0 auto;
+        max-width: 100%;
+        padding: 2.5rem 2rem;
+    }
+    .login-card {
+        margin: 2rem;
+        max-width: none;
+    }
+}
+
+
+
+
