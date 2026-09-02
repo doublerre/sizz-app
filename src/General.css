@@ -1,0 +1,61 @@
+/* Estilos del login */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /*Fuente no definida para las letras*/
+}
+
+body {
+    background-color: #f4f6f9;
+}
+
+/* Contenedor principal */
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: row;
+}
+
+/* Bloque izquierdo (banner azul) */
+.login-banner {
+    background-color: #0065B3;
+    flex: 0 0 40%; /*Tamaño del banner azul*/
+    max-width: 40%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 4rem;
+    color: #fff;
+}
+
+.banner-content {
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.logo {
+    max-width: 300px; /*Logo tamaño*/
+    margin-bottom: 0.75rem;
+}
+
+.login-banner h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 3.5rem; /*Espaciado entre el título y el párrafo*/
+    text-align: left;
+}
+
+.login-banner p {
+    font-size: 0.65rem;
+    opacity: 0.9;
+    line-height: 1.5;
+    margin: 0;
+    text-align: left;
+}
