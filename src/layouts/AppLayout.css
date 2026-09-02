@@ -48,7 +48,7 @@
     background-color: var(--bg-canvas);
 }
 
-.sidebar-item-disabled:hover {
+.sidebar-item-disable:hover {
     background-color: transparent;
 }
 
@@ -58,4 +58,35 @@
 
 .sidebar-header img {
     width: 100%;
+}
+
+.sidebar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--border-default);
+    padding: 16px 8px;
+    margin-top: 16px;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.sidebar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-brand-default);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
