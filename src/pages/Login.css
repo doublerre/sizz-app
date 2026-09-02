@@ -131,11 +131,6 @@ body {
     background-color: #ffffff; 
     color: #1e293b;
 }
-
-.input-group input::placeholder {/*Color de los placeholders de los campos de texto*/
-    color: #9ca3af;
-}
-
 /*Bloque de botones*/
 .btn-submit { /*Botón de inicio de sesión*/
     width: 100%;
