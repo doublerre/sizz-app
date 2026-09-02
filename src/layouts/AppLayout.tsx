@@ -1,4 +1,7 @@
 import { Outlet, NavLink } from "react-router-dom";
+import "./AppLayout.css";
+import logo from "../assets/logo_zigzag_main.svg"
+
 const mainMenu = [
     { label: "Inicio", to: "", available: false },
     { label: "Experiencias", to: "", available: false },
@@ -20,6 +23,9 @@ function AppLayout() {
     return (
         <div className="layout">
             <nav className="sidebar">
+                <div className="sidebar-header">
+                    <img src={logo} alt="" />
+                </div>
                 <h2 className="sidebar-group">MENÚ PRINCIPAL</h2>
                 {mainMenu.map((item) =>
                     item.available ? <NavLink className="sidebar-item" key={item.label} to={item.to}>
