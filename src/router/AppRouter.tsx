@@ -3,6 +3,7 @@ import HomePage from "../pages/public/HomePage";
 import EventsPage from "../pages/public/EventsPage";
 import LoginPage from "../pages/public/LoginPage";
 import NotFoundPage from "../pages/NotFoundPage.tsx";
+import Register from "../pages/auth/Register.tsx";
 
 export default function AppRouter() {
     return (
@@ -10,6 +11,7 @@ export default function AppRouter() {
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/eventos" element={<EventsPage />}></Route>
             <Route path="/login" element={<LoginPage />}></Route>
+            <Route path="/register" element={<Register />}></Route>
             <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>
     )
