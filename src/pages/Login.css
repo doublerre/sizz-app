@@ -13,25 +13,27 @@ body {
 /* Contenedor principal */
 .login-wrapper {
     display: flex;
-    min-height: 100vh;
+    min-height: 100svh;
     width: 100%;
+    max-width: none;
+    margin: 0 auto;
     flex-direction: row;
 }
 
 /* Bloque izquierdo (banner azul) */
 .login-banner {
     background-color: #0065B3;
-    flex: 0 0 40%; /*Tamaño del banner azul*/
-    max-width: 40%;
+    flex: 0 1 42%;
+    min-width: 320px;
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 4rem;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(2.5rem, 6vw, 6rem);
     color: #fff;
 }
 
 .banner-content {
-    max-width: 480px;
+    max-width: 32rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -40,17 +42,20 @@ body {
 }
 
 .logo {
-    width: 100%;
-    max-width: 300px;
+    width: auto;
+    max-width: 18rem;
     height: auto;
-    margin-bottom: 0.75rem;
+    margin: 0 auto 0.75rem auto;
+    display: block;
+    align-self: center;
 }
 
 .login-banner h1 {
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.2;
-    margin: 0 0 3.5rem; /*Espaciado entre el título y el párrafo*/
+    margin: 0 0 3.5rem;
+    /*Espaciado entre el título y el párrafo*/
     text-align: left;
 }
 
@@ -64,29 +69,32 @@ body {
 
 /*Lado derecho - Formulario de inicio de sesión*/
 .login-form-container {
-    flex: 0 0 60%; /*Tamaño del formulario*/
+    flex: 1 1 58%;
+    min-width: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #F4F8FB;
+    padding: clamp(2rem, 5vw, 6rem);
 }
 
 /*Tarjeta blanca para el formulario*/
 .login-card {
-    background-color:#fff;
+    background-color: #fff;
     border-radius: 16px;
-    padding: 3rem 2.75rem;
+    padding: clamp(3rem, 5vw, 5rem);
     width: 100%;
-    max-width: 400px;
+    max-width: 45rem;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 1.5rem 3rem rgba(23, 37, 54, 0.08);
 }
 
 /*Titulo del formulario*/
 .login-card .subtitle {
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing:0.05em;
+    letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
     color: #0065B3;
@@ -97,14 +105,14 @@ body {
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color:#172536;
+    color: #172536;
 }
 
 /*Credeciales*/
 .login-card p {
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
-    color:#58626E;
+    color: #58626E;
 }
 
 /*Bloque de formulario*/
@@ -114,13 +122,16 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.input-group label { /*Color y tamaño de las letras de los campos de texto*/
+.input-group label {
+    /*Color y tamaño de las letras de los campos de texto*/
     font-size: 0.85rem;
     margin-bottom: 0.2rem;
-    color:#34404F;
+    color: #34404F;
     font-weight: 600;
 }
-.input-group input {/*Color y tamaño de los campos de texto*/
+
+.input-group input {
+    /*Color y tamaño de los campos de texto*/
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid #D1D9E6;
@@ -128,11 +139,13 @@ body {
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.3s ease;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     color: #1e293b;
 }
+
 /*Bloque de botones*/
-.btn-submit { /*Botón de inicio de sesión*/
+.btn-submit {
+    /*Botón de inicio de sesión*/
     width: 100%;
     background-color: #0065B3;
     color: #fff;
@@ -145,17 +158,20 @@ body {
     margin-top: 0.5rem;
 }
 
-.btn-submit:hover { /*Efecto hover del botón de inicio de sesión*/
+.btn-submit:hover {
+    /*Efecto hover del botón de inicio de sesión*/
     background-color: #00509E;
 }
 
-.btn-submit:disabled { /*Efecto hover del botón de inicio de sesión*/
+.btn-submit:disabled {
+    /*Efecto hover del botón de inicio de sesión*/
     opacity: 0.7;
     cursor: not-allowed;
 }
 
 /*Bloque del link*/
-.register-link:hover { /*Efecto hover del link de registro*/
+.register-link:hover {
+    /*Efecto hover del link de registro*/
     text-decoration: underline;
 }
 
@@ -168,23 +184,42 @@ body {
     text-align: center;
 }
 
-/*Bloque responsive*/
-@media (max-width: 768px) {
-    .login-wrapper {
-        flex-direction: column;
-    }
-
-    .login-banner {
-        flex: 0 0 auto;
-        max-width: 100%;
-        padding: 2.5rem 2rem;
-    }
+/*Media querie para pantallas grandes*/
+@media(min-width: 1440px) {
     .login-card {
-        margin: 2rem;
-        max-width: none;
+        max-width: 50rem;
+        /* Ajusta el ancho máximo de la tarjeta en pantallas grandes */
+        padding: clamp(3.5rem, 4vw, 6rem);
+    }
+    .login-banner h1 {
+        font-size: 3rem;
+    }
+    .banner-content {
+        max-width: 36rem;
     }
 }
 
-
-
-
+/*Media query para pantallas medianas y telefonos*/
+    @media (max-width: 768px) {
+        .login-wrapper {
+            flex-direction: column;
+        }
+        .login-banner {
+            flex: 0 0 auto;
+            min-width: 0;
+            padding: 2.5rem 2rem;
+        }
+        .login-banner h1 {
+            margin-bottom: 1.5rem;
+        }
+        .login-banner p {
+            font-size: 0.75rem;
+        }
+        .login-form-container {
+            padding: 1rem;
+        }
+        .login-card {
+            margin: 1rem;
+            max-width: none;
+        }
+    }
