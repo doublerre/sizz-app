@@ -17,9 +17,11 @@ export default function AppRouter() {
             <Route path="/eventos" element={<EventsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/app" element={<AppLayout />}>
-                <Route path="taquilla" element={<BoxOfficePage />} />
                 <Route path="reservaciones" element={<ReservationsPage />} />
                 <Route path="eventos" element={<EventsAdminPage />} />
+            </Route>
+            <Route path="/taquilla" element={<AppLayout />}>
+                <Route index element={<BoxOfficePage />} />
             </Route>
             <Route path="/cuenta" element={<AccountLayout />}>
                 <Route path="reservaciones" element={<MyReservationsPage />} />
