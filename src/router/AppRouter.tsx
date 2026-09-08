@@ -20,9 +20,9 @@ export default function AppRouter() {
                 <Route path="reservaciones" element={<ReservationsPage />} />
                 <Route path="eventos" element={<EventsAdminPage />} />
             </Route>
-            <Route path="/taquilla" element={<AppLayout />}>
-                <Route index element={<BoxOfficePage />} />
-            </Route>
+            {/* Temporal: sin AppLayout porque BoxOfficePage trae su propio menú.
+             Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
+            <Route path="/taquilla" element={<BoxOfficePage />} />
             <Route path="/cuenta" element={<AccountLayout />}>
                 <Route path="reservaciones" element={<MyReservationsPage />} />
             </Route>
