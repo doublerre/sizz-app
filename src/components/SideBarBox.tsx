@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import logo from '../assets/logo_zigzag.png';
+import logo from '@/assets/logo_zigzag.png';
 import './SideBarBox.css';
 
-interface SidebarProps{
+interface SidebarProps {
   userName: string;
   userRole: string;
 }

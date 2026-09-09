@@ -1,6 +1,6 @@
 // pages/app/BoxOfficePage.tsx
-import TicketsOffice from '../TicketsOffice';
+import TicketsOffice from '@/pages/TicketsOffice';
 
 export default function BoxOfficePage() {
-  return <TicketsOffice/>;
+  return <TicketsOffice />;
 }

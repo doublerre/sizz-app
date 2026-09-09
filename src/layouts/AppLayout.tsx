@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import "./AppLayout.css";
-import logo from "../assets/logo_zigzag_main.svg"
+import logo from "@/assets/logo_zigzag_main.svg"
 
 const mainMenu = [
     { label: "Inicio", to: "", available: false, color: "var(--brand-blue)" },
