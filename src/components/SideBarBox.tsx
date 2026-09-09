@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import logo from '../assets/logo_zigzagA.png';
+import logo from '@/assets/logo_zigzag.png';
 import './SideBarBox.css';
 import { useState } from 'react';
 
