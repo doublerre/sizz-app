@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "./EventsPage.css"
 
 // Datos temporales, mientras no existe el endpoint de eventos
 const events = [
@@ -41,7 +42,7 @@ const events = [
     {
         id: 5,
         category: "Óptica",
-        color: "var(--brand-red)",
+        color: "var(--brand-red-light)",
         title: "Laboratorio de luz",
         date: "27 SEP",
         time: "16:00",
@@ -60,23 +61,31 @@ const events = [
 
 export default function EventsPage() {
     return (
+        <>
+            <header className="events-header">
+                <p className="events-eyebrow">AGENDA ZIGZAG</p>
+                <h1>Eventos para descubrir juntos</h1>
+                <p className="events-subtitle">Actividades especiales, talleres y noches temáticas para toda la familia</p>
 
-        <div className="events-grid">
-            {events.map((event) => (
-                <article className="event-card" key={event.id}>
-                    <div className="event-banner" style={{ backgroundColor: event.color }}>
-                        <span className="event-category">{event.category}</span>
-                    </div>
-                    <div className="event-body">
-                        <h3>{event.title}</h3>
-                        <p className="event-date" style={{ color: event.color }}>{event.date} · {event.time}</p>
-                        <p className="audience">{event.audience}</p>
-                        <Link to={"/eventos/" + event.id}>Consultar detalles </Link>
+            </header>
+            <div className="events-grid">
+                {events.map((event) => (
+                    <article className="event-card" key={event.id}>
+                        <div className="event-banner" style={{ backgroundColor: event.color }}>
+                            <div className="event-circle"></div>
+                            <span className="event-category" style={{ color: event.color }}>{event.category}</span>
+                        </div>
+                        <div className="event-body">
+                            <h3>{event.title}</h3>
+                            <p className="event-date" style={{ color: event.color }}>{event.date} · {event.time}</p>
+                            <p className="audience">{event.audience}</p>
+                            <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </>
 
-                    </div>
-                </article>
-            ))}
-        </div>
 
     )
 }

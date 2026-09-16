@@ -21,7 +21,8 @@ body {
 /* Bloque izquierdo (banner azul) */
 .login-banner {
     background-color: #0065B3;
-    flex: 0 0 40%; /*Tamaño del banner azul*/
+    flex: 0 0 40%;
+    /*Tamaño del banner azul*/
     max-width: 40%;
     display: flex;
     justify-content: flex-start;
@@ -50,7 +51,8 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.2;
-    margin: 0 0 3.5rem; /*Espaciado entre el título y el párrafo*/
+    margin: 0 0 3.5rem;
+    /*Espaciado entre el título y el párrafo*/
     text-align: left;
 }
 
@@ -64,7 +66,8 @@ body {
 
 /*Lado derecho - Formulario de inicio de sesión*/
 .login-form-container {
-    flex: 0 0 60%; /*Tamaño del formulario*/
+    flex: 0 0 60%;
+    /*Tamaño del formulario*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,7 +76,7 @@ body {
 
 /*Tarjeta blanca para el formulario*/
 .login-card {
-    background-color:#fff;
+    background-color: #fff;
     border-radius: 16px;
     padding: 3rem 2.75rem;
     width: 100%;
@@ -86,7 +89,7 @@ body {
 .login-card .subtitle {
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing:0.05em;
+    letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
     color: #0065B3;
@@ -97,14 +100,14 @@ body {
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color:#172536;
+    color: #172536;
 }
 
 /*Credeciales*/
 .login-card p {
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
-    color:#58626E;
+    color: #58626E;
 }
 
 /*Bloque de formulario*/
@@ -114,13 +117,16 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.input-group label { /*Color y tamaño de las letras de los campos de texto*/
+.input-group label {
+    /*Color y tamaño de las letras de los campos de texto*/
     font-size: 0.85rem;
     margin-bottom: 0.2rem;
-    color:#34404F;
+    color: #34404F;
     font-weight: 600;
 }
-.input-group input {/*Color y tamaño de los campos de texto*/
+
+.input-group input {
+    /*Color y tamaño de los campos de texto*/
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid #D1D9E6;
@@ -128,11 +134,13 @@ body {
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.3s ease;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     color: #1e293b;
 }
+
 /*Bloque de botones*/
-.btn-submit { /*Botón de inicio de sesión*/
+.btn-submit {
+    /*Botón de inicio de sesión*/
     width: 100%;
     background-color: #0065B3;
     color: #fff;
@@ -145,17 +153,20 @@ body {
     margin-top: 0.5rem;
 }
 
-.btn-submit:hover { /*Efecto hover del botón de inicio de sesión*/
+.btn-submit:hover {
+    /*Efecto hover del botón de inicio de sesión*/
     background-color: #00509E;
 }
 
-.btn-submit:disabled { /*Efecto hover del botón de inicio de sesión*/
+.btn-submit:disabled {
+    /*Efecto hover del botón de inicio de sesión*/
     opacity: 0.7;
     cursor: not-allowed;
 }
 
 /*Bloque del link*/
-.register-link:hover { /*Efecto hover del link de registro*/
+.register-link:hover {
+    /*Efecto hover del link de registro*/
     text-decoration: underline;
 }
 
@@ -179,12 +190,9 @@ body {
         max-width: 100%;
         padding: 2.5rem 2rem;
     }
+
     .login-card {
         margin: 2rem;
         max-width: none;
     }
 }
-
-
-
-
