@@ -3,8 +3,9 @@
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 24px;
     padding: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
+    background-color: var(--bg-canvas);
+    padding-bottom: 40px;
+
 }
 
 .event-card {
@@ -81,4 +82,49 @@
 .events-subtitle {
     font-size: 16px;
     opacity: 0.85;
+}
+
+.events-intro {
+    background-color: var(--bg-canvas);
+    padding: 40px 0 0;
+}
+
+.events-intro h2 {
+    font-size: 28px;
+    margin: 0 0 4px;
+}
+
+.events-intro-text {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.events-filters-wrapper {
+    background-color: var(--bg-canvas);
+    padding: 24px 0;
+}
+
+.events-filters {
+    background-color: var(--bg-surface);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.events-search {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.events-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 48px 0;
 }

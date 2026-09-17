@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "./EventsPage.css"
+import { useState } from "react";
 
 // Datos temporales, mientras no existe el endpoint de eventos
 const events = [
@@ -60,30 +61,68 @@ const events = [
 ];
 
 export default function EventsPage() {
+    const [search, setSearch] = useState("");
+
+    const filteredEvents = events.filter((event) => {
+        const query = search.toLowerCase();
+        return (
+            event.title.toLowerCase().includes(query) ||
+            event.category.toLowerCase().includes(query)
+        );
+    });
     return (
         <>
             <header className="events-header">
-                <p className="events-eyebrow">AGENDA ZIGZAG</p>
-                <h1>Eventos para descubrir juntos</h1>
-                <p className="events-subtitle">Actividades especiales, talleres y noches temáticas para toda la familia</p>
+                <div className="container">
+                    <p className="events-eyebrow">AGENDA ZIGZAG</p>
+                    <h1>Eventos para descubrir juntos</h1>
+                    <p className="events-subtitle">Actividades especiales, talleres y noches temáticas para toda la familia</p>
+                </div>
 
             </header>
-            <div className="events-grid">
-                {events.map((event) => (
-                    <article className="event-card" key={event.id}>
-                        <div className="event-banner" style={{ backgroundColor: event.color }}>
-                            <div className="event-circle"></div>
-                            <span className="event-category" style={{ color: event.color }}>{event.category}</span>
-                        </div>
-                        <div className="event-body">
-                            <h3>{event.title}</h3>
-                            <p className="event-date" style={{ color: event.color }}>{event.date} · {event.time}</p>
-                            <p className="audience">{event.audience}</p>
-                            <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
-                        </div>
-                    </article>
-                ))}
+            <section className="events-intro">
+                <div className="container">
+                    <h2>Próximos eventos</h2>
+                    <p className="events-intro-text">Consulta fechas, edades y requisitos de acceso.</p>
+                </div>
+            </section>
+            <div className="events-filters-wrapper">
+                <div className="container">
+                    <div className="events-filters">
+                        <input
+                            type="text"
+                            className="events-search"
+                            placeholder="Buscar evento o tema..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                </div>
             </div>
+            <div className="container">
+                {filteredEvents.length > 0 ? (
+                    <div className="events-grid">
+                        {filteredEvents.map((event) => (
+                            <article className="event-card" key={event.id}>
+                                <div className="event-banner" style={{ backgroundColor: event.color }}>
+                                    <div className="event-circle"></div>
+                                    <span className="event-category" style={{ color: event.color }}>{event.category}</span>
+                                </div>
+                                <div className="event-body">
+                                    <h3>{event.title}</h3>
+                                    <p className="event-date" style={{ color: event.color }}>{event.date} · {event.time}</p>
+                                    <p className="audience">{event.audience}</p>
+                                    <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="events-empty">No encontramos eventos que coincidan con tu búsqueda.</p>
+                )}
+
+            </div>
+
         </>
 
 
