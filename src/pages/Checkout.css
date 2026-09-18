@@ -1,0 +1,343 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg-app);
+  position: relative;
+}
+
+.main-container {
+	flex: 1;
+	min-width: 0;
+	max-width: 1400px;
+}
+/*Header*/
+.header-title {
+  background-color: #ffffff;
+  padding: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border-app);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.header-title p {
+  margin: 0.15rem 0 0 0;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+/*Grid*/
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+  padding: 0 2.5rem 2.5rem 2.5rem;
+}
+
+/*Detalle de compra*/
+.form-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border-app);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-block {
+  margin-bottom: 1.5rem;
+}
+
+.section-block h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 0.35rem 0;
+}
+
+.sale-meta {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+/*Lista de boletos vendidos*/
+.sale-items {
+  border-top: 1px solid var(--color-border-app);
+  margin-bottom: 1.5rem;
+}
+
+.sale-item-row {
+  display: grid;
+  grid-template-columns: 1fr 40px 60px 60px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--color-border-app);
+  font-size: 0.85rem;
+}
+
+.sale-item-label {
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+.sale-item-qty,
+.sale-item-unit,
+.sale-item-total {
+  color: var(--color-text-medium);
+  text-align: right;
+}
+
+/*Recuadro azul "Total a cobrar" */
+.total-box {
+  background: var(--color-primary-bg);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.total-box small {
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+}
+
+.total-box strong {
+  color: var(--color-primary);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/*Formulario */
+.inputs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+}
+
+.input-group input {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border-app);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: var(--color-text-dark);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+/*Botones*/
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  padding: 0;
+}
+
+.btn-link.btn-danger {
+  color: var(--color-danger);
+}
+
+/*forma de pago*/
+.summary-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border-app);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 1.5rem;
+}
+
+.summary-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 1.1rem 0;
+}
+
+/*metodo pago*/
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.payment-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-border-app);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.payment-option:hover {
+  border-color: #94a3b8;
+}
+
+.payment-option-selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+}
+
+.payment-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.payment-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.payment-text {
+  text-align: left;
+}
+
+.payment-text h4 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+.payment-detail {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-app);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.radio-dot-checked {
+  border: 5px solid var(--color-primary);
+}
+
+/*"Cambio"*/
+.change-box {
+  background: #f0fdf4;
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.change-box small {
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+}
+
+.change-box strong {
+  color: var(--color-success);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/*"Cobrar e imprimir" */
+.btn-primary {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #065293;
+}
+
+/*responsivo*/
+@media (max-width: 1024px) {
+  .header-title {
+    padding: 4rem 2rem 1rem;
+  }
+
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .header-title {
+    padding: 4rem 1.5rem 1rem;
+  }
+
+  .checkout-grid {
+    padding: 0 1rem 1.5rem 1rem;
+  }
+
+  .inputs-row {
+    grid-template-columns: 1fr;
+  }
+
+  .sale-item-row {
+    grid-template-columns: 1fr 30px 50px 50px;
+    font-size: 0.78rem;
+  }
+}

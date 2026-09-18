@@ -1,24 +1,11 @@
-import React, { useState } from 'react';
-import { User, Users, Accessibility, Sun } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
+import { TICKET_TYPES } from '../data/ticketTypes';
 import './NewSale.css';
 
-interface TicketConfig {
-  key: string;
-  label: string;
-  detail: string;
-  color: string;
-  icon: React.ElementType;
-}
-
-const TICKETS_CONFIG: TicketConfig[] = [
-  { key: 'adulto', label: 'Entrada general adulto', detail: 'Acceso general · 18+', color: 'var(--color-primary)', icon: User },
-  { key: 'infantil', label: 'Entrada general infantil', detail: 'De 3 a 17 años', color: 'var(--color-success)', icon: Users },
-  { key: 'adultoMayor', label: 'Adulto mayor', detail: 'Con identificación vigente', color: 'var(--color-warning)', icon: Accessibility },
-  { key: 'festival', label: 'Festival de verano', detail: 'Especial de temporada', color: 'var(--color-danger)', icon: Sun },
-];
-
 export const NewSale = () => {
+  const navigate = useNavigate();
   const [quantities, setQuantities] = useState<Record<string, number>>({
     adulto: 0,
     infantil: 0,
@@ -65,7 +52,7 @@ export const NewSale = () => {
               <h3>2. Boletos disponibles</h3>
 
               <div className="tickets-list">
-                {TICKETS_CONFIG.map(({ key, label, detail, color, icon: Icon }) => (
+                {TICKET_TYPES.map(({ key, label, detail, color, icon: Icon }) => (
                   <div key={key} className="ticket-card">
                     <div className="ticket-info">
                      <div className="ticket-icon" style={{ backgroundColor: color }}>
@@ -148,7 +135,7 @@ export const NewSale = () => {
               <span>_</span>
             </div>
 
-            <button type="button" className="btn-primary">
+            <button type="button" className="btn-primary" onClick={() => navigate('/taquilla/checkout')}>
               Continuar al cobro
             </button>
           </aside>

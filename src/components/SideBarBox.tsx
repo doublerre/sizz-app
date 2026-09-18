@@ -2,7 +2,6 @@ import { NavLink } from 'react-router-dom';
 import logo from '../assets/logo_zigzagA.png';
 import './SideBarBox.css';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
 
 interface SidebarProps{
   userName: string;
@@ -15,7 +14,7 @@ const MENU = [
     section: 'TAQUILLA',
     links: [
       { to: '/taquilla', label: 'Inicio', color: '#0868B7' },
-      { to: '/taquilla/nueva-venta', label: 'Nueva venta', color: '#55B82C' },
+      { to: '/taquilla/newSale', label: 'Nueva venta', color: '#55B82C' },
       { to: '/taquilla/historial', label: 'Historial', color: '#FBC400' },
       { to: '/taquilla/corte-caja', label: 'Corte de caja', color: '#EF4050' },
     ],

@@ -1,11 +1,7 @@
-// pages/app/BoxOfficePage.tsx
-import Dashboard from "../Dashboard";
-import NewSale from "../NewSale";
-
-{/*export default function BoxOfficePage() {
-  return <Dashboard />;
-}*/}
+//import NewSale from "../NewSale";
+//import Checkout from "../Checkout";
+import SaleComplete from "../SaleComplete";
 
 export default function BoxOfficePage() {
-  return <NewSale/>;
+  return <SaleComplete/>;
 }

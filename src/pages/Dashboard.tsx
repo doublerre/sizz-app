@@ -1,6 +1,8 @@
 import React from 'react';
-import { DollarSign, Banknote, CreditCard, Users, User, UserRound, Accessibility, Gift } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Banknote, CreditCard, DollarSign, Users } from 'lucide-react';
 import { Sidebar } from '../components/SideBarBox';
+import { TICKET_TYPES } from '../data/ticketTypes';
 import './Dashboard.css';
 
 interface StatItem {
@@ -33,13 +35,6 @@ const STATS_CONFIG = [
   { key: 'visitantesHoy', label: 'Visitantes hoy', color: 'var(--color-danger)', icon: Users },
 ];
 
-const TICKETS_CONFIG = [
-  { key: 'adulto', label: 'Entrada general adulto', color: 'var(--color-primary)', icon: User },
-  { key: 'infantil', label: 'Entrada general infantil', color: 'var(--color-success)', icon: UserRound },
-  { key: 'adultoMayor', label: 'Adulto Mayor', color: 'var(--color-warning)', icon: Accessibility },
-  { key: 'cortesia', label: 'Cortesía', color: 'var(--color-danger)', icon: Gift },
-];
-
 const MOCK_STATS: Record<string, StatItem> = {
   ventasTurno: { value: '_', detail: '_' + 'boletos emitidos' },
   efectivoCaja: { value: '_', detail: 'Fondo inicial incluido' },
@@ -51,7 +46,7 @@ const MOCK_TICKETS: Record<string, TicketItem> = {
   adulto: { price: '_', detail: 'Incluye todas las experiencias' },
   infantil: { price: '_', detail: 'Incluye todas las experiencias' },
   adultoMayor: { price: '_', detail: 'Incluye todas las experiencias' },
-  cortesia: { price: '_', detail: 'Incluye todas las experiencias' },
+  festival: { price: '_', detail: 'Incluye todas las experiencias' },
 };
 
 const MOCK_SHIFT: ShiftData = {
@@ -66,6 +61,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   tickets = MOCK_TICKETS,
   shiftData = MOCK_SHIFT,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="d-wrapper">
       <Sidebar userName="_" userRole="_" />
@@ -110,7 +107,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <h2 className="d-quick-sale-title">Venta Rápida</h2>
             <p className="d-subtitle">Selecciona el tipo de boleto para continuar</p>
             <div className="d-ticket-grid">
-              {TICKETS_CONFIG.map(({ key, label, color, icon: Icon }) => (
+              {TICKET_TYPES.map(({ key, label, color, icon: Icon }) => (
                 <button className="d-ticket-card" key={key} type="button">
                   <div className="d-ticket-icon" style={{ background: color }}>
                     <Icon size={18} color="#ffffff" />
@@ -125,7 +122,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </button>
               ))}
             </div>
-            <button className="d-btn-newsale" type="button">
+            <button className="d-btn-newsale" type="button" onClick={() => navigate('/taquilla/newSale')}>
               Iniciar nueva venta
             </button>
           </section>
