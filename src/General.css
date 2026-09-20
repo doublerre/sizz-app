@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
 /* Estilos del login */
 * {
     box-sizing: border-box;
@@ -21,7 +23,7 @@ body {
 /* Bloque izquierdo (banner azul) */
 .login-banner {
     background-color: #0065B3;
-    flex: 0 0 40%; /*Tamaño del banner azul*/
+    flex: 0 0 40%;
     max-width: 40%;
     display: flex;
     justify-content: flex-start;
@@ -37,25 +39,28 @@ body {
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
+    font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
 }
 
 .logo {
-    max-width: 300px; /*Logo tamaño*/
-    margin-bottom: 0.75rem;
+    max-width: 220px;
+    margin-bottom: 1rem;
 }
 
 .login-banner h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 800;
     line-height: 1.2;
-    margin: 0 0 3.5rem; /*Espaciado entre el título y el párrafo*/
+    margin: 0 0 1.5rem;
     text-align: left;
+    font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
 }
 
 .login-banner p {
-    font-size: 0.65rem;
+    font-size: 0.875rem;
     opacity: 0.9;
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
     text-align: left;
+    font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
 }

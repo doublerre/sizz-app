@@ -15,26 +15,46 @@ export function AuthBanner({ currentStep }: AuthBannerProps) {
         <div className="login-banner">
             <div className="banner-content">
                 <img src={logo} alt="ZigZag Logo" className="logo" />
-                <h1>Ciencia que se organiza, visitas que se conectan.</h1>
-                <p className="font-bold text-amber-400">Sistema Integral Zigzag</p>
-                <p className="mb-8">Gestiona tu visita con una cuenta segura y verificada</p>
 
-                <div className="mt-12 flex flex-col gap-6">
+                <h1>Ciencia que se organiza, visitas que se conectan.</h1>
+                <p className="banner-system-name">Sistema Integral Zigzag</p>
+                <p className="banner-system-desc">
+                    Gestiona tu visita con una cuenta segura y verificada
+                </p>
+                <div className="banner-steps">
                     {steps.map((step) => {
                         const isActive = currentStep === step.id;
-                        // Use partial opacity for inactive steps to make the active one stand out
                         return (
-                            <div key={step.id} className="flex items-center gap-4">
+                            <div key={step.id} style={{ display: "flex", alignItems: "center", gap: "1.1rem" }}>
                                 <div
-                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 font-bold transition-colors ${isActive
-                                            ? "border-amber-400 bg-amber-400 text-blue-900"
-                                            : "border-white/40 bg-transparent text-white/60"
-                                        }`}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        width: "2.6rem",
+                                        height: "2.6rem",
+                                        borderRadius: "50%",
+                                        border: `2px solid ${isActive ? "#F5A623" : "rgba(255,255,255,0.4)"}`,
+                                        backgroundColor: isActive ? "#F5A623" : "transparent",
+                                        color: isActive ? "#004F8F" : "rgba(255,255,255,0.6)",
+                                        fontWeight: 700,
+                                        fontSize: "1rem",
+                                        flexShrink: 0,
+                                        transition: "all 0.2s",
+                                        fontFamily: "'Montserrat', system-ui, sans-serif",
+                                    }}
                                 >
                                     {step.id}
                                 </div>
-                                <span className={`text-lg font-medium transition-colors ${isActive ? "text-amber-400" : "text-white/60"
-                                    }`}>
+                                <span
+                                    style={{
+                                        fontSize: "1rem",
+                                        fontWeight: 600,
+                                        color: isActive ? "#F5A623" : "rgba(255,255,255,0.6)",
+                                        transition: "color 0.2s",
+                                        fontFamily: "'Montserrat', system-ui, sans-serif",
+                                    }}
+                                >
                                     {step.label}
                                 </span>
                             </div>

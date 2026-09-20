@@ -1,10 +1,13 @@
 "use client"
 
 import * as z from "zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Eye, EyeOff } from "lucide-react"
 import { AuthBanner } from "../../components/AuthBanner";
 import "../../General.css";
+import "./Register.css";
 
 const formSchema = z.object({
     name: z.string().min(3, "El nombre es obligatorio"),
@@ -16,6 +19,9 @@ const formSchema = z.object({
 })
 
 export default function CreateUserForm() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -39,100 +45,129 @@ export default function CreateUserForm() {
     return (
         <div className="login-wrapper">
             <AuthBanner currentStep={1} />
-            <div className="flex flex-1 items-center justify-center p-8">
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
-                    <h6 className="text-xs text-blue-600 font-bold">SISTEMA INTEGRAL ZIGZAG</h6>
-                    <h1 className="text-3xl font-bold text-black">Crear cuenta</h1>
-                    <p className="text-sm text-gray-500">Ingresa tus datos para crear una cuenta</p>
-                    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
-                        <div className="grid grid-cols-2 gap-4 text-left">
-                            <div>
-                                <label htmlFor="name" className="block mb-1 text-sm font-medium">Nombre(s)</label>
+
+            <div className="register-right">
+                <div className="register-card">
+                    <span className="register-badge">Sistema Integral Zigzag</span>
+                    <h1 className="register-title">Crear cuenta</h1>
+                    <p className="register-subtitle">Registra tus datos para comenzar.</p>
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="register-form">
+
+                        <div className="register-row">
+                            <div className="register-field">
+                                <label htmlFor="name">Nombre(s)</label>
                                 <input
                                     type="text"
                                     id="name"
                                     {...register("name")}
-                                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                                    className={errors.name ? "input-error" : ""}
                                 />
                                 {errors.name && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                                    <span className="register-error">{errors.name.message}</span>
                                 )}
                             </div>
-                            <div>
-                                <label htmlFor="lastName" className="block mb-1 text-sm font-medium">Apellidos</label>
+                            <div className="register-field">
+                                <label htmlFor="lastName">Apellidos</label>
                                 <input
                                     type="text"
                                     id="lastName"
                                     {...register("lastName")}
-                                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                                    className={errors.lastName ? "input-error" : ""}
                                 />
                                 {errors.lastName && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
+                                    <span className="register-error">{errors.lastName.message}</span>
                                 )}
-                            </div>
-                            <div className="col-span-2">
-                                <label htmlFor="email" className="block mb-1 text-sm font-medium">Correo electrónico</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    {...register("email")}
-                                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                                />
-                                {errors.email && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block mb-1 text-sm font-medium">Contraseña</label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    {...register("password")}
-                                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                                />
-                                {errors.password && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor="repeatPassword" className="block mb-1 text-sm font-medium">Confirmar Contraseña</label>
-                                <input
-                                    type="password"
-                                    id="repeatPassword"
-                                    {...register("repeatPassword")}
-                                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                                />
-                                {errors.repeatPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.repeatPassword.message}</p>
-                                )}
-                            </div>
-                            <div className="col-span-2">
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="terms"
-                                        {...register("terms")}
-                                        className="border border-gray-300 rounded-md px-3 py-2"
-                                    />
-                                    <label htmlFor="terms" className="text-sm">Acepto el aviso de privacidad y los términos de uso</label>
-                                </div>
-                                {errors.terms && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.terms.message}</p>
-                                )}
-                            </div>
-                            <button
-                                type="submit"
-                                className="col-span-2 bg-blue-500 text-white rounded-md px-3 py-2"
-                            >
-                                Crear cuenta y enviar código
-                            </button>
-                            <div className="col-span-2 text-center mt-4">
-                                <a href="/login" className="text-blue-500 text-sm">¿Ya tienes una cuenta? Inicia sesión</a>
-                            </div>
-                            <div>
-                                <p>Recibirás un código de verificación en tu correo.</p>
                             </div>
                         </div>
+
+                        <div className="register-field">
+                            <label htmlFor="email">Correo electrónico</label>
+                            <input
+                                type="email"
+                                id="email"
+                                {...register("email")}
+                                className={errors.email ? "input-error" : ""}
+                            />
+                            {errors.email && (
+                                <span className="register-error">{errors.email.message}</span>
+                            )}
+                        </div>
+
+                        <div className="register-row">
+                            <div className="register-field">
+                                <label htmlFor="password">Contraseña</label>
+                                <div className="register-password-wrapper">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        {...register("password")}
+                                        className={errors.password ? "input-error" : ""}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="register-eye-btn"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                                {errors.password && (
+                                    <span className="register-error">{errors.password.message}</span>
+                                )}
+                            </div>
+                            <div className="register-field">
+                                <label htmlFor="repeatPassword">Confirmar contraseña</label>
+                                <div className="register-password-wrapper">
+                                    <input
+                                        type={showRepeatPassword ? "text" : "password"}
+                                        id="repeatPassword"
+                                        {...register("repeatPassword")}
+                                        className={errors.repeatPassword ? "input-error" : ""}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="register-eye-btn"
+                                        onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                                        aria-label={showRepeatPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                    >
+                                        {showRepeatPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                                {errors.repeatPassword && (
+                                    <span className="register-error">{errors.repeatPassword.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        <p className="register-hint">La contraseña debe tener al menos 8 caracteres.</p>
+
+                        <div>
+                            <div className="register-terms">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    {...register("terms")}
+                                />
+                                <label htmlFor="terms">Acepto el aviso de privacidad y los términos de uso.</label>
+                            </div>
+                            {errors.terms && (
+                                <span className="register-error">{errors.terms.message}</span>
+                            )}
+                        </div>
+
+                        <button type="submit" className="register-btn-primary">
+                            Crear cuenta y enviar código
+                        </button>
+
+                        <div className="register-login-link">
+                            <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+                        </div>
+
+                        <p className="register-note">
+                            Recibirás un código de verificación en tu correo.
+                        </p>
                     </form>
                 </div>
             </div>
