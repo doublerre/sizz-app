@@ -13,7 +13,7 @@ const MENU = [
   {
     section: 'TAQUILLA',
     links: [
-      { to: '/taquilla', label: 'Inicio', color: '#0868B7' },
+      { to: '/taquilla/dashboard', label: 'Inicio', color: '#0868B7' },
       { to: '/taquilla/newSale', label: 'Nueva venta', color: '#55B82C' },
       { to: '/taquilla/historial', label: 'Historial', color: '#FBC400' },
       { to: '/taquilla/corte-caja', label: 'Corte de caja', color: '#EF4050' },
@@ -82,7 +82,7 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
                   <li key={to}>
                     <NavLink
                       to={to}
-                      end={to === '/taquilla'}
+                      end
                       className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                     >
                       <span className="sidebar-dot" style={{ backgroundColor: color }} />

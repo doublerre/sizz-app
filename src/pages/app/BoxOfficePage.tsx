@@ -1,7 +1,5 @@
-//import NewSale from "../NewSale";
-//import Checkout from "../Checkout";
-import SaleComplete from "../SaleComplete";
+import Dashboard from "../Dashboard";
 
 export default function BoxOfficePage() {
-  return <SaleComplete/>;
+  return <Dashboard/>;
 }

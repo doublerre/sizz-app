@@ -15,8 +15,8 @@
   padding: 1rem 2.5rem;
   margin-bottom: 1.5rem;
   width: 100%;
-  border-bottom: 1px solid var(--color-border-app);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-bottom: none;
+  box-shadow: none;
 }
 
 .header-title h1 {
@@ -40,9 +40,9 @@
 /*venta realizada*/
 .complete-card {
   background: #ffffff;
-  border: 1px solid var(--color-border-app);
+  border: 1px solid #edf1f5;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(35, 61, 82, 0.04);
   padding: 3rem;
   width: 100%;
   max-width: 1000px;
@@ -58,7 +58,7 @@
   height: 96px;
   border-radius: 50%;
   background-color: #edf8e9;
-  color: #4ea72a;
+  color: var(--color-success);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +116,7 @@
 
 .status-badge {
   background-color: #b4d3a8;
-  color: #4ea72a;
+  color: var(--color-success);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -178,7 +178,7 @@
 .note-box {
   width: 100%;
   background-color: #fef9e7;
-  border: 1px solid #fbe9b0;
+  border: none;
   color: #92700e;
   font-size: 0.85rem;
   border-radius: 8px;
@@ -206,7 +206,7 @@
 }
 
 /*responsivo */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .complete-card {
     padding: 2rem 1.5rem;
   }

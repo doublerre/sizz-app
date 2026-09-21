@@ -16,8 +16,8 @@
   padding: 1rem 2.5rem;
   margin-bottom: 1.5rem;
   width: 100%;
-  border-bottom: 1px solid var(--color-border-app);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-bottom: none;
+  box-shadow: none;
 }
 
 .header-title h1 {
@@ -38,17 +38,18 @@
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch;
   padding: 0 2.5rem 2.5rem 2.5rem;
 }
 
 /*Detalle de compra*/
 .form-card {
   background: #ffffff;
-  border: 1px solid var(--color-border-app);
+  border: 1px solid #edf1f5;
   border-radius: 12px;
   padding: 1.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(35, 61, 82, 0.04);
 }
 
 .section-block {
@@ -140,7 +141,7 @@
 
 .input-group input {
   padding: 0.65rem 1rem;
-  border: 1px solid var(--color-border-app);
+  border: 1px solid #dfe7ef;
   border-radius: 8px;
   background-color: #ffffff;
   color: var(--color-text-dark);
@@ -175,8 +176,12 @@
   background: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid var(--color-border-app);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #edf1f5;
+  box-shadow: 0 1px 3px rgba(35, 61, 82, 0.04);
   position: sticky;
   top: 1.5rem;
 }
@@ -202,7 +207,7 @@
   align-items: center;
   width: 100%;
   padding: 0.85rem 1rem;
-  border: 1px solid var(--color-border-app);
+  border: 1px solid #dfe7ef;
   border-radius: 10px;
   background: #ffffff;
   cursor: pointer;
@@ -211,7 +216,7 @@
 }
 
 .payment-option:hover {
-  border-color: #94a3b8;
+  border-color: #b9cddd;
 }
 
 .payment-option-selected {
@@ -255,7 +260,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid var(--color-border-app);
+  border: 2px solid #dfe7ef;
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -289,6 +294,7 @@
 /*"Cobrar e imprimir" */
 .btn-primary {
   width: 100%;
+  margin-top: auto;
   padding: 0.8rem;
   background-color: var(--color-primary);
   color: #ffffff;

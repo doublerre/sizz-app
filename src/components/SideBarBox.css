@@ -1,7 +1,7 @@
 .sidebar {
     width: 260px;
+    height: 100vh;
     min-height: 100vh;
-    height: 100%;
     background-color: white;
     border-right: 1px solid #e5e7eb;
     display: flex;
@@ -9,6 +9,9 @@
     padding: 1.5rem;
     box-sizing: border-box;
     flex-shrink: 0;
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
     transition: transform 0.3s ease;
     z-index: 100;
 }
@@ -56,9 +59,9 @@
 }
 
 .sidebar-link:hover,
-.side-link-active {
+.sidebar-link.active { /*Función para que la opción del sideBar se quede en azul*/
     background-color: #eaf2fc;
-    color: #0065b3
+    color: #0065b3;
 }
 
 /*Bloque de usuario*/
