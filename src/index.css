@@ -11,6 +11,22 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
+  /* --- Paleta Zigzag (taquilla) --- */
+  --color-primary: #0868B7;
+  --color-primary-bg: #EAF4FC;
+  --color-bg-app: #F5F8FB;
+  --color-border-app: #C8CFD7;
+  --color-success: #55B82C;
+  --color-warning: #FBC400;
+  --color-danger: #EF4050;
+
+   /* Texto */
+  --color-text-dark: #0f172a;
+  --color-text-medium: #475569;
+  --color-text-light: #64748b;
+  --color-text-muted: #94a3b8;
+
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
