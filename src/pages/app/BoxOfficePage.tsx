@@ -1,5 +1,6 @@
-import Dashboard from "../Dashboard";
+import { Outlet } from "react-router-dom";
 
 export default function BoxOfficePage() {
-  return <Dashboard/>;
+  // <Outlet /> renderiza la sub-ruta activa (/taquilla/dashboard, /taquilla/newsale, etc.)
+  return <Outlet />;
 }
