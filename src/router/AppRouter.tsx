@@ -16,13 +16,22 @@ export default function AppRouter() {
             <Route path="/" element={<HomePage />} />
             <Route path="/eventos" element={<EventsPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />}>
+                <Route path="verify-account" element={<Verify />} />
+            </Route>
             <Route path="/app" element={<AppLayout />}>
                 <Route path="reservaciones" element={<ReservationsPage />} />
                 <Route path="eventos" element={<EventsAdminPage />} />
             </Route>
             {/* Temporal: sin AppLayout porque BoxOfficePage trae su propio menú.
              Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
-            <Route path="/taquilla" element={<BoxOfficePage />} />
+            <Route path="/taquilla" element={<BoxOfficePage />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="newsale" element={<Newsale />} />
+                <Route path="historial" element={<SalesHistory />} />
+                <Route path="checkout" element={<Checkout />} />
+                <Route path="saleComplete" element={<SaleComplete />} />
+            </Route>
             <Route path="/cuenta" element={<AccountLayout />}>
                 <Route path="reservaciones" element={<MyReservationsPage />} />
             </Route>
