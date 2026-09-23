@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./EventsPage.css"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Datos temporales, mientras no existe el endpoint de eventos
 const events = [
@@ -62,14 +62,23 @@ const events = [
 
 export default function EventsPage() {
     const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
 
     const filteredEvents = events.filter((event) => {
-        const query = search.toLowerCase();
+        const query = debouncedSearch.toLowerCase();
         return (
             event.title.toLowerCase().includes(query) ||
             event.category.toLowerCase().includes(query)
         );
     });
+
     return (
         <>
             <header className="events-header">
