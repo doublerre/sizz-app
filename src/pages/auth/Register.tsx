@@ -8,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react"
 import { AuthBanner } from "../../components/AuthBanner";
 import "../../General.css";
 import "./Register.css";
+import { Link } from "react-router-dom"
 
 const formSchema = z.object({
     name: z.string().min(3, "El nombre es obligatorio"),
@@ -157,9 +158,11 @@ export default function CreateUserForm() {
                             )}
                         </div>
 
-                        <button type="submit" className="register-btn-primary">
-                            Crear cuenta y enviar código
-                        </button>
+                        <Link to="/verify-account">
+                            <button type="submit" className="register-btn-primary">
+                                Crear cuenta y enviar código
+                            </button>
+                        </Link>
 
                         <div className="register-login-link">
                             <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
