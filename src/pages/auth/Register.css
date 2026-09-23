@@ -1,0 +1,299 @@
+
+/* ── Lado derecho: zona del formulario ── */
+.register-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 4%;
+    background-color: #F4F6F9;
+    min-height: 100vh;
+}
+
+.register-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2.75rem 2.5rem;
+    width: 100%;
+    max-width: 750px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+}
+
+.register-badge {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #0868B7;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0 0 0.5rem;
+    line-height: 1.15;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-subtitle {
+    font-size: 0.9rem;
+    color: #718096;
+    margin: 0 0 2rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.register-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.register-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.register-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #4A5568;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-field input[type="text"],
+.register-field input[type="email"],
+.register-field input[type="password"] {
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+    color: #1A1A2E;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    width: 100%;
+}
+
+.register-field input:focus {
+    border-color: #0868B7;
+    box-shadow: 0 0 0 3px rgba(8, 104, 183, 0.13);
+}
+
+.register-field input.input-error {
+    border-color: #E84040;
+}
+
+.register-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.register-password-wrapper input {
+    padding-right: 2.8rem !important;
+}
+
+.register-eye-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.register-eye-btn:hover {
+    color: #0868B7;
+}
+
+.register-hint {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: -0.3rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-error {
+    font-size: 0.75rem;
+    color: #E84040;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-terms {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.register-terms input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    accent-color: #0868B7;
+    flex-shrink: 0;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+}
+
+.register-terms label {
+    font-size: 0.83rem;
+    color: #4A5568;
+    cursor: pointer;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-btn-primary {
+    background-color: #004F8F;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    letter-spacing: 0.015em;
+    margin-top: 0.2rem;
+}
+
+.register-btn-primary:hover {
+    background-color: #0868B7;
+    box-shadow: 0 4px 18px rgba(8, 104, 183, 0.3);
+    transform: translateY(-1px);
+}
+
+.register-btn-primary:active {
+    transform: translateY(0);
+}
+
+.register-login-link {
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.register-login-link a {
+    font-size: 0.85rem;
+    color: #0868B7;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    transition: color 0.2s;
+}
+
+.register-login-link a:hover {
+    color: #004F8F;
+    text-decoration: underline;
+}
+
+.register-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eef0f3;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+
+.login-banner {
+    font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif !important;
+}
+
+.banner-system-name {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: #F5A623 !important;
+    margin-bottom: 0.4rem !important;
+    font-family: 'Montserrat', system-ui, sans-serif !important;
+}
+
+.banner-system-desc {
+    font-size: 0.95rem !important;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 2.5rem !important;
+    font-family: 'Montserrat', system-ui, sans-serif !important;
+}
+
+.banner-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    margin-top: 2rem;
+}
+
+
+
+/* Tablet grande (≤ 1024px) */
+@media (max-width: 1024px) {
+    .register-right {
+        padding: 2.5rem 3%;
+    }
+    .register-card {
+        max-width: 520px;
+    }
+}
+
+/* Tablet (≤ 860px): layout apilado */
+@media (max-width: 860px) {
+    .login-wrapper {
+        flex-direction: column;
+    }
+    .login-banner {
+        flex: 0 0 auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 2.5rem 4% !important;
+    }
+    .register-right {
+        min-height: auto;
+        padding: 2rem 4%;
+    }
+    .register-card {
+        max-width: 100%;
+    }
+}
+
+/* Móvil (≤ 540px): grid a 1 columna */
+@media (max-width: 540px) {
+    .register-row {
+        grid-template-columns: 1fr;
+    }
+    .register-card {
+        padding: 2rem 1.25rem;
+        border-radius: 14px;
+    }
+    .register-title {
+        font-size: 1.7rem;
+    }
+    .login-banner {
+        padding: 2rem 1rem !important;
+    }
+}
+
+/* Móvil pequeño (≤ 480px) */
+@media (max-width: 480px) {
+    .register-right {
+        padding: 1.5rem 1rem;
+    }
+}

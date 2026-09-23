@@ -37,5 +37,5 @@ export default function AppRouter() {
             </Route>
             <Route path="*" element={<NotFoundPage />} />
         </Routes>
-    )
+    );
 }
