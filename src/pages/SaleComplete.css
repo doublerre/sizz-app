@@ -1,0 +1,246 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg-app);
+  position: relative;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0;
+  max-width: 1400px;
+}
+.header-title {
+  background-color: #ffffff;
+  padding: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.header-title p {
+  margin: 0.15rem 0 0 0;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+.complete-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0 2.5rem 2.5rem 2.5rem;
+}
+
+/*venta realizada*/
+.complete-card {
+  background: #ffffff;
+  border: 1px solid #edf1f5;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(35, 61, 82, 0.04);
+  padding: 3rem;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/*Ícono circular */
+.success-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: #edf8e9;
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.complete-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 0.35rem 0;
+}
+
+.complete-folio {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+
+/* Recuadro azul con el resumen de la venta */
+.sale-info-box {
+  width: 100%;
+  background-color: var(--color-primary-bg);
+  border-radius: 10px;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  box-sizing: border-box;
+  margin-bottom: 1.5rem;
+}
+
+.sale-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sale-info-count {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.sale-info-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.sale-info-detail {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.status-badge {
+  background-color: #b4d3a8;
+  color: var(--color-success);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+/*botones*/
+.complete-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #065293;
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  padding: 0;
+  white-space: nowrap;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/*Nota inferior */
+.note-box {
+  width: 100%;
+  background-color: #fef9e7;
+  border: none;
+  color: #92700e;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  margin: 0 0 1.5rem 0;
+  box-sizing: border-box;
+}
+
+/*"Iniciar otra venta" */
+.btn-newsale {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: var(--color-success);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-newsale:hover {
+  background-color: #45940e;
+}
+
+/*responsivo */
+@media (max-width: 1024px) {
+  .complete-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .header-title {
+    padding: 1rem 1.5rem;
+  }
+
+  .complete-wrapper {
+    padding: 0 1rem 1.5rem 1rem;
+  }
+
+  .sale-info-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .complete-actions {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .btn-primary {
+    justify-content: center;
+  }
+}
