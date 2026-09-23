@@ -9,6 +9,13 @@ import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
 import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
 import EventsAdminPage from "@/pages/app/EventsAdminPage.tsx";
 import MyReservationsPage from "@/pages/account/MyReservationsPage.tsx";
+import Register from "@/pages/auth/Register.tsx";
+import Verify from "@/pages/auth/Verify.tsx";
+import Dashboard from "@/pages/Dashboard";
+import SalesHistory from "@/pages/SalesHistory";
+import Checkout from "@/pages/Checkout";
+import NewSale from "@/pages/NewSale";
+import SaleComplete from "@/pages/SaleComplete";
 
 export default function AppRouter() {
     return (
@@ -27,7 +34,7 @@ export default function AppRouter() {
              Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
             <Route path="/taquilla" element={<BoxOfficePage />}>
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="newsale" element={<Newsale />} />
+                <Route path="newsale" element={<NewSale />} />
                 <Route path="historial" element={<SalesHistory />} />
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="saleComplete" element={<SaleComplete />} />
