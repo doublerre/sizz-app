@@ -25,7 +25,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     /* Resoluciones */
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
