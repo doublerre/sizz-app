@@ -16,22 +16,22 @@ import SalesHistory from "@/pages/SalesHistory";
 import Checkout from "@/pages/Checkout";
 import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
+import PublicLayout from "@/layouts/PublicLayout";
 
 export default function AppRouter() {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/eventos" element={<EventsPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<Register />}>
+            <Route element={<PublicLayout />}>
+                <Route path="/eventos" element={<EventsPage />} />
             </Route>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />} />
             <Route path="verify-account" element={<Verify />} />
             <Route path="/app" element={<AppLayout />}>
                 <Route path="reservaciones" element={<ReservationsPage />} />
                 <Route path="eventos" element={<EventsAdminPage />} />
             </Route>
-            {/* Temporal: sin AppLayout porque BoxOfficePage trae su propio menú.
-             Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
             <Route path="/taquilla" element={<BoxOfficePage />}>
                 <Route index element={<Dashboard />} />
                 <Route path="dashboard" element={<Dashboard />} />

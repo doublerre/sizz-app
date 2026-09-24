@@ -12,6 +12,7 @@
   --brand-purple: #6751C3;
   --brand-navy: #0B3154;
   --neutral-ink: #172536;
+  --neutral-foot: #0B3154;
   --neutral-canvas: #F4f8fb;
   --neutral-surface: #ffffff;
   --neutral-border: #d7e1e8;
@@ -60,6 +61,12 @@
   --sans: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
   --heading: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+
+  /* Footer y superficies oscuras */
+  --bg-footer: var(--neutral-foot);
+  --bg-accent: var(--brand-yellow);
+  --text-inverse: var(--neutral-surface);
+  --border-inverse: rgba(255, 255, 255, 0.15);
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;

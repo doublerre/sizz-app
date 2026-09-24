@@ -92,6 +92,7 @@
 .events-intro h2 {
     font-size: 28px;
     margin: 0 0 4px;
+    color: var(--text-primary);
 }
 
 .events-intro-text {
