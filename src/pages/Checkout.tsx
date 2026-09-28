@@ -139,7 +139,7 @@ export const Checkout = ({
                 </button>
               ))}
             </div>
-
+             
             <div className="input-group">
               <label>Recibido</label>
               <input

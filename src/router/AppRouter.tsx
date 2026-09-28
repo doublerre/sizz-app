@@ -16,6 +16,7 @@ import SalesHistory from "@/pages/SalesHistory";
 import Checkout from "@/pages/Checkout";
 import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
+import ReservationFee from "@/pages/ReservationFee";
 
 export default function AppRouter() {
     return (
@@ -38,6 +39,7 @@ export default function AppRouter() {
                 <Route path="newsale" element={<NewSale />} />
                 <Route path="historial" element={<SalesHistory />} />
                 <Route path="checkout" element={<Checkout />} />
+                <Route path="reservationFee" element={<ReservationFee />} />
                 <Route path="saleComplete" element={<SaleComplete />} />
             </Route>
             <Route path="/cuenta" element={<AccountLayout />}>

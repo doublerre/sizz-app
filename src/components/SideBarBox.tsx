@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import logo from '@/assets/logo_zigzag.png';
+import logo from '../assets/logo_zigzagA.png';
 import './SideBarBox.css';
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ const MENU = [
       { to: '/taquilla/dashboard', label: 'Inicio', color: '#0868B7' },
       { to: '/taquilla/newSale', label: 'Nueva venta', color: '#55B82C' },
       { to: '/taquilla/historial', label: 'Historial', color: '#FBC400' },
-      { to: '/taquilla/corte-caja', label: 'Corte de caja', color: '#EF4050' },
+      { to: '/taquilla/checkout', label: 'Corte de caja', color: '#EF4050' },
     ],
   },
   {
