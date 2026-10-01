@@ -184,7 +184,7 @@ body {
     text-align: center;
 }
 
-/*Media querie para pantallas grandes*/
+/* Pantallas grandes (≥ 1024px) */
 @media(min-width: 1024px) {
     .login-card {
         max-width: 50rem;
@@ -199,8 +199,8 @@ body {
     }
 }
 
-/*Media query para pantallas medianas y telefonos*/
-    @media (max-width: 768px) {
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
         .login-wrapper {
             flex-direction: column;
         }
@@ -223,3 +223,25 @@ body {
             max-width: none;
         }
     }
+
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
+    .login-banner {
+        padding: 2rem 1.25rem;
+    }
+
+    .login-form-container {
+        padding: 0.75rem;
+    }
+
+    .login-card {
+        padding: 2rem 1.25rem;
+    }
+}
+
+/* Móvil pequeño (≤ 400px) */
+@media (max-width: 400px) {
+    .login-card {
+        padding: 1.5rem 1rem;
+    }
+}

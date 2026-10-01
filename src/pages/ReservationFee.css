@@ -322,8 +322,8 @@
     font-size: 0.55rem;
     text-align: center;
 }
-/*Bloque responsivo*/
-@media (max-width: 1024px) { 
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
     .reservation-fee-header{
     padding: 4rem 1.5rem 1rem;
 }
@@ -337,7 +337,8 @@
 .reservation-payment-card{position:static; 
   } 
 }
-@media (max-width: 600px){
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
     .reservation-detail-card,
     .reservation-payment-card{
         padding: 1rem;

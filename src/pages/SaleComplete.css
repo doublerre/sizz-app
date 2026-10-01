@@ -205,14 +205,15 @@
   background-color: #45940e;
 }
 
-/*responsivo */
-@media (max-width: 1024px) {
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
   .complete-card {
     padding: 2rem 1.5rem;
   }
 }
 
-@media (max-width: 640px) {
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
   .main-content {
     padding: 1rem;
   }

@@ -119,6 +119,23 @@
   min-width: 0;
 }
 
+.history-date-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.history-date-filter > span {
+  color: #73869e;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.history-date-filter .calendar-filter {
+  width: 100%;
+}
+
 .history-filters label > span {
   color: #73869e;
   font-size: 0.68rem;
@@ -300,10 +317,8 @@
   padding: 0 0.15rem;
 }
 
-/*
-   Responsive
- */
-@media (max-width: 1024px) {
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
   .history-header {
     width: calc(100% - 4.5rem);
     margin-left: 4.5rem;
@@ -333,7 +348,8 @@
   }
 }
 
-@media (max-width: 640px) {
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
   .history-main {
     padding: 1rem;
   }

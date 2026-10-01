@@ -329,8 +329,8 @@
   background-color: #065293;
 }
 
-/*Bloque responsivo*/
-@media (max-width: 1024px) {
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
   .header-title{
     padding-left: 4rem;
   }
@@ -343,7 +343,8 @@
   }
 }
 
-@media (max-width: 640px) {
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
   .main-content {
     padding: 1rem;
   }
