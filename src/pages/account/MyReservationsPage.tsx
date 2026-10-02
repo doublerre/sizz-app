@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo_zigzag_main.svg";
 import ReservationCalendar from "@/components/ReservationCalendar";
+import { Sidebar } from "../../components/SideBarBox";
 import "./MyReservationsPage.css";
 
 type ReservationStatus = "En revisión" | "Aprobada" | "Pagada";
@@ -64,81 +65,84 @@ export default function MyReservationsPage() {
 
     return (
         <div className="account-reservations-page">
-            <div className="account-breadcrumb">Cuenta / Mis reservaciones</div>
-            <header className="account-header">
-                <Link className="account-brand" to="/" aria-label="ZigZag, inicio">
-                    <img src={logo} alt="ZigZag" />
-                </Link>
-                <nav className="account-nav" aria-label="Navegación de cuenta">
-                    <NavLink to="/cuenta/reservaciones" end>Mis reservaciones</NavLink>
-                    <Link to="/eventos">Nueva reservación</Link>
-                    <span aria-disabled="true">Mi perfil</span>
-                </nav>
-                <div className="account-user">
-                    <span className="account-avatar">_</span>
-                    <span className="account-user-copy"><strong>_</strong><Link to="/login">Cerrar sesión</Link></span>
-                </div>
-            </header>
+            <Sidebar userName="_" userRole="_" />
 
-            <main className="account-reservations-content">
-                <section className="reservation-filters" aria-label="Filtros de reservaciones">
-                    <input
-                        aria-label="Buscar folio o institución"
-                        placeholder="Buscar folio o institución"
-                        value={search}
-                        onChange={(event) => updateSearch(event.target.value)}
-                    />
-                    <select aria-label="Filtrar por estado" value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>
-                        <option>Todos los estados</option>
-                        <option>En revisión</option>
-                        <option>Aprobada</option>
-                        <option>Pagada</option>
-                    </select>
-                    <ReservationCalendar
-                        value={date}
-                        markedDates={markedDates}
-                        variant="reservations"
-                        onChange={(value) => { setDate(value); setPage(1); }}
-                    />
-                    <button type="button" onClick={clearFilters}>Limpiar filtros</button>
-                </section>
-
-                <section className="reservation-list" aria-label="Mis reservaciones">
-                    {visibleReservations.map((reservation) => (
-                        <article className="reservation-row" key={reservation.id}>
-                            <div className="reservation-identity">
-                                <span className="reservation-folio">{reservation.folio}</span>
-                                <h2>{reservation.institution}</h2>
-                                <p>Enviada el {reservation.submittedAt}</p>
-                            </div>
-                            <div className="reservation-field">
-                                <span>FECHA TENTATIVA</span>
-                                <strong>{formatReservationDate(reservation.visitDate)}</strong>
-                            </div>
-                            <div className="reservation-field">
-                                <span>VISITANTES</span>
-                                <strong>{reservation.visitors}</strong>
-                            </div>
-                            <span className={`reservation-status status-${reservation.status.toLowerCase().replaceAll(" ", "-")}`}>
-                                {reservation.status}
-                            </span>
-                            <Link className="reservation-detail-link" to={`/cuenta/reservaciones/${reservation.id}`}>Ver detalle →</Link>
-                        </article>
-                    ))}
-                    {visibleReservations.length === 0 && <p className="reservations-empty">No hay reservaciones que coincidan con los filtros.</p>}
-                </section>
-
-                <footer className="reservation-pagination">
-                    <span>Mostrando {firstItem}–{lastItem} de {filteredReservations.length} reservaciones</span>
-                    <nav aria-label="Paginación de reservaciones">
-                        <button type="button" aria-label="Página anterior" disabled={currentPage <= 1} onClick={() => setPage((value) => value - 1)}>‹</button>
-                        {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
-                            <button key={pageNumber} type="button" className={pageNumber === currentPage ? "current" : ""} onClick={() => setPage(pageNumber)}>{pageNumber}</button>
-                        ))}
-                        <button type="button" aria-label="Página siguiente" disabled={currentPage === 0 || currentPage >= pageCount} onClick={() => setPage((value) => value + 1)}>›</button>
+            <div className="account-page-main">
+                <header className="account-header">
+                    <Link className="account-brand" to="/" aria-label="ZigZag, inicio">
+                        <img src={logo} alt="ZigZag" />
+                    </Link>
+                    <nav className="account-nav" aria-label="Navegación de cuenta">
+                        <NavLink to="/cuenta/reservaciones" end>Mis reservaciones</NavLink>
+                        <Link to="/eventos">Nueva reservación</Link>
+                        <span aria-disabled="true">Mi perfil</span>
                     </nav>
-                </footer>
-            </main>
+                    <div className="account-user">
+                        <span className="account-avatar">_</span>
+                        <span className="account-user-copy"><strong>_</strong><Link to="/login">Cerrar sesión</Link></span>
+                    </div>
+                </header>
+
+                <main className="account-reservations-content">
+                    <section className="reservation-filters" aria-label="Filtros de reservaciones">
+                        <input
+                            aria-label="Buscar folio o institución"
+                            placeholder="Buscar folio o institución"
+                            value={search}
+                            onChange={(event) => updateSearch(event.target.value)}
+                        />
+                        <select aria-label="Filtrar por estado" value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>
+                            <option>Todos los estados</option>
+                            <option>En revisión</option>
+                            <option>Aprobada</option>
+                            <option>Pagada</option>
+                        </select>
+                        <ReservationCalendar
+                            value={date}
+                            markedDates={markedDates}
+                            variant="reservations"
+                            onChange={(value) => { setDate(value); setPage(1); }}
+                        />
+                        <button type="button" onClick={clearFilters}>Limpiar filtros</button>
+                    </section>
+
+                    <section className="reservation-list" aria-label="Mis reservaciones">
+                        {visibleReservations.map((reservation) => (
+                            <article className="reservation-row" key={reservation.id}>
+                                <div className="reservation-identity">
+                                    <span className="reservation-folio">{reservation.folio}</span>
+                                    <h2>{reservation.institution}</h2>
+                                    <p>Enviada el {reservation.submittedAt}</p>
+                                </div>
+                                <div className="reservation-field">
+                                    <span>FECHA TENTATIVA</span>
+                                    <strong>{formatReservationDate(reservation.visitDate)}</strong>
+                                </div>
+                                <div className="reservation-field">
+                                    <span>VISITANTES</span>
+                                    <strong>{reservation.visitors}</strong>
+                                </div>
+                                <span className={`reservation-status status-${reservation.status.toLowerCase().replaceAll(" ", "-")}`}>
+                                    {reservation.status}
+                                </span>
+                                <Link className="reservation-detail-link" to={`/cuenta/reservaciones/${reservation.id}`}>Ver detalle →</Link>
+                            </article>
+                        ))}
+                        {visibleReservations.length === 0 && <p className="reservations-empty">No hay reservaciones que coincidan con los filtros.</p>}
+                    </section>
+
+                    <footer className="reservation-pagination">
+                        <span>Mostrando {firstItem}–{lastItem} de {filteredReservations.length} reservaciones</span>
+                        <nav aria-label="Paginación de reservaciones">
+                            <button type="button" aria-label="Página anterior" disabled={currentPage <= 1} onClick={() => setPage((value) => value - 1)}>‹</button>
+                            {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
+                                <button key={pageNumber} type="button" className={pageNumber === currentPage ? "current" : ""} onClick={() => setPage(pageNumber)}>{pageNumber}</button>
+                            ))}
+                            <button type="button" aria-label="Página siguiente" disabled={currentPage === 0 || currentPage >= pageCount} onClick={() => setPage((value) => value + 1)}>›</button>
+                        </nav>
+                    </footer>
+                </main>
+            </div>
         </div>
     );
 }

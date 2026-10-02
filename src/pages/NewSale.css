@@ -329,6 +329,14 @@
   background-color: #065293;
 }
 
+@media (max-width: 1024px) {
+  .header-title {
+    padding-left: 4.5rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+}
+
 /* Tablet (≤ 860px) */
 @media (max-width: 860px) {
   .header-title{

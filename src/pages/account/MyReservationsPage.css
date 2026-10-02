@@ -1,24 +1,37 @@
 .account-reservations-page {
+    display: flex;
+    width: 100%;
     min-height: 100vh;
     background: #f4f8fb;
     color: #172536;
+    border: none;
+    box-shadow: none;
 }
-.account-breadcrumb{
-    height: 38px;
-    box-sizing:border-box;
-    padding: 4px max(24px, calc((100% - 1280px) / 2));
-    background: #101010;
-    color: #c6cbd0;
-    font-size: .82rem;
-    font-weight: 500;
+
+.account-reservations-page > .sidebar {
+    width: 260px;
+    min-width: 260px;
+    border-right: none;
+    box-shadow: none;
+    background: #fff;
 }
+
+.account-page-main {
+    flex: 1;
+    min-width: 0;
+    background: #f4f8fb;
+}
+
 .account-header{
     display: grid;
     grid-template-columns:1fr 1fr 1fr;
     align-items:center;
-    min-height: 72px;
-    padding: 0 max(32px, calc((100% - 1280px) / 2));
+    min-height: 88px;
+    padding: 0.75rem max(32px, calc((100% - 1280px) / 2));
     background: #fff;
+    border: none;
+    border-bottom: none;
+    box-shadow: none;
 }
 .account-brand{
     display: inline-flex;
@@ -27,14 +40,14 @@
 }
 .account-brand img{
     display: block;
-    width: 150px;
+    width: 140px;
     height: auto;
 }
 .account-nav{
     display: flex;
     justify-content:center;
     align-items: center;
-    gap: clamp(24px, 5vw, 72px);
+    gap: clamp(20px, 4vw, 52px);
     height: 100%;
     white-space:nowrap;
 }
@@ -42,7 +55,8 @@
 .account-nav span{
     color: #43566a;
     text-decoration: none;
-    font-size: .66rem;
+    font-size: .72rem;
+    font-weight: 600;
 }
 .account-nav a.active{
     color: #0868b7;
@@ -84,7 +98,7 @@
 }
 .account-reservations-content{
     width: min(1060px,calc(100% - 64px));
-    margin: 108px auto 0;
+    margin: 42px auto 0;
 }
 .reservation-filters{
     display: grid;
@@ -261,6 +275,10 @@
 
 /* Tablet (≤ 860px) */
 @media (max-width: 860px) {
+    .account-brand {
+        margin-left: 3.25rem; 
+    }
+}
     .account-header{
         grid-template-columns:auto 1fr auto;
         gap: 18px;
@@ -287,9 +305,11 @@
         }.reservation-field:nth-of-type(3){
             display: none;
         }
-    }
 /* Móvil (≤ 540px) */
 @media (max-width: 540px) {
+     .account-brand {
+        margin-left: 3.75rem;
+    }
     .account-breadcrumb{
         padding-inline: 16px;
     }.account-header{ 
