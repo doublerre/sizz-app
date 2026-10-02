@@ -15,16 +15,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
 }
 
-@media (max-width: 640px) {
-    .events-grid {
-        padding: 16px;
-    }
-
-    .events-header {
-        padding: 40px 16px;
-    }
-}
-
 .event-banner {
     height: 80px;
     padding: 16px;
@@ -127,4 +117,15 @@
     text-align: center;
     color: var(--text-muted);
     padding: 48px 0;
+}
+
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
+    .events-grid {
+        padding: 16px;
+    }
+
+    .events-header {
+        padding: 40px 16px;
+    }
 }

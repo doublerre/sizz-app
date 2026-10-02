@@ -157,7 +157,12 @@ export const Checkout = ({
               <strong>{displayedChange}</strong>
             </div>
 
-            <button type="button" className="btn-primary" disabled={!selectedMethod}>
+            <button
+              type="button"
+              className="btn-primary"
+              disabled={!selectedMethod}
+              onClick={() => navigate('/taquilla/saleComplete')}
+            >
               Cobrar e imprimir
             </button>
           </aside>
