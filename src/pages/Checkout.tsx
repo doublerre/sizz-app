@@ -46,8 +46,19 @@ export const Checkout = ({
 
   const total = Number.parseFloat(totalToCharge.replace(/[^\d.-]/g, '')) || 0;
   const received = Number.parseFloat(receivedAmount) || 0;
+  const isCashPayment = selectedMethod === 'efectivo';
+  const isReceivedAmountValid = !isCashPayment || received >= total;
   const calculatedChange = Math.max(received - total, 0);
   const displayedChange = receivedAmount ? `$${calculatedChange.toFixed(2)}` : changeAmount;
+  const canSubmit = Boolean(selectedMethod) && (!isCashPayment || isReceivedAmountValid);
+
+  const handleCheckout = () => {
+    if (!canSubmit) {
+      return;
+    }
+
+    navigate('/taquilla/saleComplete');
+  };
 
   return (
     <div className="layout-container">
@@ -149,7 +160,13 @@ export const Checkout = ({
                 value={receivedAmount}
                 onChange={(event) => setReceivedAmount(event.target.value)}
                 placeholder="$0.00"
+                aria-invalid={isCashPayment && !isReceivedAmountValid}
               />
+              {isCashPayment && !isReceivedAmountValid && (
+                <small className="payment-validation-message">
+                  El efectivo recibido debe ser mayor o igual al total a cobrar.
+                </small>
+              )}
             </div>
 
             <div className="change-box">
@@ -157,7 +174,12 @@ export const Checkout = ({
               <strong>{displayedChange}</strong>
             </div>
 
-            <button type="button" className="btn-primary" disabled={!selectedMethod}>
+            <button
+              type="button"
+              className="btn-primary"
+              disabled={!canSubmit}
+              onClick={handleCheckout}
+            >
               Cobrar e imprimir
             </button>
           </aside>
