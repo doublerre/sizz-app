@@ -9,23 +9,47 @@ const money = (value: number) =>
   value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const summaryCards = [
-  { label: 'Venta bruta', value: '$ 8,700', tone: 'blue', icon: ClipboardList },
-  { label: 'Cancelaciones', value: '- $ 240', tone: 'red', icon: X },
-  { label: 'Venta neta', value: '$ 8,460', tone: 'green', icon: Wallet },
+  { label: 'Venta bruta', value: '_', tone: 'blue', icon: ClipboardList },
+  { label: 'Cancelaciones', value: '_', tone: 'red', icon: X },
+  { label: 'Venta neta', value: '_', tone: 'green', icon: Wallet },
 ];
 
 const paymentBreakdown = [
-  { method: 'Efectivo', amount: '$4,120', icon: Banknote, tone: 'green' },
-  { method: 'Tarjeta', amount: '$4,340', icon: CreditCard, tone: 'blue' },
-  { method: 'Cortesías', amount: '$0', icon: Gift, tone: 'yellow' },
+  { method: 'Efectivo', amount: '_', icon: Banknote, tone: 'green' },
+  { method: 'Tarjeta', amount: '_', icon: CreditCard, tone: 'blue' },
+  { method: 'Cortesías', amount: '_', icon: Gift, tone: 'yellow' },
 ];
 
 export default function CashClosing() {
   const [counted, setCounted] = useState(String(EXPECTED_CASH));
+  const [hasCountedError, setHasCountedError] = useState(false);
 
-  const countedNumber = Number(counted.replace(/,/g, '')) || 0;
-  const difference = countedNumber - EXPECTED_CASH;
-  const differenceTone = difference === 0 ? 'ok' : 'alert';
+  const normalizedCounted = counted.replace(/[^\d.]/g, '');
+  const countedNumber = Number(normalizedCounted || 0);
+  const isCountedValid = counted.trim() !== '' && normalizedCounted !== '' && Number.isFinite(countedNumber) && !Number.isNaN(countedNumber);
+  const difference = isCountedValid ? countedNumber - EXPECTED_CASH : 0;
+  const differenceTone = isCountedValid && difference === 0 ? 'ok' : 'alert';
+
+  const handleCountedChange = (value: string) => {
+    const cleaned = value.replace(/[^\d.]/g, '');
+    setCounted(cleaned);
+    setHasCountedError(false);
+  };
+
+  const handleCountedBlur = () => {
+    if (counted.trim() === '') {
+      setHasCountedError(true);
+      return;
+    }
+
+    if (!isCountedValid) {
+      setHasCountedError(true);
+      return;
+    }
+
+    setHasCountedError(false);
+    setCounted(money(countedNumber));
+  };
 
   return (
     <div className="cash-closing-page">
@@ -81,16 +105,21 @@ export default function CashClosing() {
                   <input
                     type="text"
                     inputMode="decimal"
-                    value={counted === '' ? '' : `$ ${counted}`}
-                    onChange={(event) => setCounted(event.target.value.replace(/[^0-9.,]/g, ''))}
-                    onBlur={() => counted !== '' && setCounted(money(countedNumber))}
+                    value={counted === '' ? '' : counted}
+                    onChange={(event) => handleCountedChange(event.target.value)}
+                    onBlur={handleCountedBlur}
+                    aria-invalid={hasCountedError}
+                    className={hasCountedError ? 'cash-count-field-input cash-count-field-input--error' : 'cash-count-field-input'}
                   />
+                  {hasCountedError && (
+                    <small className="cash-count-error">Ingresa un número válido.</small>
+                  )}
                 </label>
 
                 <div className={`cash-difference cash-difference--${differenceTone}`}>
                   <span>Diferencia</span>
                   <strong>
-                    {difference < 0 ? '- ' : ''}$ {money(Math.abs(difference))}
+                    {isCountedValid ? `${difference < 0 ? '- ' : ''}$ ${money(Math.abs(difference))}` : '$ 0.00'}
                   </strong>
                 </div>
               </div>

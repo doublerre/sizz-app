@@ -207,10 +207,23 @@
   font-size: 0.95rem;
   outline: none;
 }
+/* Estilos para el estado de error del dinero*/
+.cash-count-field-input--error {
+  border-color: #d92d20 !important;
+  box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.08);
+}
+
 
 .cash-count-field input:focus {
   border-color: #0868b7;
   box-shadow: 0 0 0 2px rgba(8, 104, 183, 0.14);
+}
+
+.cash-count-error {
+  color: #d92d20;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .cash-difference {

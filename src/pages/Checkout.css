@@ -148,6 +148,19 @@
   font-size: 0.9rem;
   outline: none;
 }
+/*Mensaje de error para cuando no se selecciona un metodo de pago*/
+.input-group input[aria-invalid="true"] {
+  border-color: #d92d20;
+  box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.08);
+}
+
+.payment-validation-message {
+  color: #d92d20;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+/*Aqui termina el mensaje de error para cuando no se selecciona un metodo de pago*/
 
 /*Botones*/
 .form-actions {
@@ -318,6 +331,11 @@
 
 .btn-primary:hover {
   background-color: #065293;
+}
+
+.btn-primary:disabled {
+  background-color: #b7c9d6;
+  cursor: not-allowed;
 }
 
 @media (max-width: 1024px) {

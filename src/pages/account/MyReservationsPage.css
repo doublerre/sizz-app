@@ -278,7 +278,7 @@
     .account-brand {
         margin-left: 3.25rem; 
     }
-}
+
     .account-header{
         grid-template-columns:auto 1fr auto;
         gap: 18px;
@@ -289,22 +289,25 @@
     }
     .account-nav{
         gap: 20px;
-        }
+    }
     .account-reservations-content{
         width: calc(100% - 40px);
         margin-top: 64px;
     }
-        .reservation-row{
-            grid-template-columns: minmax(160px, 1.2fr) 1fr 1fr 100px; 
-        }
-        .reservation-detail-link{
-            grid-column: 4;
-        }.reservation-status{
-            grid-column: 4;
-            grid-row: 1; 
-        }.reservation-field:nth-of-type(3){
-            display: none;
-        }
+    .reservation-row{
+        grid-template-columns: minmax(160px, 1.2fr) 1fr 1fr 100px; 
+    }
+    .reservation-detail-link{
+        grid-column: 4;
+    }
+    .reservation-status{
+        grid-column: 4;
+        grid-row: 1; 
+    }
+    .reservation-field:nth-of-type(3){
+        display: none;
+    }
+}
 /* Móvil (≤ 540px) */
 @media (max-width: 540px) {
      .account-brand {
