@@ -1,0 +1,219 @@
+/* ── Card de verificación ── */
+.verify-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2.75rem 2.5rem;
+    width: 100%;
+    max-width: 750px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.verify-badge {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #0868B7;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.verify-icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #eef4fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    color: #0868B7;
+}
+
+.verify-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0 0 0.6rem;
+    line-height: 1.2;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.verify-subtitle {
+    font-size: 0.88rem;
+    color: #718096;
+    margin: 0 0 0.25rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.verify-email {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin: 0 0 2rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+/* ── Inputs del código OTP ── */
+.verify-otp-row {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.verify-otp-input {
+    width: 56px;
+    height: 60px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1A1A2E;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    caret-color: #0868B7;
+}
+
+.verify-otp-input:focus {
+    border-color: #0868B7;
+    box-shadow: 0 0 0 3px rgba(8, 104, 183, 0.13);
+}
+
+.verify-otp-input.otp-filled {
+    border-color: #0868B7;
+}
+
+.verify-timer {
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #E84040;
+    margin-bottom: 1.75rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.verify-btn-primary {
+    background-color: #004F8F;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    letter-spacing: 0.015em;
+    margin-bottom: 1rem;
+}
+
+.verify-btn-primary:hover {
+    background-color: #0868B7;
+    box-shadow: 0 4px 18px rgba(8, 104, 183, 0.3);
+    transform: translateY(-1px);
+}
+
+.verify-btn-primary:active {
+    transform: translateY(0);
+}
+
+.verify-resend-link {
+    font-size: 0.85rem;
+    color: #0868B7;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    transition: color 0.2s;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+.verify-resend-link:hover {
+    color: #004F8F;
+    text-decoration: underline;
+}
+
+.verify-change-email {
+    font-size: 0.82rem;
+    color: #718096;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    transition: color 0.2s;
+    display: block;
+    margin-bottom: 1.25rem;
+}
+
+.verify-change-email:hover {
+    color: #4A5568;
+}
+
+.verify-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #eef0f3;
+    margin-bottom: 1rem;
+}
+
+.verify-note {
+    font-size: 0.75rem;
+    color: #718096;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
+    .verify-card {
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+    }
+    .verify-otp-input {
+        width: 46px;
+        height: 52px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
+    .verify-card {
+        padding: 2rem 1.25rem;
+        border-radius: 14px;
+    }
+    .verify-title {
+        font-size: 1.6rem;
+    }
+    .verify-otp-row {
+        gap: 0.5rem;
+    }
+    .verify-otp-input {
+        width: 40px;
+        height: 46px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+    }
+}
+
+/* Móvil pequeño (≤ 400px) */
+@media (max-width: 400px) {
+    .verify-otp-input {
+        width: 34px;
+        height: 42px;
+        font-size: 1rem;
+    }
+}
