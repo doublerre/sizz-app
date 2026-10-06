@@ -17,34 +17,42 @@ import Checkout from "@/pages/Checkout";
 import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
 import ReservationFee from "@/pages/ReservationFee";
+import PrivateRoute from "@/components/PrivateRoute";
 
 export default function AppRouter() {
     return (
         <Routes>
+            {/* Públicas */}
             <Route path="/" element={<HomePage />} />
             <Route path="/eventos" element={<EventsPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<Register />}>
+            <Route path="/register" element={<Register />} />
+            <Route path="/register/verify-account" element={<Verify />} />
+
+            {/* Solo ADMIN */}
+            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+                <Route path="/app" element={<AppLayout />}>
+                    <Route path="reservaciones" element={<ReservationsPage />} />
+                    <Route path="eventos" element={<EventsAdminPage />} />
+                </Route>
+                <Route path="/taquilla" element={<BoxOfficePage />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="newsale" element={<NewSale />} />
+                    <Route path="historial" element={<SalesHistory />} />
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route path="reservationFee" element={<ReservationFee />} />
+                    <Route path="saleComplete" element={<SaleComplete />} />
+                </Route>
             </Route>
-            <Route path="verify-account" element={<Verify />} />
-            <Route path="/app" element={<AppLayout />}>
-                <Route path="reservaciones" element={<ReservationsPage />} />
-                <Route path="eventos" element={<EventsAdminPage />} />
+
+            {/* Autenticados (cualquier rol) */}
+            <Route element={<PrivateRoute />}>
+                <Route path="/cuenta" element={<AccountLayout />}>
+                    <Route path="reservaciones" element={<MyReservationsPage />} />
+                </Route>
             </Route>
-            {/* Temporal: sin AppLayout porque BoxOfficePage trae su propio menú.
-             Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
-            <Route path="/taquilla" element={<BoxOfficePage />}>
-                <Route index element={<Dashboard />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="newsale" element={<NewSale />} />
-                <Route path="historial" element={<SalesHistory />} />
-                <Route path="checkout" element={<Checkout />} />
-                <Route path="reservationFee" element={<ReservationFee />} />
-                <Route path="saleComplete" element={<SaleComplete />} />
-            </Route>
-            <Route path="/cuenta" element={<AccountLayout />}>
-                <Route path="reservaciones" element={<MyReservationsPage />} />
-            </Route>
+
             <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
