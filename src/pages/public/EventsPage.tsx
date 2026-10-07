@@ -1,68 +1,79 @@
 import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
+import { getEvents, type ApiEvent } from "@/services/eventsApi";
 
-// Datos temporales, mientras no existe el endpoint de eventos
-const events = [
-    {
-        id: 1,
-        category: "Astronomía",
-        color: "var(--brand-blue)",
-        title: "Noche de estrellas",
-        date: "22 AGO",
-        time: "19:00",
-        audience: "Para todas las edades"
-    },
-    {
-        id: 2,
-        category: "Tecnología",
-        color: "var(--brand-purple)",
-        title: "Taller de robótica",
-        date: "29 AGO",
-        time: "11:00",
-        audience: "Desde 10 años"
-    },
-    {
-        id: 3,
-        category: "Evento Especial",
-        color: "var(--brand-green)",
-        title: "Festival de ciencia",
-        date: "12 SEP",
-        time: "10:00",
-        audience: "Familiar"
-    },
-    {
-        id: 4,
-        category: "Infantil",
-        color: "var(--brand-yellow)",
-        title: "Pequeños exploradores",
-        date: "20 SEP",
-        time: "12:00",
-        audience: "De 4 a 7 años"
-    },
-    {
-        id: 5,
-        category: "Óptica",
-        color: "var(--brand-red-light)",
-        title: "Laboratorio de luz",
-        date: "27 SEP",
-        time: "16:00",
-        audience: "Desde 8 años"
-    },
-    {
-        id: 6,
-        category: "Astronomía",
-        color: "var(--brand-blue)",
-        title: "Día del espacio",
-        date: "4 OCT",
-        time: "10:00",
-        audience: "Familiar"
-    }
+// La API no manda color, así que se decide aquí según la categoría.
+// Solo variables de index.css, nunca hexadecimales.
+const categoryColors: Record<string, string> = {
+    "Astronomía": "var(--brand-blue)",
+    "Tecnología": "var(--brand-purple)",
+    "Evento Especial": "var(--brand-green)",
+    "Infantil": "var(--brand-yellow)",
+    "Óptica": "var(--brand-red-light)",
+};
+
+// Colores disponibles para categorías que no están en categoryColors
+const palette = [
+    "var(--brand-blue)",
+    "var(--brand-purple)",
+    "var(--brand-green)",
+    "var(--brand-yellow)",
+    "var(--brand-red-light)",
 ];
 
+// Convierte el nombre de la categoría en un número y lo usa para elegir
+// un color de la paleta. Así la misma categoría siempre sale del mismo
+// color, sin tener que registrarla a mano.
+function fallbackColor(category: string | null): string {
+    if (!category) return palette[0];
+    let hash = 0;
+    for (const char of category) {
+        hash = (hash * 31 + char.charCodeAt(0)) % 1000003;
+    }
+    return palette[hash % palette.length];
+}
+
+// La API entrega la fecha y la hora juntas en un solo texto ISO.
+// El navegador la convierte a la zona horaria de quien la ve.
+function formatDate(iso: string | null): string {
+    if (!iso) return "Fecha por definir";
+    const date = new Date(iso);
+    const day = date.toLocaleDateString("es-MX", { day: "numeric", month: "short" }).toUpperCase();
+    const time = date.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false });
+    return `${day} · ${time}`;
+}
+
 export default function EventsPage() {
+    const [events, setEvents] = useState<ApiEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
+
+    // Carga única al abrir la página ([] = sin dependencias)
+    useEffect(() => {
+        // Si el usuario sale de la página antes de que responda la API,
+        // no se actualiza el estado de un componente que ya no existe
+        let cancelled = false;
+
+        getEvents()
+            .then((data) => {
+                if (!cancelled) setEvents(data);
+            })
+            .catch(() => {
+                if (!cancelled) setError("No pudimos cargar los eventos. Intenta de nuevo más tarde.");
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
@@ -73,9 +84,10 @@ export default function EventsPage() {
 
     const filteredEvents = events.filter((event) => {
         const query = debouncedSearch.toLowerCase();
+        // category puede venir vacía (null) desde la base de datos
         return (
             event.title.toLowerCase().includes(query) ||
-            event.category.toLowerCase().includes(query)
+            (event.category ?? "").toLowerCase().includes(query)
         );
     });
 
@@ -109,31 +121,38 @@ export default function EventsPage() {
                 </div>
             </div>
             <div className="container">
-                {filteredEvents.length > 0 ? (
+                {loading ? (
+                    <p className="events-empty">Cargando eventos...</p>
+                ) : error ? (
+                    <p className="events-empty">{error}</p>
+                ) : filteredEvents.length > 0 ? (
                     <div className="events-grid">
-                        {filteredEvents.map((event) => (
-                            <article className="event-card" key={event.id}>
-                                <div className="event-banner" style={{ backgroundColor: event.color }}>
-                                    <div className="event-circle"></div>
-                                    <span className="event-category" style={{ color: event.color }}>{event.category}</span>
-                                </div>
-                                <div className="event-body">
-                                    <h3>{event.title}</h3>
-                                    <p className="event-date" style={{ color: event.color }}>{event.date} · {event.time}</p>
-                                    <p className="audience">{event.audience}</p>
-                                    <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
-                                </div>
-                            </article>
-                        ))}
+                        {filteredEvents.map((event) => {
+                            const color = categoryColors[event.category ?? ""] ?? fallbackColor(event.category);
+                            return (
+                                <article className="event-card" key={event.id}>
+                                    <div className="event-banner" style={{ backgroundColor: color }}>
+                                        <div className="event-circle"></div>
+                                        <span className="event-category" style={{ color: color }}>{event.category ?? "General"}</span>
+                                    </div>
+                                    <div className="event-body">
+                                        <h3>{event.title}</h3>
+                                        <p className="event-date" style={{ color: color }}>{formatDate(event.startDate)}</p>
+                                        {event.audience && <p className="audience">{event.audience}</p>}
+                                        <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
+                                    </div>
+                                </article>
+                            );
+                        })}
                     </div>
                 ) : (
-                    <p className="events-empty">No encontramos eventos que coincidan con tu búsqueda.</p>
+                    <p className="events-empty">
+                        {events.length === 0
+                            ? "Por ahora no hay eventos publicados."
+                            : "No encontramos eventos que coincidan con tu búsqueda."}
+                    </p>
                 )}
-
             </div>
-
         </>
-
-
     )
 }
