@@ -1,19 +1,24 @@
 import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
+import { Atom, Orbit, ScanEye, Baby, TreePine, Share2, Sparkles, ArrowRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { getEvents, type ApiEvent } from "@/services/eventsApi";
 
-// La API no manda color, así que se decide aquí según la categoría.
-// Solo variables de index.css, nunca hexadecimales.
-const categoryColors: Record<string, string> = {
-    "Astronomía": "var(--brand-blue)",
-    "Tecnología": "var(--brand-purple)",
-    "Evento Especial": "var(--brand-green)",
-    "Infantil": "var(--brand-yellow)",
-    "Óptica": "var(--brand-red-light)",
-};
+// Categorías del diseño con su color y su ícono.
+type CategoryStyle = { name: string; color: string; icon: LucideIcon };
 
-// Colores disponibles para categorías que no están en categoryColors
+const categories: CategoryStyle[] = [
+    { name: "Física", color: "var(--brand-blue)", icon: Atom },
+    { name: "Astronomía", color: "var(--brand-green)", icon: Orbit },
+    { name: "Óptica", color: "var(--brand-red-light)", icon: ScanEye },
+    { name: "Infantil", color: "var(--brand-yellow)", icon: Baby },
+    { name: "Ambiente", color: "var(--brand-teal)", icon: TreePine },
+    { name: "Tecnología", color: "var(--brand-purple)", icon: Share2 },
+];
+
+// Colores disponibles para categorías que no están en la lista
 const palette = [
     "var(--brand-blue)",
     "var(--brand-purple)",
@@ -22,16 +27,32 @@ const palette = [
     "var(--brand-red-light)",
 ];
 
+// Quita acentos y mayusculas para comprobar textos y
+// quedan iguales. normalize("NFD") separa cada letra de su acento y el
+// replace borra los acentos sueltos.
+function normalize(text: string): string {
+    return text
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
 // Convierte el nombre de la categoría en un número y lo usa para elegir
-// un color de la paleta. Así la misma categoría siempre sale del mismo
-// color, sin tener que registrarla a mano.
-function fallbackColor(category: string | null): string {
-    if (!category) return palette[0];
+// un color de la paleta
+function fallbackColor(category: string): string {
     let hash = 0;
     for (const char of category) {
         hash = (hash * 31 + char.charCodeAt(0)) % 1000003;
     }
     return palette[hash % palette.length];
+}
+
+// Busca la categoría sin importar acentos ni mayúsculas.
+function getCategoryStyle(category: string | null): CategoryStyle {
+    const name = category ?? "General";
+    const found = categories.find((c) => normalize(c.name) === normalize(name));
+    return found ?? { name, color: fallbackColor(name), icon: Sparkles };
 }
 
 // La API entrega la fecha y la hora juntas en un solo texto ISO.
@@ -42,6 +63,11 @@ function formatDate(iso: string | null): string {
     const day = date.toLocaleDateString("es-MX", { day: "numeric", month: "short" }).toUpperCase();
     const time = date.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false });
     return `${day} · ${time}`;
+}
+
+function formatCost(cost: number): string {
+    if (cost === 0) return "Gratis";
+    return cost.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
 }
 
 export default function EventsPage() {
@@ -83,12 +109,10 @@ export default function EventsPage() {
     }, [search]);
 
     const filteredEvents = events.filter((event) => {
-        const query = debouncedSearch.toLowerCase();
-        // category puede venir vacía (null) desde la base de datos
-        return (
-            event.title.toLowerCase().includes(query) ||
-            (event.category ?? "").toLowerCase().includes(query)
-        );
+        // Cada palabra se busca por separado
+        const words = normalize(debouncedSearch).split(/\s+/).filter(Boolean);
+        const text = normalize(`${event.title} ${event.category ?? ""}`);
+        return words.every((word) => text.includes(word));
     });
 
     return (
@@ -128,18 +152,42 @@ export default function EventsPage() {
                 ) : filteredEvents.length > 0 ? (
                     <div className="events-grid">
                         {filteredEvents.map((event) => {
-                            const color = categoryColors[event.category ?? ""] ?? fallbackColor(event.category);
+                            const category = getCategoryStyle(event.category);
+                            const Icon = category.icon;
                             return (
-                                <article className="event-card" key={event.id}>
-                                    <div className="event-banner" style={{ backgroundColor: color }}>
+                                // --event-color es una variable CSS: el .css la usa para
+                                // pintar el banner y las pastillas con un solo color
+                                <article
+                                    className="event-card"
+                                    key={event.id}
+                                    style={{ "--event-color": category.color } as CSSProperties}
+                                >
+                                    <div className="event-banner">
                                         <div className="event-circle"></div>
-                                        <span className="event-category" style={{ color: color }}>{event.category ?? "General"}</span>
+                                        <span className="event-category">{category.name}</span>
+                                        <div className="event-icon">
+                                            <Icon size={22} />
+                                        </div>
                                     </div>
                                     <div className="event-body">
                                         <h3>{event.title}</h3>
-                                        <p className="event-date" style={{ color: color }}>{formatDate(event.startDate)}</p>
-                                        {event.audience && <p className="audience">{event.audience}</p>}
-                                        <Link className="event-link" to={"/eventos/" + event.id}>Consultar detalles</Link>
+                                        {event.description && (
+                                            <p className="event-description">{event.description}</p>
+                                        )}
+                                        <div className="event-tags">
+                                            {event.audience && (
+                                                <span className="event-tag event-tag-audience">{event.audience}</span>
+                                            )}
+                                            <span className="event-tag">{formatDate(event.startDate)}</span>
+                                        </div>
+                                        <div className="event-footer">
+                                            <span className={event.cost === 0 ? "event-cost event-cost-free" : "event-cost"}>
+                                                {formatCost(event.cost)}
+                                            </span>
+                                            <Link className="event-link" to={"/eventos/" + event.id}>
+                                                Ver detalle <ArrowRight size={14} />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </article>
                             );

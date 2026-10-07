@@ -11,6 +11,7 @@
   --brand-red-light: #EF4050;
   --brand-purple: #6751C3;
   --brand-navy: #0B3154;
+  --brand-teal:#0D8A75;
   --neutral-ink: #172536;
   --neutral-foot: #0B3154;
   --neutral-canvas: #F4f8fb;
@@ -18,6 +19,7 @@
   --neutral-border: #d7e1e8;
   --brand-blue-soft: #EAF4FC;
   --neutral-muted: #708096;
+  
 
   /* ── Semánticos (legacy) ── */
   --bg-brand-default: var(--brand-blue);
