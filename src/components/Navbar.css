@@ -50,6 +50,7 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 .navbar-actions {
     display: flex;
     align-items: center;
