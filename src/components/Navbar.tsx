@@ -54,8 +54,7 @@ export default function Navbar() {
 
                 <div className="navbar-actions">
                     <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
-                    {/* Sin ruta todavía: deshabilitado hasta que exista /planear-visita */}
-                    <button type="button" className="navbar-cta" disabled>Planear visita</button>
+                    <Link className="navbar-cta" to="/planear-visita" onClick={closeMenu}>Planear visita</Link>
                 </div>
             </div>
         </nav>
