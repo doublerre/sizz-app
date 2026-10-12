@@ -4,16 +4,17 @@ import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo_zigzag_main.svg";
 import "./Navbar.css";
 
+//poner true cuando la ruta este disponible
 const navLinks = [
-    { label: "Inicio", to: "/" },
-    { label: "Experiencias", to: "/experiencias" },
-    { label: "Reservaciones", to: "/reservaciones" },
-    { label: "Eventos", to: "/eventos" },
-    { label: "Ayuda", to: "/ayuda" },
+    { label: "Inicio", to: "/", available: true },
+    { label: "Experiencias", to: "/experiencias", available: false },
+    { label: "Reservaciones", to: "/reservaciones", available: false },
+    { label: "Eventos", to: "/eventos", available: true },
+    { label: "Ayuda", to: "/ayuda", available: false },
 ];
 
 export default function Navbar() {
-    // Solo importa en pantallas angostas
+    // Solo importa en pantallas angostas: ahí el menú se esconde detrás del botón
     const [open, setOpen] = useState(false);
     const closeMenu = () => setOpen(false);
 
@@ -34,18 +35,27 @@ export default function Navbar() {
                 {open ? <X size={26} /> : <Menu size={26} />}
             </button>
 
+            {/* En escritorio este div no afecta el diseño (display: contents);
+                en celular es el panel desplegable */}
             <div id="navbar-menu" className={open ? "navbar-menu open" : "navbar-menu"}>
                 <div className="navbar-links">
-                    {navLinks.map((link) => (
-                        <NavLink className="navbar-link" key={link.to} to={link.to} onClick={closeMenu}>
-                            {link.label}
-                        </NavLink>
-                    ))}
+                    {navLinks.map((link) =>
+                        link.available ? (
+                            <NavLink className="navbar-link" key={link.to} to={link.to} onClick={closeMenu}>
+                                {link.label}
+                            </NavLink>
+                        ) : (
+                            <span className="navbar-link navbar-link--disabled" key={link.to} aria-disabled="true">
+                                {link.label}
+                            </span>
+                        )
+                    )}
                 </div>
 
                 <div className="navbar-actions">
                     <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
-                    <Link className="navbar-cta" to="/planear-visita" onClick={closeMenu}>Planear visita</Link>
+                    {/* Sin ruta todavía: deshabilitado hasta que exista /planear-visita */}
+                    <button type="button" className="navbar-cta" disabled>Planear visita</button>
                 </div>
             </div>
         </nav>

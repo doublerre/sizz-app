@@ -46,6 +46,11 @@
     color: var(--bg-brand-default);
 }
 
+.navbar-link--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -67,6 +72,14 @@
     font-size: 15px;
     padding: 12px 24px;
     border-radius: 8px;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.navbar-cta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Debajo de 960px los enlaces ya no caben en una sola línea */

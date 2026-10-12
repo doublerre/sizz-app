@@ -79,6 +79,11 @@
     white-space: nowrap;
 }
 
+.footer-cta:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .footer-bottom {
     border-top: 1px solid var(--border-inverse);
     padding: 20px 0;

@@ -67,7 +67,7 @@ function formatDate(iso: string | null): string {
 
 function formatCost(cost: number): string {
     if (cost === 0) return "Gratis";
-    return cost.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
+    return cost.toLocaleString("es-MX", { style: "currency", currency: "MXN" });
 }
 
 export default function EventsPage() {
