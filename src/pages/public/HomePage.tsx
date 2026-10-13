@@ -715,6 +715,7 @@ export default function HomePage() {
                                     e.currentTarget.style.backgroundColor = "#FFF9ED";
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
+                                onClick={() => window.location.href = '/reservaciones'}
                             >
                                 <div
                                     style={{
@@ -759,6 +760,7 @@ export default function HomePage() {
                                     e.currentTarget.style.backgroundColor = "#EDFAF3";
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
+                                onClick={() => window.location.href = '/reservaciones'}
                             >
                                 <div
                                     style={{
