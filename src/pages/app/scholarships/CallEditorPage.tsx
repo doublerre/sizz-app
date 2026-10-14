@@ -47,11 +47,11 @@ export default function CallEditorPage() {
       };
     }, [callId]),
   );
-  const [types, setTypes] = useState<ApplicationType[]>([
-    "NEW_ENTRY",
-    "RENEWAL",
-  ]);
-  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [selection, setSelection] = useState<{
+    callId: string | undefined;
+    types: ApplicationType[];
+    categoryIds: string[];
+  } | null>(null);
   const [formVersionId, setFormVersionId] = useState("");
   const [assignmentType, setAssignmentType] =
     useState<ApplicationType>("NEW_ENTRY");
@@ -59,6 +59,15 @@ export default function CallEditorPage() {
   const [busy, setBusy] = useState(false);
   const data = resource.data;
   const call = data?.call;
+  const types =
+    selection && selection.callId === callId
+      ? selection.types
+      : (call?.applicationTypes ??
+        (["NEW_ENTRY", "RENEWAL"] as ApplicationType[]));
+  const categoryIds =
+    selection && selection.callId === callId
+      ? selection.categoryIds
+      : (call?.categories.map((category) => category.id) ?? []);
   const selectedForm = data?.forms.find((form) =>
     form.versions.some((version) => version.id === formVersionId),
   );
@@ -70,7 +79,7 @@ export default function CallEditorPage() {
     : call?.applicationTypes[0];
   async function create(form: HTMLFormElement) {
     const values = new FormData(form);
-    if (!call && (!types.length || !categoryIds.length)) {
+    if (!types.length || !categoryIds.length) {
       toast.error("Selecciona al menos una modalidad y categoría.");
       return;
     }
@@ -88,7 +97,11 @@ export default function CallEditorPage() {
     setBusy(true);
     try {
       if (call) {
-        await api.updateCall(call.id, general);
+        await api.updateCall(call.id, {
+          ...general,
+          applicationTypes: types,
+          categoryIds,
+        });
         resource.reload();
         toast.success("Datos de convocatoria actualizados.");
       } else {
@@ -125,6 +138,19 @@ export default function CallEditorPage() {
   }
   async function changeStatus(next: "OPEN" | "PAUSED" | "CLOSED") {
     if (!call) return;
+    if (
+      types.length !== call.applicationTypes.length ||
+      types.some((type) => !call.applicationTypes.includes(type)) ||
+      categoryIds.length !== call.categories.length ||
+      categoryIds.some(
+        (id) => !call.categories.some((category) => category.id === id),
+      )
+    ) {
+      toast.error(
+        "Guarda los cambios de modalidades y categorías antes de cambiar el estado.",
+      );
+      return;
+    }
     if (
       next === "OPEN" &&
       !call.applicationTypes.every((type) =>
@@ -272,20 +298,16 @@ export default function CallEditorPage() {
                     <label className="sch-checkbox" key={type}>
                       <input
                         type="checkbox"
-                        disabled={!!call || busy}
-                        checked={
-                          call
-                            ? call.applicationTypes.includes(
-                                type as ApplicationType,
-                              )
-                            : types.includes(type as ApplicationType)
-                        }
+                        disabled={!canEditGeneral || busy || resource.loading}
+                        checked={types.includes(type as ApplicationType)}
                         onChange={(e) =>
-                          setTypes(
-                            e.target.checked
+                          setSelection({
+                            callId,
+                            categoryIds,
+                            types: e.target.checked
                               ? [...types, type as ApplicationType]
                               : types.filter((t) => t !== type),
-                          )
+                          })
                         }
                       />
                       {label}
@@ -302,22 +324,18 @@ export default function CallEditorPage() {
                       <label className="sch-checkbox" key={category.id}>
                         <input
                           type="checkbox"
-                          disabled={!!call || busy}
-                          checked={
-                            call
-                              ? call.categories.some(
-                                  (c) => c.id === category.id,
-                                )
-                              : categoryIds.includes(category.id)
-                          }
+                          disabled={!canEditGeneral || busy || resource.loading}
+                          checked={categoryIds.includes(category.id)}
                           onChange={(e) =>
-                            setCategoryIds(
-                              e.target.checked
+                            setSelection({
+                              callId,
+                              types,
+                              categoryIds: e.target.checked
                                 ? [...categoryIds, category.id]
                                 : categoryIds.filter(
                                     (id) => id !== category.id,
                                   ),
-                            )
+                            })
                           }
                         />
                         {category.name} · {money(category.monthlyAmount)} / mes
@@ -327,7 +345,7 @@ export default function CallEditorPage() {
                   {call ? (
                     <Notice>
                       {canEditGeneral
-                        ? "Puedes corregir los datos generales. El periodo, modalidades y categorías se conservan."
+                        ? "Puedes corregir datos, modalidades y categorías. Conserva al menos una modalidad y categoría. Las solicitudes existentes y sus formularios permanecen registrados."
                         : "Pausa la convocatoria para corregir sus datos generales sin cerrarla. Los formularios asignados conservan sus versiones y solicitudes."}
                     </Notice>
                   ) : (
@@ -427,7 +445,7 @@ export default function CallEditorPage() {
                         </article>
                       );
                     })}
-                  {draft && (
+                  {(draft || paused) && (
                     <form
                       onSubmit={(e) => {
                         e.preventDefault();

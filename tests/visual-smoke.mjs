@@ -325,6 +325,16 @@ const routes = new Map([
 const unknown = [];
 const published = [];
 const callWrites = [];
+if (pauseTest) {
+  const extra = {
+    ...category,
+    id: "category-2",
+    code: "B",
+    name: "Categoría B",
+  };
+  routes.get("/api/scholarships/categories").push(extra);
+  call.categories.push(extra);
+}
 if (actionsTest) {
   routes.set("/api/scholarships/calls", [
     call,
@@ -400,6 +410,10 @@ const server = createServer(async (request, response) => {
       const input = JSON.parse(body);
       callWrites.push([url.pathname, input]);
       Object.assign(call, input);
+      if (input.categoryIds)
+        call.categories = routes
+          .get("/api/scholarships/categories")
+          .filter((category) => input.categoryIds.includes(category.id));
       call.availableBudget = call.totalBudget - call.committedBudget;
       response
         .writeHead(200, { "Content-Type": "application/json" })
@@ -737,7 +751,30 @@ try {
     );
     const originalAssignments = JSON.stringify(assignments);
     await evaluate(
+      `(()=>{const checks=document.querySelectorAll('.sch-three-columns section input[type="checkbox"]');checks[1].click();checks[3].click();})()`,
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]:checked').length`,
+      ),
+      2,
+    );
+    await evaluate(
       `(()=>{const name=document.querySelector('input[name="name"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(name,'Convocatoria corregida');name.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+    );
+    const beforeSave = callWrites.length;
+    await evaluate(
+      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Reanudar convocatoria').click()`,
+    );
+    assert.equal(
+      callWrites.length,
+      beforeSave,
+      "Unsaved choices must not be ignored when resuming",
+    );
+    assert.ok(
+      await evaluate(
+        `document.querySelector('.toast-error').textContent.includes('Guarda los cambios de modalidades y categorías')`,
+      ),
     );
     await evaluate(
       `[...document.querySelectorAll('button')].find(button=>button.textContent==='Guardar cambios').click()`,
@@ -754,6 +791,11 @@ try {
     }
     assert.equal(call.name, "Convocatoria corregida");
     assert.equal(call.status, "PAUSED");
+    assert.deepEqual(call.applicationTypes, ["NEW_ENTRY"]);
+    assert.deepEqual(
+      call.categories.map((category) => category.id),
+      ["category-1"],
+    );
     assert.equal(JSON.stringify(assignments), originalAssignments);
     assert.equal(callWrites.at(-1)[0], "/api/scholarships/calls/call-1");
     await render(
@@ -764,6 +806,47 @@ try {
     assert.equal(
       await evaluate(`document.querySelector('input[name="name"]').value`),
       "Convocatoria corregida",
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]:checked').length`,
+      ),
+      2,
+      "Changed choices survive reload",
+    );
+    const writeCount = callWrites.length;
+    await evaluate(
+      `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]')[2].click()`,
+    );
+    await evaluate(
+      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Guardar cambios').click()`,
+    );
+    assert.ok(
+      await evaluate(
+        `document.querySelector('.toast-error').textContent.includes('Selecciona al menos una modalidad y categoría.')`,
+      ),
+    );
+    assert.equal(
+      callWrites.length,
+      writeCount,
+      "Empty categories must not be sent",
+    );
+    await evaluate(
+      `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]')[2].click()`,
+    );
+    await evaluate(
+      `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]')[0].click()`,
+    );
+    await evaluate(
+      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Guardar cambios').click()`,
+    );
+    assert.equal(
+      callWrites.length,
+      writeCount,
+      "Empty modalities must not be sent",
+    );
+    await evaluate(
+      `document.querySelectorAll('.sch-three-columns section input[type="checkbox"]')[0].click()`,
     );
     await change("Reanudar convocatoria", "OPEN");
     assert.equal(

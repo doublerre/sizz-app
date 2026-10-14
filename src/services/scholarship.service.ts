@@ -45,7 +45,13 @@ export const scholarshipService = {
     id: string,
     body: Pick<
       CreateCall,
-      "name" | "opensOn" | "closesOn" | "durationMonths" | "totalBudget"
+      | "name"
+      | "opensOn"
+      | "closesOn"
+      | "durationMonths"
+      | "totalBudget"
+      | "applicationTypes"
+      | "categoryIds"
     >,
   ) =>
     api.put<ScholarshipCall>(`${root}/calls/${id}`, body).then((r) => r.data),
