@@ -1,0 +1,198 @@
+.calendar-filter {
+  position: relative;
+  min-width: 0;
+  --calendar-mark-background: #e52e0b22;
+  --calendar-mark-foreground: #b52610;
+}
+.calendar-filter--sales {
+  --calendar-mark-background: #eaf8e8;
+  --calendar-mark-foreground: #398b2a;
+}
+.calendar-filter .calendar-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dce7ef;
+  border-radius: 9px;
+  background: white;
+  color: #43566a;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.calendar-trigger svg {
+  color: #0868b7;
+  flex-shrink: 0;
+}
+.calendar-filter button:focus-visible {
+  outline: 2px solid #0868b7;
+  outline-offset: 2px;
+}
+.calendar-filter .calendar-popover {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  padding: 16px;
+  border: 1px solid #dce7ef;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 12px 32px #10243a1a;
+  color: #10243a;
+}
+.calendar-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.calendar-filter .calendar-head select,
+.calendar-filter .calendar-head input {
+  min-width: 0;
+  min-height: 34px;
+  height: 34px;
+  padding: 5px 6px;
+  border: 1px solid #dce7ef;
+  border-radius: 7px;
+  background: #f4f8fb;
+  color: #10243a;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+.calendar-head select {
+  flex: 1;
+}
+.calendar-filter .calendar-head input {
+  width: 70px;
+}
+.calendar-filter .calendar-head button {
+  width: 32px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: #f4f8fb;
+  color: #0868b7;
+  font: inherit;
+  font-size: 22px;
+  cursor: pointer;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+.calendar-weekday {
+  display: grid;
+  place-items: center;
+  height: 28px;
+  color: #73849a;
+  font-size: 11px;
+  font-weight: 600;
+}
+.calendar-filter .calendar-day {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #10243a;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.calendar-filter .calendar-day:hover {
+  background: #eaf4fc;
+  color: #0868b7;
+}
+.calendar-filter .calendar-day.has-event {
+  background: var(--calendar-mark-background);
+  color: var(--calendar-mark-foreground);
+  font-weight: 700;
+}
+.calendar-filter .calendar-day.today {
+  box-shadow: inset 0 0 0 1px #0868b7;
+  color: #0868b7;
+  font-weight: 700;
+}
+.calendar-filter .calendar-day.selected {
+  background: #0868b7;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 6px #0868b726;
+}
+.calendar-filter .calendar-day:disabled {
+  opacity: 0.35;
+  cursor: default;
+  background: transparent;
+}
+.calendar-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #dce7ef;
+}
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #73849a;
+  font-size: 10px;
+}
+.calendar-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--calendar-mark-background);
+}
+.calendar-filter .calendar-foot button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: #eaf4fc;
+  color: #0868b7;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.date-input {
+  display: block;
+  position: relative;
+}
+.sch-field .date-input > input {
+  padding-right: 48px;
+}
+.date-input > input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.date-input .calendar-filter {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+}
+.date-input .calendar-trigger {
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+}
+.calendar-filter .calendar-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

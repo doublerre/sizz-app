@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo_zigzag_main.png";
+import PublicNavigation from "../../components/PublicNavigation";
 import "./HomePage.css";
 import {
     User,
@@ -382,124 +383,9 @@ function StepCircle({
 
 
 export default function HomePage() {
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const navLinks = [
-        { label: "Inicio", href: "/" },
-        { label: "Experiencias", href: "/experiencias" },
-        { label: "Reservaciones", href: "/reservaciones" },
-        { label: "Eventos", href: "/eventos" },
-        { label: "Ayuda", href: "/ayuda" },
-    ];
-
     return (
         <div className="sizz-page">
-
-            {/* Barra de navegación */}
-            <nav className="sizz-nav">
-                <img src={logo} alt="Logo Zigzag" className="sizz-nav__logo" />
-
-                {/* Enlaces para desktop (Inicio, experiencias, etc.) */}
-                <div className="sizz-nav__links">
-                    {navLinks.map(({ label, href }) => (
-                        <a key={href} href={href} className="sizz-nav__link">{label}</a>
-                    ))}
-                </div>
-
-                {/* Botones (login y reservas) */}
-                <div className="sizz-nav__actions">
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: "transparent",
-                            color: C.blue,
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.backgroundColor = C.blue;
-                            e.currentTarget.style.color = "#fff";
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.backgroundColor = "transparent";
-                            e.currentTarget.style.color = C.blue;
-                        }}
-                        onClick={() => window.location.href = "/login"}
-                    >
-                        Iniciar sesión
-                    </button>
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: C.blue,
-                            color: "#fff",
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.backgroundColor = C.blueDark;
-                            e.currentTarget.style.borderColor = C.blueDark;
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.backgroundColor = C.blue;
-                            e.currentTarget.style.borderColor = C.blue;
-                        }}
-                    >
-                        Reservar visita
-                    </button>
-                </div>
-
-                {/* Menu hamburguesa para resoluciones medianas y pequeñas */}
-                <button
-                    className="sizz-nav__hamburger"
-                    onClick={() => setMenuOpen(o => !o)}
-                    aria-label="Abrir menú"
-                >
-                    <span style={{ transform: menuOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
-                    <span style={{ opacity: menuOpen ? 0 : 1 }} />
-                    <span style={{ transform: menuOpen ? "rotate(-45deg) translate(5px, -5px)" : "none" }} />
-                </button>
-            </nav>
-
-            {/* Menu para dispositivos moviles */}
-            <div className={`sizz-nav__mobile-menu${menuOpen ? " open" : ""}`}>
-                {navLinks.map(({ label, href }) => (
-                    <a
-                        key={href}
-                        href={href}
-                        className="sizz-nav__mobile-link"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        {label}
-                    </a>
-                ))}
-                <div className="sizz-nav__mobile-actions">
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: "transparent",
-                            color: C.blue,
-                            flex: "1 1 auto",
-                            justifyContent: "center",
-                        }}
-                        onClick={() => { window.location.href = "/login"; setMenuOpen(false); }}
-                    >
-                        Iniciar sesión
-                    </button>
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: C.blue,
-                            color: "#fff",
-                            flex: "1 1 auto",
-                            justifyContent: "center",
-                        }}
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        Reservar visita
-                    </button>
-                </div>
-            </div>
+            <PublicNavigation />
 
             {/* Hero */}
             <section
@@ -898,7 +784,7 @@ export default function HomePage() {
                     </p>
                 </div>
 
-                <div style={{ position: "relative", display: "flex", gap: "0", marginBottom: "3rem" }}>
+                <div className="sizz-steps" style={{ position: "relative", display: "flex", gap: "0", marginBottom: "3rem" }}>
                     <div
                         style={{
                             position: "absolute",
