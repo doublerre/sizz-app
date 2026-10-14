@@ -52,6 +52,8 @@ api.interceptors.response.use(
             { headers: { "Content-Type": "application/json" } },
           )
           .then(({ data }) => {
+            if (localStorage.getItem("sizz_refresh_token") !== refreshToken)
+              throw new Error("La sesión cambió durante la renovación.");
             localStorage.setItem("sizz_access_token", data.accessToken);
             localStorage.setItem("sizz_refresh_token", data.refreshToken);
             return data;
@@ -60,11 +62,14 @@ api.interceptors.response.use(
             refresh = null;
           });
       const data = await refresh;
+      if (localStorage.getItem("sizz_access_token") !== data.accessToken)
+        throw new Error("La sesión cambió antes de reintentar la solicitud.");
 
       original.headers.Authorization = `Bearer ${data.accessToken}`;
       return api(original);
     } catch {
-      clearSessionAndRedirect();
+      if (localStorage.getItem("sizz_refresh_token") === refreshToken)
+        clearSessionAndRedirect();
       return Promise.reject(error);
     }
   },

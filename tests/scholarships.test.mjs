@@ -211,6 +211,56 @@ test("failed refresh rejects all waiting requests and clears the session", async
   assert.equal(storage.size, 0);
   assert.equal(window.location.href, "/login");
 });
+
+test("refresh cannot restore a session after logout or replace a new login", async () => {
+  for (const newLogin of [false, true]) {
+    storage.set("sizz_access_token", "expired-test-token");
+    storage.set("sizz_refresh_token", "test-refresh-token");
+    let complete;
+    let notifyStarted;
+    const started = new Promise((resolve) => {
+      notifyStarted = resolve;
+    });
+    let requests = 0;
+    axios.defaults.adapter = (config) => {
+      notifyStarted();
+      return new Promise((resolve) => {
+        complete = () =>
+          resolve({
+            ...ok(config),
+            data: {
+              accessToken: "old-refreshed-token",
+              refreshToken: "old-refreshed-refresh",
+            },
+          });
+      });
+    };
+    api.defaults.adapter = async (config) => {
+      requests++;
+      throw unauthorized(config);
+    };
+    const result = assert.rejects(api.get("/scholarships/calls"));
+    await started;
+    localStorage.removeItem("sizz_access_token");
+    localStorage.removeItem("sizz_refresh_token");
+    if (newLogin) {
+      localStorage.setItem("sizz_access_token", "new-login-token");
+      localStorage.setItem("sizz_refresh_token", "new-login-refresh");
+    }
+    complete();
+    await result;
+    assert.equal(
+      localStorage.getItem("sizz_access_token"),
+      newLogin ? "new-login-token" : null,
+    );
+    assert.equal(
+      localStorage.getItem("sizz_refresh_token"),
+      newLogin ? "new-login-refresh" : null,
+    );
+    assert.equal(requests, 1, "Canceled refresh must not retry private reads");
+    assert.equal(window.location.href, "");
+  }
+});
 test("service keeps booleans and arrays and uses multipart for private documents", async () => {
   const requests = [];
   api.defaults.adapter = async (config) => {
