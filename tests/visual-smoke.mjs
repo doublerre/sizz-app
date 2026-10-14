@@ -1294,6 +1294,13 @@ try {
       "toast-enter",
     );
     const errorsCount = readCounts.get(callsPath);
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.toast-error strong').textContent`,
+      ),
+      "Ocurrió un error",
+      "Read failures must not be labeled as save failures",
+    );
     await new Promise((resolve) => setTimeout(resolve, 300));
     assert.equal(
       readCounts.get(callsPath),

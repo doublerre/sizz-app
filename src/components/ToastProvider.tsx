@@ -9,7 +9,7 @@ import "./Toast.css";
 
 const variants = {
   success: { title: "Cambios guardados", icon: successIcon, glyph: "✓" },
-  error: { title: "No se pudo guardar", icon: errorIcon, glyph: "!" },
+  error: { title: "Ocurrió un error", icon: errorIcon, glyph: "!" },
   info: { title: "Información actualizada", icon: infoIcon, glyph: "i" },
 };
 
