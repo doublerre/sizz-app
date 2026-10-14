@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import { scholarshipService as api } from "../../services/scholarship.service";
@@ -7,19 +7,13 @@ import { useApiResource } from "../../hooks/useApiResource";
 import { applicationTypes, dateLabel } from "../../data/scholarships";
 import {
   LoadState,
-  Notice,
   ScholarshipField,
   StatusBadge,
 } from "../../components/scholarships/ScholarshipUI";
 
 export default function CallsPage() {
   const { isAuthenticated } = useAuth();
-  const resource = useApiResource(
-    useCallback(
-      () => (isAuthenticated ? api.openCalls() : Promise.resolve([])),
-      [isAuthenticated],
-    ),
-  );
+  const resource = useApiResource(api.publicCalls);
   const [search, setSearch] = useState("");
   const [type, setType] = useState<ApplicationType | "">("");
   const calls = resource.data?.filter(
@@ -62,26 +56,19 @@ export default function CallsPage() {
               ))}
             </select>
           </ScholarshipField>
-          <Link className="sch-button sch-button-primary" to="/cuenta/becas">
-            Mis postulaciones
-          </Link>
+          {isAuthenticated && (
+            <Link className="sch-button sch-button-primary" to="/cuenta/becas">
+              Mis postulaciones
+            </Link>
+          )}
         </div>
         <LoadState {...resource} retry={resource.reload} />
-        {isAuthenticated && resource.data && resource.data.length > 0 && (
+        {resource.data && resource.data.length > 0 && (
           <p className="sch-muted">
             El filtro muestra las modalidades habilitadas en cada convocatoria.
             Tu modalidad de postulación se determina con tu historial del
             semestre anterior.
           </p>
-        )}
-        {!isAuthenticated && (
-          <Notice>
-            Inicia sesión para consultar las convocatorias disponibles para tu
-            historial.{" "}
-            <Link to="/login" state={{ returnTo: "/becas" }}>
-              Iniciar sesión
-            </Link>
-          </Notice>
         )}
         <div className="sch-grid">
           {calls?.map((call) => (
@@ -94,9 +81,6 @@ export default function CallsPage() {
                   .map((type) => applicationTypes[type])
                   .join(" · ")}
               </strong>
-              <p className="sch-muted">
-                Para tu postulación: {applicationTypes[call.applicationType]}
-              </p>
               <p>
                 {call.periodName} · {call.durationMonths} meses de beca
               </p>
@@ -110,7 +94,7 @@ export default function CallsPage() {
             </article>
           ))}
         </div>
-        {isAuthenticated && calls?.length === 0 && (
+        {calls?.length === 0 && (
           <p className="sch-empty">
             No hay convocatorias disponibles que coincidan con los filtros.
           </p>

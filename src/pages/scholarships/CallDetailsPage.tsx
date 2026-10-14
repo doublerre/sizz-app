@@ -1,4 +1,5 @@
 import { useToast } from "../../context/useToast";
+import { useAuth } from "../../context/useAuth";
 import { useCallback, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { scholarshipService as api } from "../../services/scholarship.service";
@@ -14,14 +15,20 @@ import {
 export default function CallDetailsPage() {
   const { callId = "" } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const resource = useApiResource(
     useCallback(async () => {
-      const [calls, applications] = await Promise.all([
-        api.openCalls(),
-        api.applications(),
+      const [calls, eligible, applications] = await Promise.all([
+        api.publicCalls(),
+        isAuthenticated ? api.openCalls() : Promise.resolve([]),
+        isAuthenticated ? api.applications() : Promise.resolve([]),
       ]);
-      return { call: calls.find((call) => call.id === callId), applications };
-    }, [callId]),
+      return {
+        call: calls.find((call) => call.id === callId),
+        eligible: eligible.find((call) => call.id === callId),
+        applications,
+      };
+    }, [callId, isAuthenticated]),
   );
   const toast = useToast();
   const [busy, setBusy] = useState(false);
@@ -29,7 +36,14 @@ export default function CallDetailsPage() {
   const existing = resource.data?.applications.find(
     (application) => application.periodId === call?.periodId,
   );
+  const form = resource.data?.eligible?.form ?? existing?.form;
+  const personalType =
+    resource.data?.eligible?.applicationType ?? existing?.applicationType;
   async function start() {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { returnTo: `/becas/${callId}` } });
+      return;
+    }
     if (existing) {
       navigate(`/cuenta/becas/${existing.id}`);
       return;
@@ -74,15 +88,26 @@ export default function CallDetailsPage() {
               </p>
               <h3>Tu modalidad de postulación</h3>
               <div className="sch-option">
-                <strong>{applicationTypes[call.applicationType]}</strong>
+                {personalType && (
+                  <strong>{applicationTypes[personalType]}</strong>
+                )}
                 <p className="sch-muted">
-                  La modalidad se determina con tu historial de becas del
-                  semestre anterior.
+                  {isAuthenticated
+                    ? personalType
+                      ? "La modalidad se determina con tu historial de becas del semestre anterior."
+                      : "Esta convocatoria no tiene una modalidad disponible para tu historial."
+                    : "Al iniciar sesión se determina la modalidad y el formulario que te corresponden según tu historial."}
                 </p>
               </div>
               <h3>Requisitos de la solicitud</h3>
+              {!form && (
+                <p className="sch-muted">
+                  Los requisitos específicos dependen de tu modalidad de
+                  postulación.
+                </p>
+              )}
               <ul className="sch-muted">
-                {call.form.fields
+                {form?.fields
                   .filter((field) => field.required)
                   .map((field) => (
                     <li key={field.key}>{field.label}</li>
@@ -106,21 +131,44 @@ export default function CallDetailsPage() {
               </dl>
               <div className="sch-divider" />
               <h3>Documentación</h3>
+              {!form && (
+                <p className="sch-muted">
+                  Al postularte podrás consultar la documentación que
+                  corresponde a tu modalidad.
+                </p>
+              )}
               <ul className="sch-muted">
-                {call.form.fields
+                {form?.fields
                   .filter((field) => field.type === "FILE")
                   .map((field) => (
                     <li key={field.key}>{field.label}</li>
                   ))}
               </ul>
-              <ScholarshipButton disabled={busy} onClick={start}>
-                {busy
-                  ? "Iniciando…"
-                  : existing
-                    ? "Ver mi postulación"
-                    : "Iniciar postulación"}
-              </ScholarshipButton>
-              <p className="sch-muted">Guardada en tu cuenta</p>
+              {isAuthenticated ? (
+                <ScholarshipButton
+                  disabled={busy || (!existing && !resource.data?.eligible)}
+                  onClick={start}
+                >
+                  {busy
+                    ? "Iniciando…"
+                    : existing
+                      ? "Ver mi postulación"
+                      : "Iniciar postulación"}
+                </ScholarshipButton>
+              ) : (
+                <Link
+                  className="sch-button sch-button-primary"
+                  to="/login"
+                  state={{ returnTo: `/becas/${callId}` }}
+                >
+                  Iniciar sesión para postularme
+                </Link>
+              )}
+              <p className="sch-muted">
+                {isAuthenticated
+                  ? "Guardada en tu cuenta"
+                  : "Puedes consultar la convocatoria sin iniciar sesión."}
+              </p>
             </aside>
           </div>
         </>

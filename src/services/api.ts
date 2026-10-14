@@ -8,7 +8,11 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("sizz_access_token");
-  if (token && !config.url?.startsWith("/auth/")) {
+  if (
+    token &&
+    !config.url?.startsWith("/auth/") &&
+    config.url !== "/scholarships/public-calls"
+  ) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -25,7 +29,8 @@ api.interceptors.response.use(
       error.response?.status !== 401 ||
       !original ||
       original._retry ||
-      original.url?.startsWith("/auth/")
+      original.url?.startsWith("/auth/") ||
+      original.url === "/scholarships/public-calls"
     ) {
       return Promise.reject(error);
     }

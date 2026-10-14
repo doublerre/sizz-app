@@ -52,8 +52,8 @@ export default function AppRouter() {
       <Route path="verify-account" element={<Verify />} />
       <Route element={<ScholarshipPublicLayout />}>
         <Route path="/becas" element={<CallsPage />} />
+        <Route path="/becas/:callId" element={<CallDetailsPage />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/becas/:callId" element={<CallDetailsPage />} />
           <Route path="/cuenta/becas" element={<MyApplicationsPage />} />
           <Route
             path="/cuenta/becas/:applicationId"

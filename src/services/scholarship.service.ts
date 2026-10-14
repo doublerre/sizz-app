@@ -15,6 +15,7 @@ import type {
   MeritList,
   MonthlyHours,
   OpenCall,
+  PublicCall,
   Period,
   ScholarshipApplication,
   ScholarshipCall,
@@ -97,6 +98,8 @@ export const scholarshipService = {
     api
       .get<ScholarshipApplication[]>(`${root}/applications/mine`)
       .then((r) => r.data),
+  publicCalls: () =>
+    api.get<PublicCall[]>(`${root}/public-calls`).then((r) => r.data),
   application: (id: string) =>
     api
       .get<ScholarshipApplication>(`${root}/applications/${id}`)

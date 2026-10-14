@@ -13,6 +13,7 @@ const activationTest = process.argv.includes("--activation");
 const builderDragTest = process.argv.includes("--builder-drag");
 const calendarTest = process.argv.includes("--calendars");
 const modalityTest = process.argv.includes("--modalities");
+const publicCallsTest = process.argv.includes("--public-calls");
 const pauseTest = process.argv.includes("--pause");
 const activationWrites = [];
 let rejectActivation = false;
@@ -326,6 +327,19 @@ const routes = new Map([
 const unknown = [];
 const published = [];
 const callWrites = [];
+routes.set(
+  "/api/scholarships/public-calls",
+  routes.get("/api/scholarships/open-calls").map((call) => ({
+    id: call.id,
+    name: call.name,
+    periodId: call.periodId,
+    periodName: call.periodName,
+    opensOn: call.opensOn,
+    closesOn: call.closesOn,
+    durationMonths: call.durationMonths,
+    applicationTypes: call.applicationTypes,
+  })),
+);
 if (pauseTest) {
   const extra = {
     ...category,
@@ -712,8 +726,61 @@ try {
     }
     assert.fail("Toast entrance animation did not finish");
   }
-  if (modalityTest) {
-    const available = routes.get("/api/scholarships/open-calls");
+  if (publicCallsTest) {
+    for (const width of [1440, 390]) {
+      await render(
+        "/becas?qa-role=NONE",
+        width,
+        join(output, `anonymous-calls-${width}.png`),
+      );
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+        1,
+      );
+      assert.equal(
+        await evaluate(
+          `document.querySelector('.sch-filter-row a[href="/cuenta/becas"]')===null`,
+        ),
+        true,
+      );
+      await render(
+        "/becas/call-1?qa-role=NONE",
+        width,
+        join(output, `anonymous-detail-${width}.png`),
+      );
+      assert.ok(
+        await evaluate(
+          `document.querySelector('h1').textContent.includes('Guías de verano')`,
+        ),
+      );
+      assert.ok(
+        await evaluate(
+          `[...document.querySelectorAll('a')].some(link=>link.textContent==='Iniciar sesión para postularme' && link.getAttribute('href')==='/login')`,
+        ),
+      );
+    }
+    assert.equal(
+      readCounts.get("/api/scholarships/open-calls") ?? 0,
+      0,
+      "Anonymous browsing never reads eligibility",
+    );
+    assert.equal(
+      readCounts.get("/api/scholarships/applications/mine") ?? 0,
+      0,
+      "Anonymous browsing never reads private applications",
+    );
+    await evaluate(
+      `[...document.querySelectorAll('a')].find(link=>link.textContent==='Iniciar sesión para postularme').click()`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    assert.equal(await evaluate(`location.pathname`), "/login");
+    assert.equal(await evaluate(`history.state.usr.returnTo`), "/becas/call-1");
+    assert.deepEqual(callWrites, []);
+    console.log(
+      "PASS anonymous call listing and details, protected personal reads and login return destination",
+    );
+  } else if (modalityTest) {
+    const available = routes.get("/api/scholarships/public-calls");
     available[0].applicationTypes = ["RENEWAL", "NEW_ENTRY"];
     available.push({
       ...available[0],
@@ -742,11 +809,12 @@ try {
         ),
         "Nuevo ingreso · Renovación",
       );
-      assert.ok(
+      assert.equal(
         await evaluate(
-          `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación: Nuevo ingreso')`,
+          `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación:')`,
         ),
-        "Filter must not change personal eligibility",
+        false,
+        "Public cards show modalities without exposing personal history",
       );
       const metrics = await connection.send("Page.getLayoutMetrics");
       const screenshot = await connection.send("Page.captureScreenshot", {
@@ -788,7 +856,7 @@ try {
         `document.body.textContent.includes('Modalidades de la convocatoria') && document.body.textContent.includes('Nuevo ingreso · Renovación')`,
       ),
     );
-    available[0].applicationType = "RENEWAL";
+    routes.get("/api/scholarships/open-calls")[0].applicationType = "RENEWAL";
     await render("/becas", 1440);
     await evaluate(
       `(()=>{const select=document.querySelector('.sch-filter-row select');select.value='NEW_ENTRY';select.dispatchEvent(new Event('change',{bubbles:true}));})()`,
@@ -798,9 +866,10 @@ try {
       await evaluate(`document.querySelectorAll('.sch-call-card').length`),
       2,
     );
+    await render("/becas/call-1", 1440);
     assert.ok(
       await evaluate(
-        `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación: Renovación')`,
+        `document.querySelector('.sch-option strong').textContent==='Renovación'`,
       ),
     );
     console.log(

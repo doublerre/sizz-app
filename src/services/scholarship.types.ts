@@ -100,7 +100,7 @@ export type CreateCall = Pick<
   | "totalBudget"
   | "applicationTypes"
 > & { categoryIds: string[] };
-export interface OpenCall {
+export interface PublicCall {
   id: string;
   name: string;
   periodId: string;
@@ -108,8 +108,10 @@ export interface OpenCall {
   opensOn: string;
   closesOn: string;
   durationMonths: number;
-  applicationType: ApplicationType;
   applicationTypes: ApplicationType[];
+}
+export interface OpenCall extends PublicCall {
+  applicationType: ApplicationType;
   form: FormVersion;
 }
 export interface ApplicationFile {

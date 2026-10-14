@@ -150,6 +150,26 @@ test("login 401 is shown without refreshing or redirecting; stale token is exclu
   assert.equal(refreshCalls, 0);
   assert.equal(window.location.href, "");
 });
+test("public calls ignore stale credentials and never trigger authentication refresh", async () => {
+  let refreshCalls = 0;
+  axios.defaults.adapter = async (config) => {
+    refreshCalls++;
+    return ok(config);
+  };
+  api.defaults.adapter = async (config) => {
+    assert.equal(config.headers.Authorization, undefined);
+    return { ...ok(config), data: [] };
+  };
+  assert.deepEqual(await scholarshipService.publicCalls(), []);
+  api.defaults.adapter = async (config) => {
+    throw unauthorized(config);
+  };
+  await assert.rejects(scholarshipService.publicCalls());
+  assert.equal(refreshCalls, 0);
+  assert.equal(window.location.href, "");
+  assert.equal(localStorage.getItem("sizz_access_token"), "expired-test-token");
+});
+
 test("concurrent expired requests share a refresh and retry with the new token", async () => {
   let refreshCalls = 0;
   axios.defaults.adapter = async (config) => {
