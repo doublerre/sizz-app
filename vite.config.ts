@@ -4,7 +4,6 @@ import babel from '@rolldown/plugin-babel'
 import path from "path";
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
@@ -16,4 +15,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src")
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+    },
+  },
 })
+
