@@ -86,7 +86,7 @@ export default function Verify() {
         setApiError(null)
         setIsLoading(true)
         try {
-            await registerUser({
+            const claims = await registerUser({
                 firstName: state.firstName,
                 lastName: state.lastName,
                 email: state.email,
@@ -94,8 +94,10 @@ export default function Verify() {
                 code,
                 role: state.role,
             })
-            // AuthContext ya guardó los tokens; redirigimos según el perfil
-            navigate(state.role === "GUIDE" ? "/app" : "/cuenta/reservaciones", { replace: true })
+            // GUIDE no tiene acceso a /app (requiere ADMIN); usamos los claims
+            // recién devueltos para decidir y enviamos USER y GUIDE a la misma
+            // ruta autenticada disponible para ambos roles.
+            navigate(claims.role === "ADMIN" ? "/app" : "/cuenta/reservaciones", { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

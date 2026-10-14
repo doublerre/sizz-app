@@ -13,8 +13,8 @@ interface AuthUser extends JwtClaims {}
 interface AuthContextValue {
     user: AuthUser | null;
     isAuthenticated: boolean;
-    login: (email: string, password: string) => Promise<void>;
-    register: (payload: RegisterPayload) => Promise<void>;
+    login: (email: string, password: string) => Promise<JwtClaims>;
+    register: (payload: RegisterPayload) => Promise<JwtClaims>;
     logout: () => void;
 }
 
@@ -46,14 +46,18 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(loadUserFromStorage);
 
-    const login = useCallback(async (email: string, password: string) => {
+    const login = useCallback(async (email: string, password: string): Promise<JwtClaims> => {
         const tokens = await authService.login(email, password);
-        setUser(persistTokens(tokens));
+        const claims = persistTokens(tokens);
+        setUser(claims);
+        return claims;
     }, []);
 
-    const register = useCallback(async (payload: RegisterPayload) => {
+    const register = useCallback(async (payload: RegisterPayload): Promise<JwtClaims> => {
         const tokens = await authService.register(payload);
-        setUser(persistTokens(tokens));
+        const claims = persistTokens(tokens);
+        setUser(claims);
+        return claims;
     }, []);
 
     const logout = useCallback(() => {

@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let refreshQueue: ((token: string) => void)[] = [];
+let refreshQueue: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
 
 api.interceptors.response.use(
     (response) => response,
@@ -25,17 +25,28 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
+        // Tarea 6: los 401 de /auth/login son errores de credenciales, no de sesión.
+        // El componente Login ya muestra el mensaje; no debemos recargar la página.
+        if (original.url?.includes("/auth/login")) {
+            return Promise.reject(error);
+        }
+
         const refreshToken = localStorage.getItem("sizz_refresh_token");
         if (!refreshToken) {
             clearSessionAndRedirect();
             return Promise.reject(error);
         }
 
+        // Tarea 4+5: encolar con resolve Y reject, y marcar _retry antes de reintentar.
         if (isRefreshing) {
-            return new Promise((resolve) => {
-                refreshQueue.push((newToken) => {
-                    original.headers.Authorization = `Bearer ${newToken}`;
-                    resolve(api(original));
+            return new Promise((resolve, reject) => {
+                refreshQueue.push({
+                    resolve: (newToken) => {
+                        original._retry = true;
+                        original.headers.Authorization = `Bearer ${newToken}`;
+                        resolve(api(original));
+                    },
+                    reject,
                 });
             });
         }
@@ -53,12 +64,15 @@ api.interceptors.response.use(
             localStorage.setItem("sizz_access_token", data.accessToken);
             localStorage.setItem("sizz_refresh_token", data.refreshToken);
 
-            refreshQueue.forEach((cb) => cb(data.accessToken));
+            refreshQueue.forEach(({ resolve }) => resolve(data.accessToken));
             refreshQueue = [];
 
             original.headers.Authorization = `Bearer ${data.accessToken}`;
             return api(original);
-        } catch {
+        } catch (refreshError) {
+            // Tarea 4: rechazar todas las solicitudes en cola antes de vaciarla.
+            refreshQueue.forEach(({ reject }) => reject(refreshError));
+            refreshQueue = [];
             clearSessionAndRedirect();
             return Promise.reject(error);
         } finally {

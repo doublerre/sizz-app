@@ -256,9 +256,7 @@ export default function ExperiencesPage() {
     const navLinks = [
         { label: "Inicio", href: "/" },
         { label: "Experiencias", href: "/experiencias" },
-        { label: "Reservaciones", href: "/reservaciones" },
         { label: "Eventos", href: "/eventos" },
-        { label: "Ayuda", href: "/ayuda" },
     ];
 
     const handleClearFilters = () => {
@@ -332,22 +330,17 @@ export default function ExperiencesPage() {
                     >
                         Iniciar sesión
                     </button>
+                    {/* Reservaciones no está disponible aún como ruta pública */}
                     <button
                         style={{
                             ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: C.blue,
-                            color: "#fff",
+                            border: `2px solid #CBD5E0`,
+                            backgroundColor: "#EDF2F7",
+                            color: "#A0AEC0",
+                            cursor: "not-allowed",
                         }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.backgroundColor = C.blueDark;
-                            e.currentTarget.style.borderColor = C.blueDark;
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.backgroundColor = C.blue;
-                            e.currentTarget.style.borderColor = C.blue;
-                        }}
-                        onClick={() => window.location.href = "/reservaciones"}
+                        disabled
+                        title="Próximamente"
                     >
                         Planear visita
                     </button>
@@ -389,16 +382,19 @@ export default function ExperiencesPage() {
                     >
                         Iniciar sesión
                     </button>
+                    {/* Reservaciones no está disponible aún como ruta pública */}
                     <button
                         style={{
                             ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: C.blue,
-                            color: "#fff",
+                            border: `2px solid #CBD5E0`,
+                            backgroundColor: "#EDF2F7",
+                            color: "#A0AEC0",
+                            cursor: "not-allowed",
                             flex: "1 1 auto",
                             justifyContent: "center",
                         }}
-                        onClick={() => { window.location.href = "/reservaciones"; setMenuOpen(false); }}
+                        disabled
+                        title="Próximamente"
                     >
                         Planear visita
                     </button>
@@ -424,9 +420,14 @@ export default function ExperiencesPage() {
                         Elige cuáles quieres descubrir durante tu visita.
                     </p>
 
-                    <a href="/reservaciones" className="exp-hero__btn-schedule">
+                    {/* /reservaciones no existe como ruta pública — CTA deshabilitado */}
+                    <span
+                        className="exp-hero__btn-schedule"
+                        style={{ opacity: 0.45, cursor: "not-allowed", pointerEvents: "none" }}
+                        title="Próximamente"
+                    >
                         Consultar horarios de visita
-                    </a>
+                    </span>
                 </div>
 
                 <div className="exp-hero__col-card">
@@ -657,9 +658,14 @@ export default function ExperiencesPage() {
                             </p>
                         </div>
                     </div>
-                    <a href="/reservaciones" className="exp-cta-banner__btn">
+                    {/* /reservaciones no existe como ruta pública — botón deshabilitado */}
+                    <span
+                        className="exp-cta-banner__btn"
+                        style={{ opacity: 0.45, cursor: "not-allowed", pointerEvents: "none" }}
+                        title="Próximamente"
+                    >
                         Planear mi visita
-                    </a>
+                    </span>
                 </div>
             </section>
 
@@ -703,13 +709,15 @@ export default function ExperiencesPage() {
                                 </div>
 
                                 <div style={{ display: "flex", gap: "0.75rem" }}>
-                                    <a href="/reservaciones"
-                                        style={{
+                                    {/* /reservaciones no existe como ruta pública */}
+                                    <span
+                                        style={{ opacity: 0.4, cursor: "not-allowed", pointerEvents: "none",
                                             ...btnBase, backgroundColor: theme.color, color: "#fff",
-                                            flex: 1, justifyContent: "center", textDecoration: "none"
-                                        }}>
+                                            flex: 1, justifyContent: "center", textDecoration: "none" }}
+                                        title="Próximamente"
+                                    >
                                         Reservar visita
-                                    </a>
+                                    </span>
                                     <button
                                         style={{ ...btnBase, border: "1px solid #E2E8F0", backgroundColor: "#fff", color: C.textMid }}
                                         onClick={() => setDetailModalOpen(false)}>
@@ -759,7 +767,7 @@ export default function ExperiencesPage() {
                             EXPLORA
                         </h5>
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                            {["Experiencias", "Eventos", "Reservaciones"].map((item) => (
+                            {["Experiencias", "Eventos"].map((item) => (
                                 <a
                                     key={item}
                                     href={`/${item.toLowerCase()}`}
@@ -779,42 +787,37 @@ export default function ExperiencesPage() {
                         </h5>
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                             {["Preguntas frecuentes", "Consulta / Info", "Aviso de privacidad"].map((item) => (
-                                <a
+                                <span
                                     key={item}
-                                    href="/ayuda"
-                                    style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "0.88rem", transition: "color 0.2s" }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+                                    style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.88rem", cursor: "not-allowed" }}
+                                    title="Próximamente"
                                 >
                                     {item}
-                                </a>
+                                </span>
                             ))}
+
                         </div>
                     </div>
 
                     <div style={{ flex: "1 1 120px", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                        <a
-                            href="/reservaciones"
+                        {/* /reservaciones no existe como ruta pública — enlace deshabilitado */}
+                        <span
                             style={{
                                 ...btnBase,
-                                backgroundColor: C.yellow,
-                                border: `2px solid ${C.yellow}`,
+                                backgroundColor: "#A0AEC0",
+                                border: `2px solid #A0AEC0`,
                                 color: "#fff",
                                 textDecoration: "none",
                                 fontSize: "0.9rem",
                                 whiteSpace: "nowrap",
+                                cursor: "not-allowed",
+                                opacity: 0.6,
+                                pointerEvents: "none",
                             }}
-                            onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = C.yellowDark;
-                                (e.currentTarget as HTMLAnchorElement).style.borderColor = C.yellowDark;
-                            }}
-                            onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = C.yellow;
-                                (e.currentTarget as HTMLAnchorElement).style.borderColor = C.yellow;
-                            }}
+                            title="Próximamente"
                         >
                             Planea tu visita
-                        </a>
+                        </span>
                     </div>
                 </div>
 

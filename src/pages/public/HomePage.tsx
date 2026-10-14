@@ -704,18 +704,12 @@ export default function HomePage() {
                                     borderRadius: "12px",
                                     border: "none",
                                     backgroundColor: "#FFF9ED",
-                                    cursor: "pointer",
+                                    cursor: "not-allowed",
                                     transition: "all 0.2s",
+                                    opacity: 0.6,
                                 }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.backgroundColor = "#FFF0CC";
-                                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(245,166,35,0.2)";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.backgroundColor = "#FFF9ED";
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
-                                onClick={() => window.location.href = '/reservaciones'}
+                                disabled
+                                title="Próximamente"
                             >
                                 <div
                                     style={{
@@ -749,18 +743,12 @@ export default function HomePage() {
                                     borderRadius: "12px",
                                     border: "none",
                                     backgroundColor: "#EDFAF3",
-                                    cursor: "pointer",
+                                    cursor: "not-allowed",
                                     transition: "all 0.2s",
+                                    opacity: 0.6,
                                 }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.backgroundColor = "#D4F4E3";
-                                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(46,175,107,0.2)";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.backgroundColor = "#EDFAF3";
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
-                                onClick={() => window.location.href = '/reservaciones'}
+                                disabled
+                                title="Próximamente"
                             >
                                 <div
                                     style={{

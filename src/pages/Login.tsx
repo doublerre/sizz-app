@@ -15,7 +15,7 @@ const formSchema = z.object({
 });
 
 export const Login = () => {
-    const { login, user } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +30,10 @@ export const Login = () => {
         setApiError(null);
         setIsLoading(true);
         try {
-            await login(data.email, data.password);
-            // El AuthContext ya actualizó `user` con los claims del JWT
-            // Redirigimos según el rol decodificado del token
-            const role = user?.role;
-            navigate(role === 'ADMIN' ? '/app' : '/cuenta/reservaciones', { replace: true });
+            const claims = await login(data.email, data.password);
+            // Usamos los claims recién devueltos por login(), no el estado de React
+            // que pertenece al render anterior y aún contiene null.
+            navigate(claims.role === 'ADMIN' ? '/app' : '/cuenta/reservaciones', { replace: true });
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message;
