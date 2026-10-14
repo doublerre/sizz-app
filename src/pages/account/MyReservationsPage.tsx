@@ -74,6 +74,7 @@ export default function MyReservationsPage() {
                     </Link>
                     <nav className="account-nav" aria-label="Navegación de cuenta">
                         <NavLink to="/cuenta/reservaciones" end>Mis reservaciones</NavLink>
+                        <Link to="/cuenta/becas">Mis postulaciones</Link>
                         <Link to="/eventos">Nueva reservación</Link>
                         <span aria-disabled="true">Mi perfil</span>
                     </nav>

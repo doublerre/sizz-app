@@ -1,76 +1,74 @@
 import axios from "axios";
+import type { TokenResponse } from "./auth.service";
 
 const api = axios.create({
-    baseURL: "/api",
-    headers: { "Content-Type": "application/json" },
+  baseURL: "/api",
+  headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("sizz_access_token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  const token = localStorage.getItem("sizz_access_token");
+  if (token && !config.url?.startsWith("/auth/")) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
-let isRefreshing = false;
-let refreshQueue: ((token: string) => void)[] = [];
+let refresh: Promise<TokenResponse> | null = null;
 
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const original = error.config;
+  (response) => response,
+  async (error) => {
+    const original = error.config;
 
-        if (error.response?.status !== 401 || original._retry) {
-            return Promise.reject(error);
-        }
+    if (
+      error.response?.status !== 401 ||
+      !original ||
+      original._retry ||
+      original.url?.startsWith("/auth/")
+    ) {
+      return Promise.reject(error);
+    }
 
-        const refreshToken = localStorage.getItem("sizz_refresh_token");
-        if (!refreshToken) {
-            clearSessionAndRedirect();
-            return Promise.reject(error);
-        }
+    const refreshToken = localStorage.getItem("sizz_refresh_token");
+    if (!refreshToken) {
+      clearSessionAndRedirect();
+      return Promise.reject(error);
+    }
 
-        if (isRefreshing) {
-            return new Promise((resolve) => {
-                refreshQueue.push((newToken) => {
-                    original.headers.Authorization = `Bearer ${newToken}`;
-                    resolve(api(original));
-                });
-            });
-        }
+    original._retry = true;
 
-        original._retry = true;
-        isRefreshing = true;
-
-        try {
-            const { data } = await axios.post(
-                "/api/auth/refresh",
-                { refreshToken },
-                { headers: { "Content-Type": "application/json" } }
-            );
-
+    try {
+      if (!refresh)
+        refresh = axios
+          .post<TokenResponse>(
+            "/api/auth/refresh",
+            { refreshToken },
+            { headers: { "Content-Type": "application/json" } },
+          )
+          .then(({ data }) => {
             localStorage.setItem("sizz_access_token", data.accessToken);
             localStorage.setItem("sizz_refresh_token", data.refreshToken);
+            return data;
+          })
+          .finally(() => {
+            refresh = null;
+          });
+      const data = await refresh;
 
-            refreshQueue.forEach((cb) => cb(data.accessToken));
-            refreshQueue = [];
-
-            original.headers.Authorization = `Bearer ${data.accessToken}`;
-            return api(original);
-        } catch {
-            clearSessionAndRedirect();
-            return Promise.reject(error);
-        } finally {
-            isRefreshing = false;
-        }
+      original.headers.Authorization = `Bearer ${data.accessToken}`;
+      return api(original);
+    } catch {
+      clearSessionAndRedirect();
+      return Promise.reject(error);
     }
+  },
 );
 
 function clearSessionAndRedirect() {
-    localStorage.removeItem("sizz_access_token");
-    localStorage.removeItem("sizz_refresh_token");
-    window.location.href = "/login";
+  localStorage.removeItem("sizz_access_token");
+  localStorage.removeItem("sizz_refresh_token");
+  window.location.href = "/login";
 }
 
 export default api;
