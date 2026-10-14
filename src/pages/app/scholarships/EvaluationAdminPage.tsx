@@ -335,7 +335,10 @@ export default function EvaluationAdminPage() {
                             ),
                           ) ?? []
                         }
-                        onUpdate={merit.reload}
+                        onUpdate={() => {
+                          sessions.reload();
+                          merit.reload();
+                        }}
                         editable={
                           call.status !== "DRAFT" &&
                           trainingConfigured &&

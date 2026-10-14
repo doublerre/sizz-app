@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo_zigzag_main.svg";
 import ReservationCalendar from "@/components/ReservationCalendar";
 import { Sidebar } from "../../components/SideBarBox";
+import { useAuth } from "../../context/useAuth";
 import "./MyReservationsPage.css";
 
 type ReservationStatus = "En revisión" | "Aprobada" | "Pagada";
@@ -29,6 +30,7 @@ const formatReservationDate = (iso: string) => {
 };
 
 export default function MyReservationsPage() {
+    const { logout } = useAuth();
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("Todos los estados");
     const [date, setDate] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export default function MyReservationsPage() {
                     </nav>
                     <div className="account-user">
                         <span className="account-avatar">_</span>
-                        <span className="account-user-copy"><strong>_</strong><Link to="/login">Cerrar sesión</Link></span>
+                        <span className="account-user-copy"><strong>_</strong><Link to="/login" onClick={logout}>Cerrar sesión</Link></span>
                     </div>
                 </header>
 
@@ -126,7 +128,6 @@ export default function MyReservationsPage() {
                                 <span className={`reservation-status status-${reservation.status.toLowerCase().replaceAll(" ", "-")}`}>
                                     {reservation.status}
                                 </span>
-                                <Link className="reservation-detail-link" to={`/cuenta/reservaciones/${reservation.id}`}>Ver detalle →</Link>
                             </article>
                         ))}
                         {visibleReservations.length === 0 && <p className="reservations-empty">No hay reservaciones que coincidan con los filtros.</p>}

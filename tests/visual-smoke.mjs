@@ -14,6 +14,8 @@ const builderDragTest = process.argv.includes("--builder-drag");
 const calendarTest = process.argv.includes("--calendars");
 const modalityTest = process.argv.includes("--modalities");
 const publicCallsTest = process.argv.includes("--public-calls");
+const reviewTest = process.argv.includes("--review-regressions");
+let rejectAttendance = false;
 const pauseTest = process.argv.includes("--pause");
 const activationWrites = [];
 let rejectActivation = false;
@@ -327,6 +329,8 @@ const routes = new Map([
 const unknown = [];
 const published = [];
 const callWrites = [];
+const fakeToken = (role) =>
+  `test.${Buffer.from(JSON.stringify({ sub: "qa@example.test", uid: "qa-test-id", role, exp: 4102444800 })).toString("base64url")}.test`;
 routes.set(
   "/api/scholarships/public-calls",
   routes.get("/api/scholarships/open-calls").map((call) => ({
@@ -379,6 +383,53 @@ if (callFlow) {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url, "http://localhost");
   if (url.pathname.startsWith("/api/")) {
+    if (
+      reviewTest &&
+      request.method === "POST" &&
+      url.pathname === "/api/auth/register"
+    ) {
+      let body = "";
+      for await (const chunk of request) body += chunk;
+      const input = JSON.parse(body);
+      assert.ok(["GUIDE", "USER"].includes(input.role));
+      response
+        .writeHead(201, { "Content-Type": "application/json" })
+        .end(
+          JSON.stringify({
+            accessToken: fakeToken(input.role),
+            refreshToken: "test-registration-refresh",
+            tokenType: "Bearer",
+            expiresIn: 3600,
+          }),
+        );
+      return;
+    }
+    if (
+      reviewTest &&
+      ["POST", "DELETE"].includes(request.method) &&
+      url.pathname ===
+        "/api/scholarships/admin/training-sessions/session-1/attendance/student-1"
+    ) {
+      if (rejectAttendance) {
+        response
+          .writeHead(422, { "Content-Type": "application/json" })
+          .end(
+            JSON.stringify({ message: "No se pudo actualizar la asistencia." }),
+          );
+        return;
+      }
+      const attendance = routes.get(
+        "/api/scholarships/admin/training-sessions/session-1/attendance",
+      );
+      attendance.splice(0);
+      if (request.method === "POST")
+        attendance.push({ studentId: "student-1" });
+      routes.get(
+        "/api/scholarships/admin/calls/call-1/training-sessions",
+      )[0].presentCount = attendance.length;
+      response.writeHead(200, { "Content-Type": "application/json" }).end("{}");
+      return;
+    }
     if (request.method === "GET") {
       readCounts.set(url.pathname, (readCounts.get(url.pathname) ?? 0) + 1);
       if (url.pathname === delayedRead)
@@ -520,11 +571,15 @@ const server = createServer(async (request, response) => {
         exp: 4102444800,
       };
       const token = `test.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.test`;
+      const verifyRole = url.searchParams.get("qa-verify-role");
+      const verifySetup = verifyRole
+        ? `history.replaceState({usr:${JSON.stringify({ firstName: "Test", lastName: "Student", email: "verify@example.test", password: "TestOnly123!", role: verifyRole })}},'');`
+        : "";
       content = content
         .toString()
         .replace(
           "<head>",
-          `<head><script>${role === "NONE" ? "localStorage.removeItem('sizz_access_token')" : `localStorage.setItem('sizz_access_token',${JSON.stringify(token)})`};window.__errors=[];addEventListener('error',e=>window.__errors.push(e.message));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));setTimeout(()=>{window.__qaResult={case:${JSON.stringify(url.searchParams.get("qa-case"))},viewport:innerWidth,path:location.pathname,heading:document.querySelector('h1')?.textContent,errors:window.__errors,overflow:document.documentElement.scrollWidth>innerWidth,logos:[...document.querySelectorAll('img')].map(img=>({loaded:img.complete&&img.naturalWidth>0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height}))}},1500)</script>`,
+          `<head><script>${verifySetup}${role === "NONE" ? "localStorage.removeItem('sizz_access_token')" : `localStorage.setItem('sizz_access_token',${JSON.stringify(token)})`};window.__errors=[];addEventListener('error',e=>window.__errors.push(e.message));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));setTimeout(()=>{window.__qaResult={case:${JSON.stringify(url.searchParams.get("qa-case"))},viewport:innerWidth,path:location.pathname,heading:document.querySelector('h1')?.textContent,errors:window.__errors,overflow:document.documentElement.scrollWidth>innerWidth,logos:[...document.querySelectorAll('img')].map(img=>({loaded:img.complete&&img.naturalWidth>0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height}))}},1500)</script>`,
         );
     }
     response
@@ -726,7 +781,154 @@ try {
     }
     assert.fail("Toast entrance animation did not finish");
   }
-  if (publicCallsTest) {
+  if (reviewTest) {
+    for (const width of [390, 540, 1440]) {
+      await render("/cuenta/reservaciones?qa-role=USER", width);
+      assert.equal(
+        await evaluate(
+          `document.querySelector('a[href^="/cuenta/reservaciones/"]')===null`,
+        ),
+        true,
+        "No unimplemented reservation details are offered",
+      );
+      await evaluate(`document.querySelector('.calendar-trigger').click()`);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      assert.equal(
+        await evaluate(
+          `[...document.querySelectorAll('.calendar-day')].every(day=>getComputedStyle(day).gridColumnStart==='auto' && getComputedStyle(day).gridColumnEnd==='auto')`,
+        ),
+        true,
+        "Each calendar day occupies one column",
+      );
+      assert.ok(await evaluate(`(()=>{const r=document.querySelector('.calendar-popover').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth})()`),'Reservation calendar remains fully visible');
+      assert.equal(
+        await evaluate(
+          `new Set([...document.querySelectorAll('.calendar-weekday')].map(day=>Math.round(day.getBoundingClientRect().x))).size`,
+        ),
+        7,
+      );
+      await evaluate(`document.querySelector('.calendar-day').click()`);
+      assert.equal(
+        await evaluate(`document.querySelector('.calendar-popover')===null`),
+        true,
+      );
+    }
+    await evaluate(
+      `localStorage.setItem('sizz_refresh_token','logout-test-refresh');[...document.querySelectorAll('a')].find(link=>link.textContent==='Cerrar sesión').click()`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    assert.equal(await evaluate(`location.pathname`), "/login");
+    assert.equal(
+      await evaluate(`localStorage.getItem('sizz_access_token')`),
+      null,
+    );
+    assert.equal(
+      await evaluate(`localStorage.getItem('sizz_refresh_token')`),
+      null,
+    );
+    for (const role of ["GUIDE", "USER"]) {
+      await render(
+        `/register/verify-account?qa-role=NONE&qa-verify-role=${role}`,
+        1440,
+      );
+      await evaluate(
+        `document.querySelectorAll('.verify-otp-input').forEach(input=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'1');input.dispatchEvent(new Event('input',{bubbles:true}));});document.querySelector('.verify-btn-primary').click()`,
+      );
+      const destination =
+        role === "GUIDE" ? "/cuenta/becas/horas" : "/cuenta/reservaciones";
+      for (let attempt = 0; attempt < 50; attempt++) {
+        if (
+          await evaluate(`location.pathname===${JSON.stringify(destination)}`)
+        )
+          break;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      assert.equal(
+        await evaluate(`location.pathname`),
+        destination,
+        "Verified role reaches an allowed route",
+      );
+    }
+    call.status = "OPEN";
+    routes.set("/api/scholarships/calls/call-1/grants", []);
+    const sessionsPath =
+      "/api/scholarships/admin/calls/call-1/training-sessions";
+    const meritPath = "/api/scholarships/admin/calls/call-1/merit-list";
+    routes.get(sessionsPath)[0].presentCount = 0;
+    routes
+      .get("/api/scholarships/admin/training-sessions/session-1/attendance")
+      .splice(0);
+    await render("/app/becas/call-1/evaluacion", 1440);
+    await evaluate(
+      `document.querySelector('.sch-form-builder details').open=true;true`,
+    );
+    async function canConfigure() {
+      return evaluate(
+        `![...document.querySelectorAll('button')].find(button=>button.textContent==='Agregar sesión').disabled`,
+      );
+    }
+    assert.equal(await canConfigure(), true);
+    const sessionReads = readCounts.get(sessionsPath);
+    const meritReads = readCounts.get(meritPath);
+    delayedRead = sessionsPath;
+    await evaluate(
+      `document.querySelector('.sch-form-builder details input[type="checkbox"]').click()`,
+    );
+    for (let attempt = 0; attempt < 50; attempt++) {
+      if (
+        readCounts.get(sessionsPath) > sessionReads &&
+        (await canConfigure()) === false
+      )
+        break;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    assert.equal(await canConfigure(), false);
+    assert.ok(
+      readCounts.get(sessionsPath) > sessionReads,
+      "Attendance refreshes session counts",
+    );
+    assert.ok(
+      readCounts.get(meritPath) > meritReads,
+      "Attendance refreshes merit",
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    assert.equal(
+      await canConfigure(),
+      false,
+      "First attendance keeps configuration locked",
+    );
+    delayedRead = "";
+    await evaluate(
+      `document.querySelector('.sch-form-builder details input[type="checkbox"]').click()`,
+    );
+    for (let attempt = 0; attempt < 50; attempt++) {
+      if (await canConfigure()) break;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    assert.equal(
+      await canConfigure(),
+      true,
+      "Removing last attendance unlocks configuration",
+    );
+    rejectAttendance = true;
+    await evaluate(
+      `document.querySelector('.sch-form-builder details input[type="checkbox"]').click()`,
+    );
+    for (let attempt = 0; attempt < 50; attempt++) {
+      if (await evaluate(`!!document.querySelector('.toast-error')`)) break;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.sch-form-builder details input[type="checkbox"]').checked`,
+      ),
+      false,
+    );
+    assert.equal(await canConfigure(), true);
+    console.log(
+      "PASS review regressions: reservation logout, valid routes, calendar columns, verified role destinations and attendance count refresh",
+    );
+  } else if (publicCallsTest) {
     for (const width of [1440, 390]) {
       await render(
         "/becas?qa-role=NONE",

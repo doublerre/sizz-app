@@ -95,7 +95,7 @@ export default function Verify() {
                 role: state.role,
             })
             // AuthContext ya guardó los tokens; redirigimos según el perfil
-            navigate(state.role === "GUIDE" ? "/app" : "/cuenta/reservaciones", { replace: true })
+            navigate(state.role === "GUIDE" ? "/cuenta/becas/horas" : "/cuenta/reservaciones", { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

@@ -112,8 +112,8 @@
     border-radius: 12px;
     background: #fff;
 }
-.reservation-filters input,
-.reservation-filters select{
+.reservation-filters > input,
+.reservation-filters > select{
     width: 100%;
     min-width: 0;
     height: 37px;
@@ -127,11 +127,11 @@
     font-size: .59rem;
     outline: 0;
 }
-.reservation-filters input:focus,
-.reservation-filters select:focus { 
+.reservation-filters > input:focus,
+.reservation-filters > select:focus {
     border-color: #0868b7; 
 }
-.reservation-filters button{
+.reservation-filters > button{
     justify-self: end;
     border: 0;
     background: transparent;
@@ -216,17 +216,6 @@
     background:#eaf4fc;
     color: #0868b7;
 }
-.reservation-detail-link{
-    justify-self: end;
-    color: #0868b7;
-    font-size: .58rem;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-}
-.reservation-detail-link:hover{ 
-    text-decoration: underline;
-}
 .reservations-empty{
     padding: 32px 16px;
     border: 1px solid #e0eaf1;
@@ -297,9 +286,6 @@
     .reservation-row{
         grid-template-columns: minmax(160px, 1.2fr) 1fr 1fr 100px; 
     }
-    .reservation-detail-link{
-        grid-column: 4;
-    }
     .reservation-status{
         grid-column: 4;
         grid-row: 1; 
@@ -339,9 +325,9 @@
             grid-template-columns:1fr 1fr;
             gap:10px;
             padding: 12px;
-        }.reservation-filters input{
+        }.reservation-filters > input{
             grid-column: 1 / -1; 
-        }.reservation-filters button{
+        }.reservation-filters > button{
             grid-column: 1 / -1;
             justify-self: start;
             padding: 5px 0;
@@ -360,9 +346,6 @@
             display: flex;
         }.reservation-status {
             grid-column: 2; grid-row: 2;
-        }.reservation-detail-link{
-            grid-column: 2;
-            grid-row: 3;
         }.reservation-pagination {
             align-items: flex-start;
             flex-direction: column;
