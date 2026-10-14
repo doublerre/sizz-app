@@ -65,7 +65,14 @@ export default function CallDetailsPage() {
               <p>
                 {call.periodName} · Beca de {call.durationMonths} meses.
               </p>
-              <h3>Tu modalidad</h3>
+              <h3>Modalidades de la convocatoria</h3>
+              <p>
+                {call.applicationTypes
+                  .toSorted()
+                  .map((type) => applicationTypes[type])
+                  .join(" · ")}
+              </p>
+              <h3>Tu modalidad de postulación</h3>
               <div className="sch-option">
                 <strong>{applicationTypes[call.applicationType]}</strong>
                 <p className="sch-muted">

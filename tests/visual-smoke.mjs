@@ -12,6 +12,7 @@ const feedbackTest = process.argv.includes("--feedback");
 const activationTest = process.argv.includes("--activation");
 const builderDragTest = process.argv.includes("--builder-drag");
 const calendarTest = process.argv.includes("--calendars");
+const modalityTest = process.argv.includes("--modalities");
 const pauseTest = process.argv.includes("--pause");
 const activationWrites = [];
 let rejectActivation = false;
@@ -711,7 +712,101 @@ try {
     }
     assert.fail("Toast entrance animation did not finish");
   }
-  if (pauseTest) {
+  if (modalityTest) {
+    const available = routes.get("/api/scholarships/open-calls");
+    available[0].applicationTypes = ["RENEWAL", "NEW_ENTRY"];
+    available.push({
+      ...available[0],
+      id: "new-entry-only",
+      name: "Solo nuevo ingreso",
+      applicationTypes: ["NEW_ENTRY"],
+    });
+    for (const width of [1440, 390]) {
+      await render("/becas", width);
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+        2,
+      );
+      await evaluate(
+        `(()=>{const select=document.querySelector('.sch-filter-row select');select.value='RENEWAL';select.dispatchEvent(new Event('change',{bubbles:true}));})()`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+        1,
+        "Both-mode call remains visible in renewal filter",
+      );
+      assert.equal(
+        await evaluate(
+          `document.querySelector('.sch-call-card strong').textContent`,
+        ),
+        "Nuevo ingreso · Renovación",
+      );
+      assert.ok(
+        await evaluate(
+          `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación: Nuevo ingreso')`,
+        ),
+        "Filter must not change personal eligibility",
+      );
+      const metrics = await connection.send("Page.getLayoutMetrics");
+      const screenshot = await connection.send("Page.captureScreenshot", {
+        format: "png",
+        captureBeyondViewport: true,
+        clip: {
+          x: 0,
+          y: 0,
+          width: metrics.cssContentSize.width,
+          height: metrics.cssContentSize.height,
+          scale: 1,
+        },
+      });
+      await writeFile(
+        join(output, `renewal-filter-${width}.png`),
+        Buffer.from(screenshot.data, "base64"),
+      );
+      await evaluate(
+        `(()=>{const select=document.querySelector('.sch-filter-row select');select.value='NEW_ENTRY';select.dispatchEvent(new Event('change',{bubbles:true}));})()`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+        2,
+      );
+      await evaluate(
+        `(()=>{const input=document.querySelector('.sch-filter-row input');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'Solo nuevo');input.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+        1,
+        "Search works together with modality filter",
+      );
+    }
+    await render("/becas/call-1", 1440);
+    assert.ok(
+      await evaluate(
+        `document.body.textContent.includes('Modalidades de la convocatoria') && document.body.textContent.includes('Nuevo ingreso · Renovación')`,
+      ),
+    );
+    available[0].applicationType = "RENEWAL";
+    await render("/becas", 1440);
+    await evaluate(
+      `(()=>{const select=document.querySelector('.sch-filter-row select');select.value='NEW_ENTRY';select.dispatchEvent(new Event('change',{bubbles:true}));})()`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    assert.equal(
+      await evaluate(`document.querySelectorAll('.sch-call-card').length`),
+      2,
+    );
+    assert.ok(
+      await evaluate(
+        `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación: Renovación')`,
+      ),
+    );
+    console.log(
+      "PASS enabled-modality filters, search, both-mode visibility, details and independent personal eligibility",
+    );
+  } else if (pauseTest) {
     await render("/app/becas/call-1/editar", 1440);
     async function change(label, status) {
       await evaluate(

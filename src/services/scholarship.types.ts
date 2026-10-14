@@ -109,6 +109,7 @@ export interface OpenCall {
   closesOn: string;
   durationMonths: number;
   applicationType: ApplicationType;
+  applicationTypes: ApplicationType[];
   form: FormVersion;
 }
 export interface ApplicationFile {

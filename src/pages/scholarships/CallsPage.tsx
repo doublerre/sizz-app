@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import { scholarshipService as api } from "../../services/scholarship.service";
+import type { ApplicationType } from "../../services/scholarship.types";
 import { useApiResource } from "../../hooks/useApiResource";
 import { applicationTypes, dateLabel } from "../../data/scholarships";
 import {
@@ -20,13 +21,13 @@ export default function CallsPage() {
     ),
   );
   const [search, setSearch] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState<ApplicationType | "">("");
   const calls = resource.data?.filter(
     (call) =>
       `${call.name} ${call.periodName}`
         .toLowerCase()
         .includes(search.toLowerCase()) &&
-      (!type || call.applicationType === type),
+      (!type || call.applicationTypes.includes(type)),
   );
   return (
     <>
@@ -39,7 +40,7 @@ export default function CallsPage() {
         </p>
       </section>
       <main className="sch-public-content sch-calls-content">
-        <h2>Encuentra una modalidad</h2>
+        <h2>Encuentra una convocatoria</h2>
         <div className="sch-filter-row">
           <ScholarshipField label="Buscar">
             <input
@@ -48,8 +49,11 @@ export default function CallsPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </ScholarshipField>
-          <ScholarshipField label="Modalidad">
-            <select value={type} onChange={(e) => setType(e.target.value)}>
+          <ScholarshipField label="Modalidad de la convocatoria">
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as ApplicationType | "")}
+            >
               <option value="">Todas las modalidades</option>
               {Object.entries(applicationTypes).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -63,6 +67,13 @@ export default function CallsPage() {
           </Link>
         </div>
         <LoadState {...resource} retry={resource.reload} />
+        {isAuthenticated && resource.data && resource.data.length > 0 && (
+          <p className="sch-muted">
+            El filtro muestra las modalidades habilitadas en cada convocatoria.
+            Tu modalidad de postulación se determina con tu historial del
+            semestre anterior.
+          </p>
+        )}
         {!isAuthenticated && (
           <Notice>
             Inicia sesión para consultar las convocatorias disponibles para tu
@@ -77,7 +88,15 @@ export default function CallsPage() {
             <article className="sch-card sch-call-card" key={call.id}>
               <StatusBadge status="OPEN" />
               <h3>{call.name}</h3>
-              <strong>{applicationTypes[call.applicationType]}</strong>
+              <strong>
+                {call.applicationTypes
+                  .toSorted()
+                  .map((type) => applicationTypes[type])
+                  .join(" · ")}
+              </strong>
+              <p className="sch-muted">
+                Para tu postulación: {applicationTypes[call.applicationType]}
+              </p>
               <p>
                 {call.periodName} · {call.durationMonths} meses de beca
               </p>
