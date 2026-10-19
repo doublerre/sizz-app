@@ -62,7 +62,7 @@ export default function Footer() {
 
                 <div className="footer-cta-wrapper">
                     {/* Sin ruta todavía; cuando exista la de reservaciones se cambia*/}
-                    <button type="button" className="footer-cta" disabled></button>
+                    <button type="button" className="footer-cta" disabled>Planear Mi Visita</button>
                 </div>
             </div>
 
