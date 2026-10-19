@@ -31,19 +31,109 @@
 }
 
 .register-title {
-    font-size: 2.1rem;
+    font-size: 1.85rem;
     font-weight: 800;
     color: #1A1A2E;
-    margin: 0 0 0.5rem;
-    line-height: 1.15;
+    margin: 0 0 0.3rem;
+    line-height: 1.2;
     font-family: 'Montserrat', system-ui, sans-serif;
 }
 
 .register-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #718096;
-    margin: 0 0 2rem;
+    margin: 0 0 1.5rem;
     font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+/* ── Selector de tipo de perfil ── */
+.register-profile-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin-bottom: 0.65rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-profile-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.4rem;
+}
+
+.register-profile-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: left;
+    width: 100%;
+}
+
+.register-profile-card:hover {
+    border-color: #0868B7;
+}
+
+.register-profile-card.active {
+    border-color: #0868B7;
+    box-shadow: 0 0 0 3px rgba(8, 104, 183, 0.12);
+}
+
+.register-profile-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.register-profile-dot.blue  { background: #0868B7; }
+.register-profile-dot.yellow { background: #F5A623; }
+
+.register-profile-card-text strong {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1A1A2E;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-profile-card-text span {
+    font-size: 0.78rem;
+    color: #718096;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+/* ── Recuadro informativo para aspirante a guía ── */
+.register-guide-info {
+    background: #FFFBEB;
+    border: 1.5px solid #F5A623;
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.register-guide-info strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #92660A;
+    margin-bottom: 0.25rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.register-guide-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #92660A;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    line-height: 1.5;
 }
 
 .register-form {
@@ -266,7 +356,8 @@
 
 /* Móvil (≤ 540px): grid a 1 columna */
 @media (max-width: 540px) {
-    .register-row {
+    .register-row,
+    .register-profile-options {
         grid-template-columns: 1fr;
     }
     .register-card {
