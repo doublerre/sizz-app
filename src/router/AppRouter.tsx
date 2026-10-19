@@ -17,7 +17,6 @@ import SalesHistory from "@/pages/SalesHistory";
 import Checkout from "@/pages/Checkout";
 import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
-import PublicLayout from "@/layouts/PublicLayout";
 import ReservationFee from "@/pages/ReservationFee";
 import PrivateRoute from "@/components/PrivateRoute";
 

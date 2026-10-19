@@ -84,10 +84,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (shouldRefresh && refreshToken) {
             authService.refresh(refreshToken)
                 .then((tokens) => {
+                    const currentRefreshToken = localStorage.getItem("sizz_refresh_token");
+                    if (currentRefreshToken !== refreshToken) {
+                        return;
+                    }
                     const claims = persistTokens(tokens);
                     setUser(claims);
                 })
                 .catch(() => {
+                    const currentRefreshToken = localStorage.getItem("sizz_refresh_token");
+                    if (currentRefreshToken !== refreshToken) {
+                        return;
+                    }
                     localStorage.removeItem("sizz_access_token");
                     localStorage.removeItem("sizz_refresh_token");
                     setUser(null);
