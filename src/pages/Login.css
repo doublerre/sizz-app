@@ -184,6 +184,54 @@ body {
     text-align: center;
 }
 
+.login-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.login-password-wrapper input {
+    padding-right: 2.8rem !important;
+}
+
+.login-eye-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.login-eye-btn:hover { color: #0868B7; }
+
+.login-field-error {
+    font-size: 0.75rem;
+    color: #E84040;
+    margin-top: 0.25rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.login-api-error {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #E84040;
+    background: #fff5f5;
+    border: 1px solid #fed7d7;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.input-group input.input-error {
+    border-color: #E84040;
+}
+
 /*Media querie para pantallas grandes*/
 @media(min-width: 1024px) {
     .login-card {
