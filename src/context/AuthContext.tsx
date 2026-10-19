@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { authService, type RegisterPayload, type TokenResponse } from "../services/auth.service";
 
 interface JwtClaims {
@@ -8,11 +8,12 @@ interface JwtClaims {
     exp: number;
 }
 
-interface AuthUser extends JwtClaims {}
+type AuthUser = JwtClaims;
 
 interface AuthContextValue {
     user: AuthUser | null;
     isAuthenticated: boolean;
+    isLoading: boolean;
     login: (email: string, password: string) => Promise<JwtClaims>;
     register: (payload: RegisterPayload) => Promise<JwtClaims>;
     logout: () => void;
@@ -45,6 +46,57 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(loadUserFromStorage);
+    const [isLoading, setIsLoading] = useState<boolean>(() => {
+        const token = localStorage.getItem("sizz_access_token");
+        const refreshToken = localStorage.getItem("sizz_refresh_token");
+        if (!token && refreshToken) return true;
+        if (token && refreshToken) {
+            try {
+                const claims = decodeJwt(token);
+                if (claims.exp * 1000 < Date.now()) {
+                    return true;
+                }
+            } catch {
+                return true;
+            }
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const token = localStorage.getItem("sizz_access_token");
+        const refreshToken = localStorage.getItem("sizz_refresh_token");
+
+        let shouldRefresh = false;
+        if (!token && refreshToken) {
+            shouldRefresh = true;
+        } else if (token && refreshToken) {
+            try {
+                const claims = decodeJwt(token);
+                if (claims.exp * 1000 < Date.now()) {
+                    shouldRefresh = true;
+                }
+            } catch {
+                shouldRefresh = true;
+            }
+        }
+
+        if (shouldRefresh && refreshToken) {
+            authService.refresh(refreshToken)
+                .then((tokens) => {
+                    const claims = persistTokens(tokens);
+                    setUser(claims);
+                })
+                .catch(() => {
+                    localStorage.removeItem("sizz_access_token");
+                    localStorage.removeItem("sizz_refresh_token");
+                    setUser(null);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        }
+    }, []);
 
     const login = useCallback(async (email: string, password: string): Promise<JwtClaims> => {
         const tokens = await authService.login(email, password);
@@ -67,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

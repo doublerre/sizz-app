@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
-import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
+import PublicLayout from "@/layouts/PublicLayout.tsx";
 import AccountLayout from "@/layouts/AccountLayout.tsx";
 import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
 import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
@@ -25,8 +25,9 @@ export default function AppRouter() {
         <Routes>
             {/* Públicas */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/experiencias" element={<ExperiencesPage />} />
-            <Route path="/eventos" element={<EventsPage />} />
+            <Route element={<PublicLayout />}>
+                <Route path="/eventos" element={<EventsPage />} />
+            </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register/verify-account" element={<Verify />} />

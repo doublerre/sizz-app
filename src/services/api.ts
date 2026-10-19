@@ -25,9 +25,8 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        // Tarea 6: los 401 de /auth/login son errores de credenciales, no de sesión.
-        // El componente Login ya muestra el mensaje; no debemos recargar la página.
-        if (original.url?.includes("/auth/login")) {
+        // Tarea 6: los 401 de /auth/login y /auth/refresh no deben disparar refresh
+        if (original.url?.includes("/auth/login") || original.url?.includes("/auth/refresh")) {
             return Promise.reject(error);
         }
 
@@ -60,6 +59,15 @@ api.interceptors.response.use(
                 { refreshToken },
                 { headers: { "Content-Type": "application/json" } }
             );
+
+            // Tarea 3: Si logout() ocurrió durante la espera o el token cambió, descartar sin persistir ni reintentar
+            const currentRefreshToken = localStorage.getItem("sizz_refresh_token");
+            if (!currentRefreshToken || currentRefreshToken !== refreshToken) {
+                const sessionDiscarded = new Error("Session ended or changed during refresh");
+                refreshQueue.forEach(({ reject }) => reject(sessionDiscarded));
+                refreshQueue = [];
+                return Promise.reject(sessionDiscarded);
+            }
 
             localStorage.setItem("sizz_access_token", data.accessToken);
             localStorage.setItem("sizz_refresh_token", data.refreshToken);
