@@ -148,7 +148,7 @@
 }
 .reservation-row{
     display: grid;
-    grid-template-columns:minmax(220px, 1.35fr) minmax(150px, 1fr) minmax(180px, 1fr) 100px 90px;
+    grid-template-columns:minmax(220px, 1.35fr) minmax(150px, 1fr) minmax(180px, 1fr) 100px;
     align-items: center;
     gap: 16px;
     min-height: 95px;
@@ -215,17 +215,6 @@
 .status-pagada{
     background:#eaf4fc;
     color: #0868b7;
-}
-.reservation-detail-link{
-    justify-self: end;
-    color: #0868b7;
-    font-size: .58rem;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-}
-.reservation-detail-link:hover{ 
-    text-decoration: underline;
 }
 .reservations-empty{
     padding: 32px 16px;
@@ -297,9 +286,6 @@
     .reservation-row{
         grid-template-columns: minmax(160px, 1.2fr) 1fr 1fr 100px; 
     }
-    .reservation-detail-link{
-        grid-column: 4;
-    }
     .reservation-status{
         grid-column: 4;
         grid-row: 1; 
@@ -360,9 +346,6 @@
             display: flex;
         }.reservation-status {
             grid-column: 2; grid-row: 2;
-        }.reservation-detail-link{
-            grid-column: 2;
-            grid-row: 3;
         }.reservation-pagination {
             align-items: flex-start;
             flex-direction: column;
