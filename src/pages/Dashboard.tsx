@@ -122,7 +122,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </button>
               ))}
             </div>
-            <button className="d-btn-newsale" type="button" onClick={() => navigate('/taquilla/newSale')}>
+            <button className="d-btn-newsale" type="button" onClick={() => navigate('/taquilla/newsale')}>
               Iniciar nueva venta
             </button>
           </section>
