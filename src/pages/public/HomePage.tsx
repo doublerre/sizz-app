@@ -445,7 +445,7 @@ export default function HomePage() {
 
     const navLinks = [
         { label: "Inicio", href: "/", available: true },
-        { label: "Experiencias", href: "/experiencias", available: false },
+        { label: "Experiencias", href: "/experiencias", available: true },
         { label: "Reservaciones", href: "/reservaciones", available: false },
         { label: "Eventos", href: "/eventos", available: true },
         { label: "Ayuda", href: "/ayuda", available: false },

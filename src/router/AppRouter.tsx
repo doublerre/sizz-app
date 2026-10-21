@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
+import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
@@ -25,6 +26,7 @@ export default function AppRouter() {
         <Routes>
             {/* Públicas */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/experiencias" element={<ExperiencesPage />} />
             <Route element={<PublicLayout />}>
                 <Route path="/eventos" element={<EventsPage />} />
             </Route>
