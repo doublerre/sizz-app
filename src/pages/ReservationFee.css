@@ -220,7 +220,7 @@
     flex-direction: row;
     gap: .35rem;
 }
-.payment-methods button{ 
+.reservation-payment-card .payment-methods button{ 
     flex: 1; 
     display:flex;
     align-items:center;
@@ -235,7 +235,7 @@
     font-size:0.63rem;
     font-weight:700;
 }
-.payment-methods button.selected{
+.reservation-payment-card .payment-methods button.selected{
     background: var(--color-primary);
     color: #fff;
 }

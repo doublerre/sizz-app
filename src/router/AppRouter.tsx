@@ -18,8 +18,8 @@ import Checkout from "@/pages/Checkout";
 import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
 import ReservationFee from "@/pages/ReservationFee";
-
 import CashClosing from "@/pages/CashClosing";
+import StartShift from "@/pages/OpenShift";
 import PrivateRoute from "@/components/PrivateRoute";
 
 export default function AppRouter() {
@@ -34,8 +34,8 @@ export default function AppRouter() {
             <Route path="/register" element={<Register />} />
             <Route path="/register/verify-account" element={<Verify />} />
 
-            {/* Solo ADMIN */}
-            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+            {/* Solo ADMIN y CASHIER  */}
+            <Route element={<PrivateRoute requiredRoles={["ADMIN", "CASHIER"]} />}>
                 <Route path="/app" element={<AppLayout />}>
                     <Route path="reservaciones" element={<ReservationsPage />} />
                     <Route path="eventos" element={<EventsAdminPage />} />
@@ -43,6 +43,7 @@ export default function AppRouter() {
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="inicio-turno" element={<StartShift />} />
                     <Route path="newsale" element={<NewSale />} />
                     <Route path="historial" element={<SalesHistory />} />
                     <Route path="checkout" element={<Checkout />} />

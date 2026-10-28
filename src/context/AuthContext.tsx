@@ -4,7 +4,7 @@ import { authService, type RegisterPayload, type TokenResponse } from "../servic
 interface JwtClaims {
     sub: string;  // email
     uid: string;
-    role: "USER" | "ADMIN" | "GUIDE";
+    role: "USER" | "ADMIN" | "GUIDE" | "CASHIER";
     exp: number;
 }
 

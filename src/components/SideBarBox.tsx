@@ -13,6 +13,7 @@ const MENU = [
   {
     section: 'TAQUILLA',
     links: [
+      { to: '/taquilla/inicio-turno', label: 'Inicio de turno', color: '#0868B7' },
       { to: '/taquilla/dashboard', label: 'Inicio', color: '#0868B7' },
       { to: '/taquilla/newSale', label: 'Nueva venta', color: '#55B82C' },
       { to: '/taquilla/corte', label: 'Corte de caja', color: '#EF4050' },
