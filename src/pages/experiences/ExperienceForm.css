@@ -1,0 +1,456 @@
+/* ── Formulario de experiencia (Nueva / Editar) ── */
+.exf-page {
+  font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
+  color: #1a1a2e;
+  background-color: #f1f5fa;
+  min-height: 100vh;
+  width: 100%;
+  text-align: left;
+}
+
+.exf-page *,
+.exf-page *::before,
+.exf-page *::after {
+  box-sizing: border-box;
+}
+
+/* Encabezado */
+.exf-head {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8ecf0;
+  padding: 1.5rem 2.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.exf-head__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #10243a;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.exf-head__subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #718096;
+}
+
+/* Botones */
+.exf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.8rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.exf-btn--blue  { background-color: #0868b7; }
+.exf-btn--blue:hover:not(:disabled)  { background-color: #004f8f; }
+.exf-btn--green { background-color: #52b32c; }
+.exf-btn--green:hover:not(:disabled) { background-color: #44991f; }
+
+.exf-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.exf-link {
+  background: none;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0868b7;
+  cursor: pointer;
+}
+
+.exf-link:hover {
+  text-decoration: underline;
+}
+
+.exf-btn:focus-visible,
+.exf-link:focus-visible,
+.exf-switch:focus-visible,
+.exf-control:focus-visible {
+  outline: 2px solid #0868b7;
+  outline-offset: 2px;
+}
+
+/* Layout */
+.exf-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.8rem;
+  padding: 1.4rem 2.2rem 3rem;
+  align-items: start;
+}
+
+.exf-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.exf-section-label {
+  margin: 0.4rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0868b7;
+}
+
+.exf-col > .exf-card + .exf-section-label {
+  margin-top: 1rem;
+}
+
+/* Tarjetas */
+.exf-card {
+  background-color: #ffffff;
+  border: 1px solid #e8ecf0;
+  border-radius: 18px;
+  padding: 1.6rem 1.6rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.exf-card--side {
+  padding: 1.5rem 1.4rem;
+}
+
+.exf-card__title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #10243a;
+}
+
+.exf-row {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.exf-row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.exf-row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Campos */
+.exf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.exf-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.exf-control {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: #1a1a2e;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.exf-control::placeholder {
+  color: #94a3b8;
+}
+
+.exf-control:focus {
+  outline: none;
+  border-color: #0868b7;
+  box-shadow: 0 0 0 3px rgba(8, 104, 183, 0.12);
+}
+
+.exf-control[aria-invalid='true'] {
+  border-color: #e84040;
+}
+
+.exf-control--textarea {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Selects */
+.exf-select {
+  position: relative;
+}
+
+.exf-control--select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.4rem;
+  cursor: pointer;
+}
+
+.exf-control--empty {
+  color: #94a3b8;
+}
+
+.exf-control--strong {
+  font-weight: 800;
+  color: #0868b7;
+}
+
+.exf-control--button {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exf-select__chevron {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+.exf-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(16, 36, 58, 0.14);
+  z-index: 30;
+}
+
+.exf-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #2d3748;
+  cursor: pointer;
+}
+
+.exf-menu__item:hover {
+  background-color: #f1f5f9;
+  color: #0868b7;
+}
+
+.exf-menu__item--selected {
+  font-weight: 700;
+  color: #0868b7;
+  background-color: #ebf4fa;
+}
+
+/* Input con unidad */
+.exf-suffix {
+  position: relative;
+}
+
+.exf-suffix .exf-control {
+  padding-right: 4.8rem;
+}
+
+.exf-suffix__text {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.74rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+/* Errores */
+.exf-error {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #c53030;
+}
+
+/* Vista previa de color */
+.exf-preview {
+  height: 94px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s;
+}
+
+.exf-preview__circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #ffc107;
+  color: #10243a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Interruptores */
+.exf-switches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.exf-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.exf-switch__track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background-color: #cbd5e1;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.exf-switch__track--on {
+  background-color: #52b32c;
+}
+
+.exf-switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: transform 0.2s;
+}
+
+.exf-switch__track--on .exf-switch__thumb {
+  transform: translateX(16px);
+}
+
+.exf-switch__label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #10243a;
+}
+
+/* Consideraciones */
+.exf-notes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.72rem;
+  color: #718096;
+}
+
+.exf-notes li::before {
+  content: '· ';
+}
+
+.exf-modified {
+  border-top: 1px solid #eef1f5;
+  padding-top: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.exf-modified__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.exf-modified__value {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #10243a;
+}
+
+.exf-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.exf-actions .exf-btn {
+  flex: 0 0 52%;
+}
+
+/* Estado: no encontrada */
+.exf-not-found {
+  padding: 3rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.exf-not-found .exf-btn {
+  margin-top: 0.75rem;
+}
+
+/* Responsivo */
+@media (max-width: 1000px) {
+  .exf-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .exf-head {
+    padding: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .exf-layout {
+    padding: 1.25rem 1.25rem 2.5rem;
+  }
+  .exf-row--2,
+  .exf-row--3 {
+    grid-template-columns: 1fr;
+  }
+  .exf-card {
+    padding: 1.3rem 1.2rem;
+  }
+}

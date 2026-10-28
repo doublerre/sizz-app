@@ -41,7 +41,7 @@ export default function CreateUserForm() {
         setApiError(null)
         setIsLoading(true)
         try {
-            await authService.sendVerificationCode(data.email)
+            await authService.sendVerificationCode(data.email, data.name)
             navigate("/register/verify-account", {
                 state: {
                     firstName: data.name,
