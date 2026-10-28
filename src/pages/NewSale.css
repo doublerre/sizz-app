@@ -99,6 +99,25 @@
   gap: 0.85rem;
 }
 
+.sale-state,
+.sale-error {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.sale-error p {
+  margin: 0 0 0.75rem;
+}
+
+.sale-error button {
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-primary);
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
 .ticket-card {
   display: flex;
   justify-content: space-between;
@@ -111,6 +130,41 @@
 
 .ticket-card:hover {
   border-color: #b9cddd;
+}
+
+.ticket-category-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(260px, 1.25fr);
+  gap: 1rem;
+}
+
+.ticket-category-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ticket-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #edf1f5;
+  padding-bottom: 0.5rem;
+}
+
+.ticket-option:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ticket-unavailable {
+  align-self: center;
+  justify-self: end;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  text-align: right;
 }
 
 .ticket-info {
@@ -329,8 +383,22 @@
   background-color: #065293;
 }
 
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /*Bloque responsivo*/
 @media (max-width: 1024px) {
+  .header-title {
+    padding-left: 4.5rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+}
+
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
   .header-title{
     padding-left: 4rem;
   }
@@ -343,7 +411,8 @@
   }
 }
 
-@media (max-width: 640px) {
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
   .main-content {
     padding: 1rem;
   }
@@ -364,6 +433,21 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+  }
+
+  .ticket-category-card {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-unavailable {
+    align-self: flex-start;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .ticket-category-options,
+  .ticket-option {
+    width: 100%;
   }
 
   .ticket-controls {

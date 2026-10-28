@@ -3,7 +3,7 @@ import logo from '../assets/logo_zigzagA.png';
 import './SideBarBox.css';
 import { useState } from 'react';
 
-interface SidebarProps{
+interface SidebarProps {
   userName: string;
   userRole: string;
 }
@@ -13,10 +13,12 @@ const MENU = [
   {
     section: 'TAQUILLA',
     links: [
+      { to: '/taquilla/inicio-turno', label: 'Inicio de turno', color: '#0868B7' },
       { to: '/taquilla/dashboard', label: 'Inicio', color: '#0868B7' },
       { to: '/taquilla/newSale', label: 'Nueva venta', color: '#55B82C' },
+      { to: '/taquilla/corte', label: 'Corte de caja', color: '#EF4050' },
       { to: '/taquilla/historial', label: 'Historial', color: '#FBC400' },
-      { to: '/taquilla/corte-caja', label: 'Corte de caja', color: '#EF4050' },
+      { to: '/cuenta/reservaciones', label: 'Reservaciones', color: '#FBC400' },
     ],
   },
   {
@@ -40,7 +42,7 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
 
   return (
     <>
-    {/* Botón hamburguesa visible solo en móviles */}
+    {!isOpen && (
       <button
         className="sidebar-toggle-btn"
         onClick={toggleSidebar}
@@ -53,6 +55,7 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </button>
+    )}
 
       {/* Fondo oscuro para cerrar al presionar afuera */}
       {isOpen && (
@@ -103,6 +106,14 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
           <span className="sidebar-user-role">{userRole}</span>
         </div>
       </div>
+
+      <button
+        type="button"
+        className="sidebar-close-menu"
+        onClick={toggleSidebar}
+      >
+        Cerrar menú
+      </button>
     </aside>
     </>
   );

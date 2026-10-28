@@ -1,23 +1,10 @@
 import React, { useState } from 'react';
 import { Banknote, CreditCard, Wallet } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
+import { useAuth } from '../context/AuthContext';
+import type { SaleDraft } from '../types/boxOffice';
 import './Checkout.css';
-
-interface SaleItem{
-  label: string;
-  quantity: string;
-  unitPrice: string;
-  total: string;
-}
-
-interface CheckoutProps{
-  saleItems?: SaleItem[];
-  ticketCount?: string;
-  visitDate?: string;
-  totalToCharge?: string;
-  changeAmount?: string;
-}
 
 interface PaymentMethod {
   key: string;
@@ -33,25 +20,62 @@ const PAYMENT_METHODS: PaymentMethod[] = [
   { key: 'mixto', label: 'Pago mixto', detail: 'Combina formas de pago', icon: Wallet, color: 'var(--color-warning)' },
 ];
 
-export const Checkout = ({
-  saleItems = [],
-  ticketCount = '_',
-  visitDate = '_',
-  totalToCharge = '_',
-  changeAmount = '_',
-}: CheckoutProps) => {
+//Validación de formato es opcional c:
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(price);
+}
+
+export const Checkout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [receivedAmount, setReceivedAmount] = useState('');
+  
+  const draft = location.state as SaleDraft | null;
+  const hasSaleDraft = draft != null && Array.isArray(draft.items) && draft.items.length > 0;
+  const userName = user?.sub ?? '';
+  const userRole = user?.role === 'ADMIN' ? 'Administrador' : user?.role ?? '';
 
-  const total = Number.parseFloat(totalToCharge.replace(/[^\d.-]/g, '')) || 0;
+  if (!hasSaleDraft) {
+    return (
+      <div className="layout-container">
+        <Sidebar userName={userName} userRole={userRole} />
+        <main className="main-container">
+          <header className="header-title">
+            <h1>Cobro</h1>
+            <p>No hay una venta seleccionada.</p>
+          </header>
+          <section className="form-card checkout-empty">
+            <p>Selecciona tarifas y cantidades antes de continuar al cobro.</p>
+            <button type="button" className="btn-primary" onClick={() => navigate('/taquilla/newSale')}>
+              Ir a nueva venta
+            </button>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  const saleItems = draft.items;
+  const ticketCount = saleItems.reduce((sum, item) => sum + item.quantity, 0);
+  const total = saleItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   const received = Number.parseFloat(receivedAmount) || 0;
+  const isCashPayment = selectedMethod === 'efectivo';
+  const isReceivedAmountValid = !isCashPayment || received >= total;
   const calculatedChange = Math.max(received - total, 0);
-  const displayedChange = receivedAmount ? `$${calculatedChange.toFixed(2)}` : changeAmount;
+  const visitDate = new Date(`${draft.visitDate}T00:00:00`).toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
     <div className="layout-container">
-      <Sidebar userName="_" userRole="_" />
+      <Sidebar userName={userName} userRole={userRole} />
 
         <main className="main-container">
           <header className="header-title">
@@ -67,19 +91,19 @@ export const Checkout = ({
               </div>
 
               <div className="sale-items">
-                {saleItems.map((item, index) => (
-                  <div key={`${item.label}-${index}`} className="sale-item-row">
-                    <span className="sale-item-label">{item.label}</span>
+                {saleItems.map((item) => (
+                  <div key={item.tariffId} className="sale-item-row">
+                    <span className="sale-item-label">{item.visitorTypeName} · {item.activityName}</span>
                     <span className="sale-item-qty">{item.quantity}</span>
-                    <span className="sale-item-unit">{item.unitPrice}</span>
-                    <span className="sale-item-total">{item.total}</span>
+                    <span className="sale-item-unit">{formatPrice(item.unitPrice)}</span>
+                    <span className="sale-item-total">{formatPrice(item.quantity * item.unitPrice)}</span>
                   </div>
                 ))}
               </div>
 
               <div className="total-box">
                 <small>Total a cobrar</small>
-                <strong>{totalToCharge}</strong>
+                <strong>{formatPrice(total)}</strong>
               </div>
 
               <div className="section-block">
@@ -104,10 +128,10 @@ export const Checkout = ({
               </div>
 
               <div className="form-actions">
-                <button type="button" className="btn-link" onClick={() => navigate('/taquilla/newSale')}>
+                <button type="button" className="btn-link" onClick={() => navigate('/taquilla/newSale', { state: draft })}>
                   Volver
                 </button>
-                <button type="button" className="btn-link btn-danger" onClick={() => window.history.back()}>
+                <button type="button" className="btn-link btn-danger" onClick={() => navigate('/taquilla/dashboard')}>
                   Cancelar venta
                 </button>
               </div>
@@ -124,22 +148,20 @@ export const Checkout = ({
                   className={`payment-option ${selectedMethod === key ? 'payment-option-selected' : ''}`}
                   onClick={() => setSelectedMethod(key)}
                 >
-                  <div className="payment-info">
-                    <div className="payment-icon" style={{ backgroundColor: color }}>
-                      <Icon size={20} color="#ffffff" />
-                    </div>
+                  <div className="payment-icon" style={{ backgroundColor: color }}>
+                    <Icon size={20} color="#ffffff" />
+                  </div>
 
-                    <div className="payment-text">
-                      <h4>{label}</h4>
-                      <span className="payment-detail">{detail}</span>
-                    </div>
+                  <div className="payment-text">
+                    <h4>{label}</h4>
+                    <span className="payment-detail">{detail}</span>
                   </div>
 
                   <span className={`radio-dot ${selectedMethod === key ? 'radio-dot-checked' : ''}`} />
                 </button>
               ))}
             </div>
-
+             
             <div className="input-group">
               <label>Recibido</label>
               <input
@@ -149,15 +171,24 @@ export const Checkout = ({
                 value={receivedAmount}
                 onChange={(event) => setReceivedAmount(event.target.value)}
                 placeholder="$0.00"
+                aria-invalid={isCashPayment && !isReceivedAmountValid}
               />
+              {isCashPayment && !isReceivedAmountValid && (
+                <small className="payment-validation-message">
+                  El efectivo recibido debe ser mayor o igual al total a cobrar.
+                </small>
+              )}
             </div>
 
             <div className="change-box">
               <small>Cambio</small>
-              <strong>{displayedChange}</strong>
+              <strong>{formatPrice(calculatedChange)}</strong>
             </div>
 
-            <button type="button" className="btn-primary" disabled={!selectedMethod}>
+            <p className="checkout-pending" role="status">
+              El registro del cobro estará disponible cuando se implemente el servicio de ventas.
+            </p>
+            <button type="button" className="btn-primary" disabled>
               Cobrar e imprimir
             </button>
           </aside>

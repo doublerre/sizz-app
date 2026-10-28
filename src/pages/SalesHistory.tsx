@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Download, MoreHorizontal, Search } from 'lucide-react';
 import { Sidebar } from '../components/SideBarBox';
+import ReservationCalendar from '../components/ReservationCalendar';
 import './SalesHistory.css';
 
 /*Estructura del backend cuando exista la integración.*/
@@ -11,14 +12,11 @@ interface Sale {
 	payment: string;
 	total: number;
 	status: 'Activo' | 'Cancelado';
+    date?: string;
 }
 
 /*formato dinero mx*/
 const formatCurrency = (amount: number) => `$${amount.toLocaleString('es-MX')}`;
-
-/*fecha del sistema */
-const formatDate = (date: Date) => date.toLocaleDateString('es-MX');
-
 
 interface SalesHistoryProps {
     sales?: Sale[];
@@ -27,15 +25,18 @@ interface SalesHistoryProps {
 export const SalesHistory = ({ sales = [] }: SalesHistoryProps) => {
 	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState('Todos');
+    const [date, setDate] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const pageSize = 5;
+    const markedDates = useMemo(() => new Set(sales.flatMap((sale) => sale.date ? [sale.date] : [])), [sales]);
 
 
     const visibleSales = useMemo(() => sales.filter((sale) => {
 		const matchesSearch = `${sale.folio} ${sale.payment}`.toLowerCase().includes(search.toLowerCase());
 		const matchesStatus = status === 'Todos' || sale.status === status;
-		return matchesSearch && matchesStatus;
-    }), [sales, search, status]);
+        const matchesDate = !date || sale.date === date;
+        return matchesSearch && matchesStatus && matchesDate;
+    }), [sales, search, status, date]);
 
     //cantidad de páginas se calcula con las ventas filtradas y el tamaño de página.
     const totalPages = Math.ceil(visibleSales.length / pageSize);
@@ -48,8 +49,6 @@ export const SalesHistory = ({ sales = [] }: SalesHistoryProps) => {
     const totalAmount = sales.reduce((sum, sale) => sum + sale.total, 0);
     const ticketCount = sales.reduce((sum, sale) => sum + sale.tickets, 0);
     const cancelledCount = sales.filter((sale) => sale.status === 'Cancelado').length;
-    const today = formatDate(new Date());
-
     // Al cambiar un filtro, la tabla vuelve a la primera página para evitar páginas vacías.
     const updateSearch = (value: string) => {
         setSearch(value);
@@ -99,10 +98,15 @@ export const SalesHistory = ({ sales = [] }: SalesHistoryProps) => {
                                 <span>Buscar</span>
                                 <Search size={16} aria-hidden="true" />
                                 <input value={search} onChange={(event) => updateSearch(event.target.value)} placeholder="Folio, nombre o correo..." /></label>
-							<label>
+							<div className="history-date-filter">
                                 <span>Fecha</span>
-                                <input type="text" value={today} readOnly />
-                                </label>
+                                <ReservationCalendar
+                                    value={date}
+                                    markedDates={markedDates}
+                                    variant="sales"
+                                    onChange={(value) => { setDate(value); setPage(1); }}
+                                />
+                            </div>
 							<label>
                                 <span>Estado</span>
                                 <select value={status} onChange={(event) => updateStatus(event.target.value)}>
