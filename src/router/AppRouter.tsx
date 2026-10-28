@@ -20,6 +20,10 @@ import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
 import ReservationFee from "@/pages/ReservationFee";
 import PrivateRoute from "@/components/PrivateRoute";
+import ExperiencesAdministrationPage from "@/pages/app/ExperiencesAdministrationPage";
+import NewExperience from "@/pages/experiences/NewExperience";
+import EditExperience from "@/pages/experiences/EditExperience";
+import AdminDashboard from "@/pages/app/AdminDashboard";
 
 export default function AppRouter() {
     return (
@@ -37,6 +41,10 @@ export default function AppRouter() {
             {/* Solo ADMIN */}
             <Route element={<PrivateRoute requiredRole="ADMIN" />}>
                 <Route path="/app" element={<AppLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="experiences" element={<ExperiencesAdministrationPage />} />
+                    <Route path="experiences/new" element={<NewExperience />} />
+                    <Route path="experiences/:id/edit" element={<EditExperience />} />
                     <Route path="reservaciones" element={<ReservationsPage />} />
                     <Route path="eventos" element={<EventsAdminPage />} />
                 </Route>

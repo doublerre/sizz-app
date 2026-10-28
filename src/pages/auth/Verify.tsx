@@ -115,7 +115,7 @@ export default function Verify() {
         setApiError(null)
         setIsResending(true)
         try {
-            await authService.sendVerificationCode(state.email)
+            await authService.sendVerificationCode(state.email, state.firstName)
             setSecondsLeft(CODE_TTL_SECONDS)
             inputRefs.current.forEach((r) => { if (r) r.value = "" })
             inputRefs.current[0]?.focus()

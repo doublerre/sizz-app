@@ -3,8 +3,8 @@ import "./AppLayout.css";
 import logo from "@/assets/logo_zigzag_main.svg"
 
 const mainMenu = [
-    { label: "Inicio", to: "", available: false, color: "var(--brand-blue)" },
-    { label: "Experiencias", to: "", available: false, color: "var(--brand-green)" },
+    { label: "Inicio", to: "/app/", available: true, color: "var(--brand-blue)" },
+    { label: "Experiencias", to: "/app/experiences", available: true, color: "var(--brand-green)" },
     { label: "Visitantes", to: "", available: false, color: "var(--brand-yellow)" },
     { label: "Reservaciones", to: "/app/reservaciones", available: true, color: "var(--brand-red)" },
     { label: "Contenidos", to: "", available: false, color: "var(--brand-blue)" },
