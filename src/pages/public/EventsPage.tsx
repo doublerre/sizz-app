@@ -2,43 +2,9 @@ import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getEvents, type ApiEvent } from "@/services/eventsApi";
-import { categories, type CategoryStyle } from "@/data/eventCategories";
-
-// Colores disponibles para categorías que no están en la lista
-const palette = [
-    "var(--brand-blue)",
-    "var(--brand-purple)",
-    "var(--brand-green)",
-    "var(--brand-yellow)",
-    "var(--brand-red-light)",
-];
-
-function normalize(text: string): string {
-    return text
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-}
-
-// Convierte el nombre de la categoría en un número y lo usa para elegir
-// un color de la paleta
-function fallbackColor(category: string): string {
-    let hash = 0;
-    for (const char of category) {
-        hash = (hash * 31 + char.charCodeAt(0)) % 1000003;
-    }
-    return palette[hash % palette.length];
-}
-
-// Busca la categoría sin importar acentos ni mayúsculas.
-function getCategoryStyle(category: string | null): CategoryStyle {
-    const name = category ?? "General";
-    const found = categories.find((c) => normalize(c.name) === normalize(name));
-    return found ?? { name, color: fallbackColor(name), icon: Sparkles };
-}
+import { getCategoryStyle, normalize } from "@/data/eventCategories";
 
 
 function formatDate(iso: string | null): string {

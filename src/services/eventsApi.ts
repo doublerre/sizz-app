@@ -22,6 +22,14 @@ export async function getEvents(): Promise<ApiEvent[]> {
     return response.json();
 }
 
+export async function getEvent(id: string): Promise<ApiEvent> {
+    const response = await fetch(`/api/events/${id}`);
+    if (!response.ok) {
+        throw new Error("No se pudo cargar el evento");
+    }
+    return response.json();
+}
+
 // Lo que se manda al crear un evento (coincide con EventRequest del backend)
 export type EventPayload = {
     title: string;

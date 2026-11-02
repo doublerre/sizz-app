@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
 import EventsPage from "@/pages/public/EventsPage";
+import EventDetailPage from "@/pages/public/EventDetailPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -27,6 +28,7 @@ export default function AppRouter() {
             <Route path="/" element={<HomePage />} />
             <Route element={<PublicLayout />}>
                 <Route path="/eventos" element={<EventsPage />} />
+                <Route path="/eventos/:id" element={<EventDetailPage />} />
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
@@ -37,7 +39,7 @@ export default function AppRouter() {
                 <Route path="/app" element={<AppLayout />}>
                     <Route index element={<Navigate to="eventos" replace/>}/>
                     <Route path="reservaciones" element={<ReservationsPage />} />
-                    //<Route path="eventos" element={<EventsAdminPage />} />
+                    <Route path="eventos" element={<EventsAdminPage />} />
                 </Route>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
