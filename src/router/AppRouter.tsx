@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
 import EventsPage from "@/pages/public/EventsPage";
 import LoginPage from "@/pages/public/LoginPage";
@@ -35,8 +35,9 @@ export default function AppRouter() {
             {/* Solo ADMIN */}
             <Route element={<PrivateRoute requiredRole="ADMIN" />}>
                 <Route path="/app" element={<AppLayout />}>
+                    <Route index element={<Navigate to="eventos" replace/>}/>
                     <Route path="reservaciones" element={<ReservationsPage />} />
-                    <Route path="eventos" element={<EventsAdminPage />} />
+                    //<Route path="eventos" element={<EventsAdminPage />} />
                 </Route>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />

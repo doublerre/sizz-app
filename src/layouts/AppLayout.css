@@ -1,21 +1,26 @@
-.layout {
+.admin-layout {
     display: flex;
 }
 
-.sidebar {
+.admin-sidebar {
     width: 260px;
     background-color: var(--bg-surface);
     border-right: 1px var(--border-default) solid;
     padding: 0 12px;
     display: flex;
     flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    align-self: flex-start;
 }
 
-.content {
+.admin-content {
     flex: 1;
 }
 
-.sidebar-item {
+.admin-sidebar-item {
     height: 48px;
     padding: 0 8px;
     font-size: 15px;
@@ -26,7 +31,7 @@
     align-items: center;
 }
 
-.sidebar-group {
+.admin-sidebar-group {
     font-size: 12px;
     font-weight: 700;
     color: var(--text-muted);
@@ -35,34 +40,34 @@
     margin: 24px 0 8px;
 }
 
-.sidebar-item-disable {
+.admin-sidebar-item-disabled {
     color: var(--text-muted);
     cursor: not-allowed;
 }
 
-.sidebar-item.active {
+.admin-sidebar-item.active {
     background-color: var(--bg-item-active);
     color: var(--text-item-active);
     border-radius: 8px;
 }
 
-.sidebar-item:hover {
+.admin-sidebar-item:hover {
     background-color: var(--bg-canvas);
 }
 
-.sidebar-item-disable:hover {
+.admin-sidebar-item-disabled:hover {
     background-color: transparent;
 }
 
-.sidebar-header {
+.admin-sidebar-header {
     padding: 24px 16px;
 }
 
-.sidebar-header img {
+.admin-sidebar-header img {
     width: 100%;
 }
 
-.sidebar-dot {
+.admin-sidebar-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -70,7 +75,7 @@
     flex-shrink: 0;
 }
 
-.sidebar-user {
+.admin-sidebar-user {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -83,7 +88,7 @@
     color: var(--text-muted);
 }
 
-.sidebar-avatar {
+.admin-sidebar-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -92,4 +97,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+.admin-sidebar-user > div:last-child {
+    min-width: 0;
+}
+
+/* Un correo largo se recorta con "…" */
+.admin-sidebar-user-email {
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-sidebar-logout {
+    margin: 8px 0 16px;
+    padding: 10px;
+    background: none;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.admin-sidebar-logout:hover {
+    background-color: var(--bg-item-active);
 }

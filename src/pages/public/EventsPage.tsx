@@ -2,21 +2,9 @@ import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
-import { Atom, Orbit, ScanEye, Baby, TreePine, Share2, Sparkles, ArrowRight } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { getEvents, type ApiEvent } from "@/services/eventsApi";
-
-// Categorías del diseño con su color y su ícono.
-type CategoryStyle = { name: string; color: string; icon: LucideIcon };
-
-const categories: CategoryStyle[] = [
-    { name: "Física", color: "var(--brand-blue)", icon: Atom },
-    { name: "Astronomía", color: "var(--brand-green)", icon: Orbit },
-    { name: "Óptica", color: "var(--brand-red-light)", icon: ScanEye },
-    { name: "Infantil", color: "var(--brand-yellow)", icon: Baby },
-    { name: "Ambiente", color: "var(--brand-teal)", icon: TreePine },
-    { name: "Tecnología", color: "var(--brand-purple)", icon: Share2 },
-];
+import { categories, type CategoryStyle } from "@/data/eventCategories";
 
 // Colores disponibles para categorías que no están en la lista
 const palette = [
@@ -27,9 +15,6 @@ const palette = [
     "var(--brand-red-light)",
 ];
 
-// Quita acentos y mayusculas para comprobar textos y
-// quedan iguales. normalize("NFD") separa cada letra de su acento y el
-// replace borra los acentos sueltos.
 function normalize(text: string): string {
     return text
         .normalize("NFD")
@@ -55,8 +40,7 @@ function getCategoryStyle(category: string | null): CategoryStyle {
     return found ?? { name, color: fallbackColor(name), icon: Sparkles };
 }
 
-// La API entrega la fecha y la hora juntas en un solo texto ISO.
-// El navegador la convierte a la zona horaria de quien la ve.
+
 function formatDate(iso: string | null): string {
     if (!iso) return "Fecha por definir";
     const date = new Date(iso);
@@ -80,8 +64,7 @@ export default function EventsPage() {
 
     // Carga única al abrir la página ([] = sin dependencias)
     useEffect(() => {
-        // Si el usuario sale de la página antes de que responda la API,
-        // no se actualiza el estado de un componente que ya no existe
+        // Si el usuario sale de la página antes de que responda la API no se actualiza
         let cancelled = false;
 
         getEvents()
