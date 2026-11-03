@@ -1,98 +1,86 @@
 import axios from "axios";
+import type { TokenResponse } from "./auth.service";
 
 const api = axios.create({
-    baseURL: "/api",
-    headers: { "Content-Type": "application/json" },
+  baseURL: "/api",
+  headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("sizz_access_token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  const token = localStorage.getItem("sizz_access_token");
+  if (
+    token &&
+    !config.url?.startsWith("/auth/") &&
+    config.url !== "/scholarships/public-calls"
+  ) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
-let isRefreshing = false;
-let refreshQueue: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
+let refresh: { token: string; promise: Promise<TokenResponse> } | null = null;
 
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const original = error.config;
+  (response) => response,
+  async (error) => {
+    const original = error.config;
 
-        if (error.response?.status !== 401 || original._retry) {
-            return Promise.reject(error);
-        }
+    if (
+      error.response?.status !== 401 ||
+      !original ||
+      original._retry ||
+      original.url?.startsWith("/auth/") ||
+      original.url === "/scholarships/public-calls"
+    ) {
+      return Promise.reject(error);
+    }
 
-        // Tarea 6: los 401 de /auth/login y /auth/refresh no deben disparar refresh
-        if (original.url?.includes("/auth/login") || original.url?.includes("/auth/refresh")) {
-            return Promise.reject(error);
-        }
+    const refreshToken = localStorage.getItem("sizz_refresh_token");
+    if (!refreshToken) {
+      clearSessionAndRedirect();
+      return Promise.reject(error);
+    }
 
-        const refreshToken = localStorage.getItem("sizz_refresh_token");
-        if (!refreshToken) {
-            clearSessionAndRedirect();
-            return Promise.reject(error);
-        }
+    original._retry = true;
 
-        // Tarea 4+5: encolar con resolve Y reject, y marcar _retry antes de reintentar.
-        if (isRefreshing) {
-            return new Promise((resolve, reject) => {
-                refreshQueue.push({
-                    resolve: (newToken) => {
-                        original._retry = true;
-                        original.headers.Authorization = `Bearer ${newToken}`;
-                        resolve(api(original));
-                    },
-                    reject,
-                });
-            });
-        }
-
-        original._retry = true;
-        isRefreshing = true;
-
-        try {
-            const { data } = await axios.post(
-                "/api/auth/refresh",
-                { refreshToken },
-                { headers: { "Content-Type": "application/json" } }
-            );
-
-            // Tarea 3: Si logout() ocurrió durante la espera o el token cambió, descartar sin persistir ni reintentar
-            const currentRefreshToken = localStorage.getItem("sizz_refresh_token");
-            if (!currentRefreshToken || currentRefreshToken !== refreshToken) {
-                const sessionDiscarded = new Error("Session ended or changed during refresh");
-                refreshQueue.forEach(({ reject }) => reject(sessionDiscarded));
-                refreshQueue = [];
-                return Promise.reject(sessionDiscarded);
-            }
-
+    try {
+      if (refresh?.token !== refreshToken) {
+        const promise: Promise<TokenResponse> = axios
+          .post<TokenResponse>(
+            "/api/auth/refresh",
+            { refreshToken },
+            { headers: { "Content-Type": "application/json" } },
+          )
+          .then(({ data }) => {
+            if (localStorage.getItem("sizz_refresh_token") !== refreshToken)
+              throw new Error("La sesión cambió durante la renovación.");
             localStorage.setItem("sizz_access_token", data.accessToken);
             localStorage.setItem("sizz_refresh_token", data.refreshToken);
+            return data;
+          })
+          .finally(() => {
+            if (refresh?.promise === promise) refresh = null;
+          });
+        refresh = { token: refreshToken, promise };
+      }
+      const data = await refresh.promise;
+      if (localStorage.getItem("sizz_access_token") !== data.accessToken)
+        throw new Error("La sesión cambió antes de reintentar la solicitud.");
 
-            refreshQueue.forEach(({ resolve }) => resolve(data.accessToken));
-            refreshQueue = [];
-
-            original.headers.Authorization = `Bearer ${data.accessToken}`;
-            return api(original);
-        } catch (refreshError) {
-            // Tarea 4: rechazar todas las solicitudes en cola antes de vaciarla.
-            refreshQueue.forEach(({ reject }) => reject(refreshError));
-            refreshQueue = [];
-            clearSessionAndRedirect();
-            return Promise.reject(error);
-        } finally {
-            isRefreshing = false;
-        }
+      original.headers.Authorization = `Bearer ${data.accessToken}`;
+      return api(original);
+    } catch {
+      if (localStorage.getItem("sizz_refresh_token") === refreshToken)
+        clearSessionAndRedirect();
+      return Promise.reject(error);
     }
+  },
 );
 
 function clearSessionAndRedirect() {
-    localStorage.removeItem("sizz_access_token");
-    localStorage.removeItem("sizz_refresh_token");
-    window.location.href = "/login";
+  localStorage.removeItem("sizz_access_token");
+  localStorage.removeItem("sizz_refresh_token");
+  window.location.href = "/login";
 }
 
 export default api;

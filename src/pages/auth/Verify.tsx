@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { isAxiosError } from "axios"
 import { AuthBanner } from "../../components/AuthBanner"
 import { authService } from "../../services/auth.service"
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/useAuth"
 import "../../General.css"
 import "../auth/Register.css"
 import "./Verify.css"
@@ -94,10 +94,8 @@ export default function Verify() {
                 code,
                 role: state.role,
             })
-            // GUIDE no tiene acceso a /app (requiere ADMIN); usamos los claims
-            // recién devueltos para decidir y enviamos USER y GUIDE a la misma
-            // ruta autenticada disponible para ambos roles.
-            navigate(claims.role === "ADMIN" ? "/app" : "/cuenta/reservaciones", { replace: true })
+            // La API determina el rol de la cuenta registrada.
+            navigate(claims.role === "ADMIN" || claims.role === "SCHOLARSHIP_MANAGER" ? "/app/becas" : claims.role === "GUIDE" ? "/cuenta/becas/horas" : "/cuenta/reservaciones", { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

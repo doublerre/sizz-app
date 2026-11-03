@@ -11,28 +11,33 @@
 }
 
 .history-header {
-  background: #fff;
+  background-color: #ffffff;
   padding: 1.25rem 2rem 1.15rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
   border-bottom: none;
+  box-shadow: none;
 }
 
 .history-header h1 {
   margin: 0;
-  color: var(--color-text-dark);
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  color: var(--color-text-dark);
   line-height: 1.25;
 }
 
 .history-header p {
-  margin-top: 0.35rem;
-  color: #8b9bb0;
-  font-size: 0.72rem;
+  margin: 0.15rem 0 0 0;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
 }
 
 .history-body {
+  width: 100%;
   padding: 1.5rem 2rem 2rem;
-  max-width: 980px;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 /*  Tarjetas de estadísticas */
@@ -99,9 +104,10 @@
 }
 .history-panel {
   background: #fff;
-  border: 1px solid #edf1f5;
+  border: 1px solid rgba(120, 141, 164, 0.18);
   border-radius: 15px;
   overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(120, 141, 164, 0.04);
 }
 
 .history-filters {
@@ -109,6 +115,7 @@
   grid-template-columns: 1.45fr 0.9fr 0.9fr auto;
   gap: 0.7rem;
   align-items: end;
+  min-height: 138px;
   padding: 1.15rem 1.25rem 1.25rem;
 }
 
@@ -117,6 +124,23 @@
   flex-direction: column;
   gap: 0.3rem;
   min-width: 0;
+}
+
+.history-date-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.history-date-filter > span {
+  color: #73869e;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.history-date-filter .calendar-filter {
+  width: 100%;
 }
 
 .history-filters label > span {
@@ -180,6 +204,7 @@
 /*Tabla*/
 .history-table-wrap {
   overflow-x: auto;
+  min-height: 280px;
 }
 
 .history-table {
@@ -300,16 +325,23 @@
   padding: 0 0.15rem;
 }
 
-/*
-   Responsive
- */
 @media (max-width: 1024px) {
   .history-header {
-    width: calc(100% - 4.5rem);
-    margin-left: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0.85rem 1rem 1rem 4.5rem;
     box-sizing: border-box;
   }
 
+  .history-header h1 {
+    line-height: 1.1;
+  }
+}
+
+/* Tablet (≤ 860px) */
+@media (max-width: 860px) {
   .history-body {
     padding: 1rem;
   }
@@ -333,17 +365,18 @@
   }
 }
 
-@media (max-width: 640px) {
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
   .history-main {
-    padding: 1rem;
+    padding: 0rem;
   }
 
   .history-header {
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1rem 1rem 4.5rem;
   }
 
   .history-body {
-    padding: 0 0 1.5rem;
+    padding: 0 1rem 1.5rem;
   }
 
   .history-filters {

@@ -334,16 +334,6 @@
 
 
 
-/* Tablet grande (≤ 1024px) */
-@media (max-width: 1024px) {
-    .register-right {
-        padding: 2.5rem 3%;
-    }
-    .register-card {
-        max-width: 520px;
-    }
-}
-
 /* Tablet (≤ 860px): layout apilado */
 @media (max-width: 860px) {
     .login-wrapper {
@@ -382,8 +372,8 @@
     }
 }
 
-/* Móvil pequeño (≤ 480px) */
-@media (max-width: 480px) {
+/* Móvil pequeño (≤ 400px) */
+@media (max-width: 400px) {
     .register-right {
         padding: 1.5rem 1rem;
     }

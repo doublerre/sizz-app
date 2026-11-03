@@ -228,3 +228,14 @@
     color: var(--text-muted);
     padding: 48px 0;
 }
+
+/* Móvil (≤ 540px) */
+@media (max-width: 540px) {
+    .events-grid {
+        padding: 16px;
+    }
+
+    .events-header {
+        padding: 40px 16px;
+    }
+}
