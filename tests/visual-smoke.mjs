@@ -16,6 +16,7 @@ const modalityTest = process.argv.includes("--modalities");
 const publicCallsTest = process.argv.includes("--public-calls");
 const reviewTest = process.argv.includes("--review-regressions");
 const mergeAuthTest = process.argv.includes("--merge-auth");
+const imageFormatsTest = process.argv.includes("--image-formats");
 const bootstrapRefreshes = [];
 let rejectAttendance = false;
 const pauseTest = process.argv.includes("--pause");
@@ -49,12 +50,12 @@ const field = (key, label, type, extra = {}) => ({
   ...extra,
 });
 const fields = [
-  field("university", "Institución educativa", "SHORT_TEXT"),
-  field("career", "Carrera o área de estudio", "SHORT_TEXT"),
+  field("university", "InstituciÃ³n educativa", "SHORT_TEXT"),
+  field("career", "Carrera o Ã¡rea de estudio", "SHORT_TEXT"),
   field("semester", "Semestre actual", "NUMBER", { minValue: 1, maxValue: 12 }),
   field("hours", "Disponibilidad semanal", "NUMBER"),
-  field("motivation", "¿Por qué quieres ser guía Zigzag?", "PARAGRAPH"),
-  field("id_document", "Identificación oficial", "FILE", {
+  field("motivation", "Â¿Por quÃ© quieres ser guÃ­a Zigzag?", "PARAGRAPH"),
+  field("id_document", "IdentificaciÃ³n oficial", "FILE", {
     allowedFileTypes: ["PDF", "IMAGE"],
   }),
 ];
@@ -71,7 +72,7 @@ const examVersion = {
   fields: [
     field(
       "science",
-      "¿Qué instrumento permite observar objetos muy pequeños?",
+      "Â¿QuÃ© instrumento permite observar objetos muy pequeÃ±os?",
       "SINGLE_SELECT",
       {
         correctAnswer: "microscope",
@@ -87,14 +88,14 @@ const examVersion = {
 const forms = [
   {
     id: "form-1",
-    name: "Postulación para guías",
+    name: "PostulaciÃ³n para guÃ­as",
     purpose: "APPLICATION",
     active: true,
     versions: [version],
   },
   {
     id: "exam-form",
-    name: "Evaluación de ciencia",
+    name: "EvaluaciÃ³n de ciencia",
     purpose: "EXAM",
     active: true,
     versions: [examVersion],
@@ -103,14 +104,14 @@ const forms = [
 const category = {
   id: "category-1",
   code: "A",
-  name: "Categoría A",
+  name: "CategorÃ­a A",
   monthlyAmount: 6000,
   monthlyHours: 60,
   active: true,
 };
 const period = {
   id: "period-1",
-  name: "Enero – Junio 2027",
+  name: "Enero â€“ Junio 2027",
   startDate: "2027-01-01",
   endDate: "2027-06-30",
   active: true,
@@ -118,7 +119,7 @@ const period = {
 const call = {
   id: "call-1",
   periodId: period.id,
-  name: "Guías de verano 2027",
+  name: "GuÃ­as de verano 2027",
   opensOn: "2026-10-01",
   closesOn: "2026-12-18",
   durationMonths: 6,
@@ -140,11 +141,11 @@ const application = {
   submittedAt: "2026-10-02T10:42:00Z",
   form: version,
   answers: {
-    university: "Universidad Autónoma de Zacatecas",
-    career: "Comunicación",
+    university: "Universidad AutÃ³noma de Zacatecas",
+    career: "ComunicaciÃ³n",
     semester: 6,
     hours: 20,
-    motivation: "Me interesa acercar la ciencia a niñas, niños y familias.",
+    motivation: "Me interesa acercar la ciencia a niÃ±as, niÃ±os y familias.",
   },
   files: [
     {
@@ -163,15 +164,15 @@ const applicants = [
   {
     application,
     studentId: "student-1",
-    firstName: "María",
-    lastName: "Hernández",
+    firstName: "MarÃ­a",
+    lastName: "HernÃ¡ndez",
     email: "maria@example.test",
   },
   {
     application: { ...application, id: "application-2", status: "SUBMITTED" },
     studentId: "student-2",
     firstName: "Carlos",
-    lastName: "Pérez",
+    lastName: "PÃ©rez",
     email: "carlos@example.test",
   },
 ];
@@ -270,7 +271,7 @@ const routes = new Map([
       {
         id: "session-1",
         callId: call.id,
-        name: "Acción Reacción",
+        name: "AcciÃ³n ReacciÃ³n",
         weight: 100,
         presentCount: 1,
       },
@@ -282,8 +283,8 @@ const routes = new Map([
       {
         studentId: "student-1",
         email: applicants[0].email,
-        firstName: "María",
-        lastName: "Hernández",
+        firstName: "MarÃ­a",
+        lastName: "HernÃ¡ndez",
         markedAt: application.createdAt,
       },
     ],
@@ -300,7 +301,7 @@ const routes = new Map([
           applicationId: application.id,
           studentId: "student-2",
           firstName: "Carlos",
-          lastName: "Pérez",
+          lastName: "PÃ©rez",
           examPercent: 90,
           attendancePercent: 100,
           finalPercent: 93,
@@ -351,7 +352,7 @@ if (pauseTest) {
     ...category,
     id: "category-2",
     code: "B",
-    name: "Categoría B",
+    name: "CategorÃ­a B",
   };
   routes.get("/api/scholarships/categories").push(extra);
   call.categories.push(extra);
@@ -452,7 +453,7 @@ const server = createServer(async (request, response) => {
       if (url.pathname === failingRead) {
         response.writeHead(500, { "Content-Type": "application/json" }).end(
           JSON.stringify({
-            message: "Ocurrió un error interno. Intenta de nuevo más tarde.",
+            message: "OcurriÃ³ un error interno. Intenta de nuevo mÃ¡s tarde.",
           }),
         );
         return;
@@ -623,27 +624,27 @@ await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const port = server.address().port;
 const screens = [
   ["/becas", "Convocatorias abiertas", "calls"],
-  ["/becas/call-1", "Guías de verano 2027", "detail"],
+  ["/becas/call-1", "GuÃ­as de verano 2027", "detail"],
   [
     "/cuenta/becas/application-1/editar",
-    "Completa tu postulación",
+    "Completa tu postulaciÃ³n",
     "application",
   ],
-  ["/cuenta/becas/application-1", "Estado de tu postulación", "status"],
+  ["/cuenta/becas/application-1", "Estado de tu postulaciÃ³n", "status"],
   [
     "/cuenta/becas/application-1/examenes",
     "Evaluaciones de la convocatoria",
     "exam",
   ],
   ["/cuenta/becas/horas", "Mis horas y becas", "guide-hours"],
-  ["/app/becas", "Convocatorias para guías", "admin-calls"],
+  ["/app/becas", "Convocatorias para guÃ­as", "admin-calls"],
   ["/app/becas/nueva", "Editor de convocatoria", "admin-new"],
   ["/app/becas/call-1/editar", "Editor de convocatoria", "admin-editor"],
-  ["/app/becas/formularios/nuevo", "Formularios y exámenes", "form-builder"],
-  ["/app/becas/formularios/form-1", "Formularios y exámenes", "form-existing"],
-  ["/app/becas/catalogos", "Periodos y categorías", "catalogs"],
+  ["/app/becas/formularios/nuevo", "Formularios y exÃ¡menes", "form-builder"],
+  ["/app/becas/formularios/form-1", "Formularios y exÃ¡menes", "form-existing"],
+  ["/app/becas/catalogos", "Periodos y categorÃ­as", "catalogs"],
   ["/app/becas/call-1/postulaciones", "Postulaciones", "admin-applications"],
-  ["/app/becas/call-1/evaluacion", "Evaluación y otorgamiento", "evaluation"],
+  ["/app/becas/call-1/evaluacion", "EvaluaciÃ³n y otorgamiento", "evaluation"],
   ["/app/becas/call-1/horas", "Horas y becas", "admin-hours"],
 ];
 let browserProcess;
@@ -800,7 +801,38 @@ try {
     }
     assert.fail("Toast entrance animation did not finish");
   }
-  if (mergeAuthTest) {
+  if (imageFormatsTest) {
+    function allowsImages(accept) {
+      for (const type of ["image/jpeg", "image/png", "image/gif", "image/webp"])
+        assert.ok(
+          accept.split(",").includes(type),
+          `File picker must allow ${type}`,
+        );
+    }
+    await render("/cuenta/becas/application-1/editar", 1440);
+    await evaluate(`[...document.querySelectorAll('.sch-steps button')].find(b=>b.textContent.includes('Documentos')).click()`);
+    allowsImages(
+      await evaluate(`document.querySelector('input[type=file]').accept`),
+    );
+    await render("/app/becas/formularios/form-1", 1440);
+    assert.ok(
+      await evaluate(
+        `document.body.textContent.includes('JPG / PNG / GIF / WebP')`,
+      ),
+    );
+    await evaluate(
+      `[...document.querySelectorAll('button')].find(b=>b.textContent==='Vista previa').click()`,
+    );
+    allowsImages(
+      await evaluate(`document.querySelector('input[type=file]').accept`),
+    );
+    assert.ok(
+      await evaluate(
+        `document.querySelector('input[type=file]').parentElement.textContent.includes('JPG / PNG / GIF / WebP')`,
+      ),
+    );
+    console.log("PASS GIF/WebP in document picker, form builder and preview");
+  } else if (mergeAuthTest) {
     await render("/cuenta/becas/horas?qa-role=NONE&qa-bootstrap=merge-guide-refresh", 1440);
     assert.equal(await evaluate(`location.pathname`), "/cuenta/becas/horas", "Bootstrap refresh must complete before the route guard redirects");
     assert.equal(await evaluate(`localStorage.getItem('sizz_refresh_token')`), "merge-rotated-refresh");
@@ -844,7 +876,7 @@ try {
       );
     }
     await evaluate(
-      `localStorage.setItem('sizz_refresh_token','logout-test-refresh');[...document.querySelectorAll('a')].find(link=>link.textContent==='Cerrar sesión').click()`,
+      `localStorage.setItem('sizz_refresh_token','logout-test-refresh');[...document.querySelectorAll('a')].find(link=>link.textContent==='Cerrar sesiÃ³n').click()`,
     );
     await new Promise((resolve) => setTimeout(resolve, 100));
     assert.equal(await evaluate(`location.pathname`), "/login");
@@ -894,7 +926,7 @@ try {
     );
     async function canConfigure() {
       return evaluate(
-        `![...document.querySelectorAll('button')].find(button=>button.textContent==='Agregar sesión').disabled`,
+        `![...document.querySelectorAll('button')].find(button=>button.textContent==='Agregar sesiÃ³n').disabled`,
       );
     }
     assert.equal(await canConfigure(), true);
@@ -982,12 +1014,12 @@ try {
       );
       assert.ok(
         await evaluate(
-          `document.querySelector('h1').textContent.includes('Guías de verano')`,
+          `document.querySelector('h1').textContent.includes('GuÃ­as de verano')`,
         ),
       );
       assert.ok(
         await evaluate(
-          `[...document.querySelectorAll('a')].some(link=>link.textContent==='Iniciar sesión para postularme' && link.getAttribute('href')==='/login')`,
+          `[...document.querySelectorAll('a')].some(link=>link.textContent==='Iniciar sesiÃ³n para postularme' && link.getAttribute('href')==='/login')`,
         ),
       );
     }
@@ -1002,7 +1034,7 @@ try {
       "Anonymous browsing never reads private applications",
     );
     await evaluate(
-      `[...document.querySelectorAll('a')].find(link=>link.textContent==='Iniciar sesión para postularme').click()`,
+      `[...document.querySelectorAll('a')].find(link=>link.textContent==='Iniciar sesiÃ³n para postularme').click()`,
     );
     await new Promise((resolve) => setTimeout(resolve, 100));
     assert.equal(await evaluate(`location.pathname`), "/login");
@@ -1039,11 +1071,11 @@ try {
         await evaluate(
           `document.querySelector('.sch-call-card strong').textContent`,
         ),
-        "Nuevo ingreso · Renovación",
+        "Nuevo ingreso Â· RenovaciÃ³n",
       );
       assert.equal(
         await evaluate(
-          `document.querySelector('.sch-call-card').textContent.includes('Para tu postulación:')`,
+          `document.querySelector('.sch-call-card').textContent.includes('Para tu postulaciÃ³n:')`,
         ),
         false,
         "Public cards show modalities without exposing personal history",
@@ -1085,7 +1117,7 @@ try {
     await render("/becas/call-1", 1440);
     assert.ok(
       await evaluate(
-        `document.body.textContent.includes('Modalidades de la convocatoria') && document.body.textContent.includes('Nuevo ingreso · Renovación')`,
+        `document.body.textContent.includes('Modalidades de la convocatoria') && document.body.textContent.includes('Nuevo ingreso Â· RenovaciÃ³n')`,
       ),
     );
     routes.get("/api/scholarships/open-calls")[0].applicationType = "RENEWAL";
@@ -1101,7 +1133,7 @@ try {
     await render("/becas/call-1", 1440);
     assert.ok(
       await evaluate(
-        `document.querySelector('.sch-option strong').textContent==='Renovación'`,
+        `document.querySelector('.sch-option strong').textContent==='RenovaciÃ³n'`,
       ),
     );
     console.log(
@@ -1169,7 +1201,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `document.querySelector('.toast-error').textContent.includes('Guarda los cambios de modalidades y categorías')`,
+        `document.querySelector('.toast-error').textContent.includes('Guarda los cambios de modalidades y categorÃ­as')`,
       ),
     );
     await evaluate(
@@ -1219,7 +1251,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `document.querySelector('.toast-error').textContent.includes('Selecciona al menos una modalidad y categoría.')`,
+        `document.querySelector('.toast-error').textContent.includes('Selecciona al menos una modalidad y categorÃ­a.')`,
       ),
     );
     assert.equal(
@@ -1520,7 +1552,7 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 100));
     [expected[0], expected[1]] = [expected[1], expected[0]];
     await evaluate(
-      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Publicar nueva versión').click()`,
+      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Publicar nueva versiÃ³n').click()`,
     );
     for (let attempt = 0; attempt < 50 && published.length === 0; attempt++)
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -1661,7 +1693,7 @@ try {
         await evaluate(
           `document.querySelector('.sch-tabs a.active').textContent`,
         ),
-        "Evaluación",
+        "EvaluaciÃ³n",
       );
       assert.equal(
         await evaluate(`document.querySelectorAll('.sch-nav-group').length`),
@@ -1674,7 +1706,7 @@ try {
     await render("/app/becas/call-1/evaluacion", 1440);
     assert.ok(
       await evaluate(
-        `document.querySelector('.toast-error').textContent.includes('Ocurrió un error interno')`,
+        `document.querySelector('.toast-error').textContent.includes('OcurriÃ³ un error interno')`,
       ),
     );
     assert.equal(
@@ -1694,7 +1726,7 @@ try {
       await evaluate(
         `document.querySelector('.toast-error strong').textContent`,
       ),
-      "Ocurrió un error",
+      "OcurriÃ³ un error",
       "Read failures must not be labeled as save failures",
     );
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -1722,7 +1754,7 @@ try {
     failingRead = meritPath;
     delayedRead = meritPath;
     await evaluate(
-      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Actualizar mérito').click()`,
+      `[...document.querySelectorAll('button')].find(button=>button.textContent==='Actualizar mÃ©rito').click()`,
     );
     assert.ok(
       await evaluate(
@@ -1732,7 +1764,7 @@ try {
     );
     assert.equal(
       await evaluate(
-        `[...document.querySelectorAll('.sch-notice')].some(node=>node.textContent==='Cargando…')`,
+        `[...document.querySelectorAll('.sch-notice')].some(node=>node.textContent==='Cargandoâ€¦')`,
       ),
       false,
     );
@@ -1806,7 +1838,7 @@ try {
         await evaluate(
           `document.querySelector('.sch-table-actions-trigger').textContent`,
         ),
-        "•••",
+        "â€¢â€¢â€¢",
       );
       assert.ok(
         await evaluate(
@@ -1976,14 +2008,14 @@ try {
         await evaluate(
           `[...document.querySelectorAll('.sch-steps button')].map(b=>b.textContent)`,
         ),
-        ["1 General", "2 Formularios de solicitud", "3 Publicación"],
+        ["1 General", "2 Formularios de solicitud", "3 PublicaciÃ³n"],
       );
       await evaluate(
         `document.querySelectorAll('.sch-steps button')[1].click()`,
       );
       assert.ok(
         await evaluate(
-          `document.body.textContent.includes('Identificación oficial')`,
+          `document.body.textContent.includes('IdentificaciÃ³n oficial')`,
         ),
       );
       assert.ok(
@@ -2155,7 +2187,7 @@ try {
     );
     assert.equal(
       await evaluate(
-        `[...document.querySelectorAll('button')].find(b=>b.textContent==='Agregar sesión').disabled`,
+        `[...document.querySelectorAll('button')].find(b=>b.textContent==='Agregar sesiÃ³n').disabled`,
       ),
       false,
     );
@@ -2163,7 +2195,7 @@ try {
       `(()=>{const select=document.querySelector('select');Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set.call(select,'exam-version');select.dispatchEvent(new Event('change',{bubbles:true}));})()`,
     );
     await evaluate(
-      `[...document.querySelectorAll('button')].find(b=>b.textContent==='Asignar evaluación').click()`,
+      `[...document.querySelectorAll('button')].find(b=>b.textContent==='Asignar evaluaciÃ³n').click()`,
     );
     for (let attempt = 0; attempt < 50 && callWrites.length < 2; attempt++)
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -2263,12 +2295,12 @@ try {
     );
     assert.ok(
       await evaluate(
-        `document.querySelector('input[type=file]').parentElement.textContent.includes('JPG / PNG · Máximo 10 MB')`,
+        `document.querySelector('input[type=file]').parentElement.textContent.includes('JPG / PNG Â· MÃ¡ximo 10 MB')`,
       ),
     );
     assert.ok(
       await evaluate(
-        `document.querySelector('input[type=file]').parentElement.textContent.includes('Identificación oficial *')`,
+        `document.querySelector('input[type=file]').parentElement.textContent.includes('IdentificaciÃ³n oficial *')`,
       ),
     );
     assert.equal(
@@ -2280,18 +2312,18 @@ try {
       `[...document.querySelectorAll('button')].find(b=>b.textContent==='Volver al editor').click()`,
     );
     await evaluate(
-      `(()=>{const input=document.querySelector('.sch-builder-field input');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'Institución actualizada');input.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+      `(()=>{const input=document.querySelector('.sch-builder-field input');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'InstituciÃ³n actualizada');input.dispatchEvent(new Event('input',{bubbles:true}));})()`,
     );
     await evaluate(
-      `[...document.querySelectorAll('button')].find(b=>b.textContent==='Publicar nueva versión').click()`,
+      `[...document.querySelectorAll('button')].find(b=>b.textContent==='Publicar nueva versiÃ³n').click()`,
     );
     for (let attempt = 0; attempt < 50 && published.length === 0; attempt++)
       await new Promise((resolve) => setTimeout(resolve, 50));
     assert.equal(published.length, 1);
-    assert.equal(published[0].fields[0].label, "Institución actualizada");
+    assert.equal(published[0].fields[0].label, "InstituciÃ³n actualizada");
     assert.equal(
       version.fields[0].label,
-      "Institución educativa",
+      "InstituciÃ³n educativa",
       "The previous version remains unchanged",
     );
     for (let attempt = 0; attempt < 50; attempt++) {

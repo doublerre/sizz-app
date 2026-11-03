@@ -55,13 +55,13 @@ export default function DynamicFields({
                       .map((type) =>
                         type === "PDF"
                           ? "application/pdf"
-                          : "image/jpeg,image/png",
+                          : "image/jpeg,image/png,image/gif,image/webp",
                       )
                       .join(",")}
                   />
                   <small>
                     {field.allowedFileTypes
-                      .map((type) => (type === "IMAGE" ? "JPG / PNG" : type))
+                      .map((type) => (type === "IMAGE" ? "JPG / PNG / GIF / WebP" : type))
                       .join(" / ")}{" "}
                     · Máximo {(field.maxFileBytes ?? 10485760) / 1048576} MB
                   </small>

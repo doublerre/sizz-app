@@ -589,7 +589,7 @@ export default function FormBuilder({
                               })
                             }
                           />
-                          {type === "IMAGE" ? "JPG / PNG" : "PDF"}
+                          {type === "IMAGE" ? "JPG / PNG / GIF / WebP" : "PDF"}
                         </label>
                       ))}
                     </fieldset>

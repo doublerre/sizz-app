@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-let refresh: Promise<TokenResponse> | null = null;
+let refresh: { token: string; promise: Promise<TokenResponse> } | null = null;
 
 api.interceptors.response.use(
   (response) => response,
@@ -44,8 +44,8 @@ api.interceptors.response.use(
     original._retry = true;
 
     try {
-      if (!refresh)
-        refresh = axios
+      if (refresh?.token !== refreshToken) {
+        const promise: Promise<TokenResponse> = axios
           .post<TokenResponse>(
             "/api/auth/refresh",
             { refreshToken },
@@ -59,9 +59,11 @@ api.interceptors.response.use(
             return data;
           })
           .finally(() => {
-            refresh = null;
+            if (refresh?.promise === promise) refresh = null;
           });
-      const data = await refresh;
+        refresh = { token: refreshToken, promise };
+      }
+      const data = await refresh.promise;
       if (localStorage.getItem("sizz_access_token") !== data.accessToken)
         throw new Error("La sesión cambió antes de reintentar la solicitud.");
 

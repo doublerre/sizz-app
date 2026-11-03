@@ -69,7 +69,7 @@ export function validateFile(
     (field.allowedFileTypes.includes("PDF") &&
       file.type === "application/pdf") ||
     (field.allowedFileTypes.includes("IMAGE") &&
-      ["image/jpeg", "image/png"].includes(file.type));
+      ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type));
   return allowed ? "" : "Selecciona un archivo del formato permitido.";
 }
 

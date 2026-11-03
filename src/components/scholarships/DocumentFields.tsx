@@ -105,7 +105,7 @@ export default function DocumentFields({
                       .map((type) =>
                         type === "PDF"
                           ? "application/pdf"
-                          : "image/jpeg,image/png",
+                          : "image/jpeg,image/png,image/gif,image/webp",
                       )
                       .join(",")}
                     onChange={async (e) => {

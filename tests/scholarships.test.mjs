@@ -150,6 +150,86 @@ test("login 401 is shown without refreshing or redirecting; stale token is exclu
   assert.equal(refreshCalls, 0);
   assert.equal(window.location.href, "");
 });
+
+for (const type of ["image/gif", "image/webp"]) {
+  test(`IMAGE accepts ${type} while keeping size and format restrictions`, () => {
+    const image = field("FILE", { allowedFileTypes: ["IMAGE"] });
+    assert.equal(validateFile(image, { type, size: 100 }), "");
+    assert.ok(validateFile(image, { type, size: 0 }));
+    assert.ok(validateFile(image, { type, size: 1025 }));
+    assert.ok(validateFile(field("FILE"), { type, size: 100 }));
+    assert.ok(validateFile(image, { type: "image/svg+xml", size: 100 }));
+  });
+}
+
+for (const fails of [false, true]) {
+  test(`overlapping sessions keep refreshes isolated when the old refresh ${fails ? "fails" : "succeeds"}`, async () => {
+    const pending = new Map();
+    const calls = [];
+    const requests = [];
+    axios.defaults.adapter = (config) => {
+      const { refreshToken } = JSON.parse(config.data);
+      calls.push(refreshToken);
+      return new Promise((resolve, reject) =>
+        pending.set(refreshToken, () => {
+          if (fails && refreshToken === "test-refresh-token")
+            reject(unauthorized(config));
+          else
+            resolve({
+              ...ok(config),
+              data: {
+                accessToken: `${refreshToken}-access`,
+                refreshToken: `${refreshToken}-rotated`,
+              },
+            });
+        }),
+      );
+    };
+    api.defaults.adapter = async (config) => {
+      if (!config._retry) throw unauthorized(config);
+      assert.equal(
+        config.headers.Authorization,
+        "Bearer new-login-refresh-access",
+      );
+      return ok(config);
+    };
+    try {
+      const old = assert.rejects(api.get("/scholarships/calls"));
+      requests.push(old);
+      await new Promise(setImmediate);
+      localStorage.setItem("sizz_access_token", "new-login-access");
+      localStorage.setItem("sizz_refresh_token", "new-login-refresh");
+      const current = api.get("/scholarships/forms");
+      requests.push(current);
+      await new Promise(setImmediate);
+      assert.deepEqual(calls, ["test-refresh-token", "new-login-refresh"]);
+      pending.get("test-refresh-token")();
+      await old;
+      assert.equal(
+        localStorage.getItem("sizz_refresh_token"),
+        "new-login-refresh",
+      );
+      const sameSession = api.get("/scholarships/periods");
+      requests.push(sameSession);
+      await new Promise(setImmediate);
+      assert.equal(
+        calls.length,
+        2,
+        "The old finally must not discard the current shared refresh",
+      );
+      pending.get("new-login-refresh")();
+      await Promise.all([current, sameSession]);
+      assert.equal(
+        localStorage.getItem("sizz_refresh_token"),
+        "new-login-refresh-rotated",
+      );
+      assert.equal(window.location.href, "");
+    } finally {
+      for (const complete of pending.values()) complete();
+      await Promise.allSettled(requests);
+    }
+  });
+}
 test("public calls ignore stale credentials and never trigger authentication refresh", async () => {
   let refreshCalls = 0;
   axios.defaults.adapter = async (config) => {
