@@ -1,0 +1,814 @@
+.exp-page {
+    font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
+    text-align: left;
+    color: #1a1a2e;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* ── Hero Container ── */
+.exp-hero {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: 3.5rem;
+    padding: 5rem 4%;
+    min-height: 480px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #004F8F;
+}
+
+.exp-hero__col-text {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.exp-hero__eyebrow {
+    color: #F5A623;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 0.85rem;
+}
+
+.exp-hero__title {
+    font-size: clamp(2.4rem, 3.8vw, 3.6rem);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.15;
+    margin: 0 0 1.25rem;
+    letter-spacing: -0.5px;
+}
+
+.exp-hero__desc {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.6;
+    margin: 0 0 2.2rem;
+    max-width: 540px;
+}
+
+.exp-hero__btn-schedule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #F5A623;
+    border: 2px solid #F5A623;
+    color: #1A1A2E;
+    padding: 0.8rem 1.8rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.exp-hero__btn-schedule:hover {
+    background-color: #D48C0E;
+    border-color: #D48C0E;
+    transform: translateY(-1px);
+}
+
+/* ── Hero Card ── */
+.exp-hero__col-card {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.exp-hero__card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 2.2rem 2.2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    box-sizing: border-box;
+}
+
+.exp-hero__card-header {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.exp-hero__card-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background-color: #E6F0FA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0868B7;
+    flex-shrink: 0;
+}
+
+.exp-hero__card-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #718096;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+}
+
+.exp-hero__card-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.exp-hero__card-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.exp-hero__card-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+    color: #2D3748;
+    font-weight: 500;
+}
+
+.badge-check {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.badge-check svg path:last-child,
+.badge-check svg polyline {
+    stroke: white;
+}
+
+/* ── Sección Principal con Filtros y Grid ── */
+.exp-main-section {
+    padding: 4.5rem 4%;
+    position: relative;
+    overflow: hidden;
+    background-color: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.exp-bg-circle {
+    position: absolute;
+    top: -60px;
+    right: 5%;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 235, 180, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.exp-main-header {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2rem;
+}
+
+.exp-main-header__title {
+    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.3px;
+}
+
+.exp-main-header__desc {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ── Barra de Filtros ── */
+.exp-filters-bar {
+    position: relative;
+    z-index: 10;
+    background-color: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 0.65rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+}
+
+.exp-search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1 1 220px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.exp-search-box:focus-within {
+    border-color: #0868B7;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(8, 104, 183, 0.1);
+}
+
+.exp-search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #1A1A2E;
+    width: 100%;
+}
+
+.exp-search-input::placeholder {
+    color: #94A3B8;
+}
+
+/* Dropdowns */
+.exp-dropdown {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.exp-dropdown__btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1A1A2E;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.exp-dropdown__btn:hover {
+    border-color: #CBD5E1;
+    background-color: #F8FAFC;
+}
+
+.exp-dropdown__btn.active {
+    border-color: #0868B7;
+    color: #0868B7;
+}
+
+.exp-dropdown__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 190px;
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 0;
+    z-index: 50;
+    list-style: none;
+    margin: 0;
+}
+
+.exp-dropdown__item {
+    padding: 0.55rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #2D3748;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.exp-dropdown__item:hover {
+    background-color: #F1F5F9;
+    color: #0868B7;
+}
+
+.exp-dropdown__item.selected {
+    font-weight: 700;
+    color: #0868B7;
+    background-color: #EBF4FA;
+}
+
+.exp-filters-clear {
+    background: none;
+    border: none;
+    color: #0868B7;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.2s, opacity 0.2s;
+    margin-left: auto;
+}
+
+.exp-filters-clear:hover {
+    color: #004F8F;
+    text-decoration: underline;
+}
+
+.exp-count-label {
+    position: relative;
+    z-index: 1;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #718096;
+    margin-bottom: 2rem;
+}
+
+/* ── Grid de Experiencias ── */
+.exp-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.8rem;
+    margin-bottom: 3.5rem;
+}
+
+/* ── Tarjeta de Experiencia ── */
+.exp-card {
+    background-color: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #E8ECF0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-sizing: border-box;
+}
+
+.exp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(0, 79, 143, 0.12);
+}
+
+.exp-card__banner {
+    height: 145px;
+    position: relative;
+    overflow: hidden;
+    padding: 1.4rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+.exp-card__banner-circle {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.14);
+    pointer-events: none;
+}
+
+.exp-card__tag {
+    background-color: #ffffff;
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.exp-card__icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+
+/* Cuerpo de la tarjeta */
+.exp-card__body {
+    padding: 1.5rem 1.4rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.exp-card__title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+}
+
+.exp-card__desc {
+    font-size: 0.88rem;
+    color: #718096;
+    line-height: 1.55;
+    margin: 0 0 1.25rem;
+    min-height: 42px;
+}
+
+.exp-card__badges {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.exp-card__badge-age {
+    border-radius: 6px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.exp-card__badge-duration {
+    background-color: #F1F5F9;
+    color: #475569;
+    border-radius: 6px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.exp-card__footer {
+    padding: 1rem 1.4rem 1.25rem;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.exp-card__included {
+    color: #2EAF6B;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.exp-card__link {
+    color: #0868B7;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: gap 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.exp-card__link:hover {
+    color: #004F8F;
+    gap: 0.5rem;
+}
+
+/* ── Banner Inferior CTA (Todas las experiencias...) ── */
+.exp-cta-banner {
+    position: relative;
+    z-index: 1;
+    background-color: #EBF3FA;
+    border: 1px solid #D6E4F0;
+    border-radius: 18px;
+    padding: 1.6rem 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    box-sizing: border-box;
+}
+
+.exp-cta-banner__left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.exp-cta-banner__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #0868B7;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.exp-cta-banner__title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1A1A2E;
+    margin: 0;
+    line-height: 1.25;
+}
+
+.exp-cta-banner__subtitle {
+    font-size: 0.86rem;
+    color: #718096;
+    margin: 0.35rem 0 0;
+    line-height: 1.45;
+}
+
+.exp-cta-banner__btn {
+    background-color: #0868B7;
+    border: 2px solid #0868B7;
+    color: #ffffff;
+    padding: 0.75rem 1.8rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.exp-cta-banner__btn:hover {
+    background-color: #004F8F;
+    border-color: #004F8F;
+    transform: translateY(-1px);
+}
+
+/* ── Modal de Detalle de Experiencia ── */
+.exp-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(16, 36, 58, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.exp-modal {
+    background: #ffffff;
+    border-radius: 20px;
+    max-width: 550px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: expModalFadeIn 0.25s ease-out;
+}
+
+@keyframes expModalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.exp-modal__header {
+    padding: 2rem 2rem 1.5rem;
+    color: #ffffff;
+    position: relative;
+}
+
+.exp-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.exp-modal__close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.exp-modal__body {
+    padding: 1.8rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.exp-modal__title {
+    margin: 0 0 0.5rem;
+    padding-right: 2.5rem;       /* espacio para el botón de cerrar */
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.exp-modal__desc {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);   /* antes: gris oscuro sobre azul */
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.exp-modal__section-title {
+    margin: 0 0 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #718096;
+}
+
+.exp-modal__tariffs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.exp-modal__tariffs li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.92rem;
+    color: #2D3748;
+}
+
+.exp-modal__tariffs li + li {
+    border-top: 1px solid #F1F5F9;
+}
+
+.exp-modal__tariffs strong {
+    color: #1A1A2E;
+    font-weight: 800;
+}
+
+.exp-modal__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.exp-modal__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #2D3748;
+}
+
+/* ── Responsividad (Breakpoints) ── */
+@media (max-width: 1024px) {
+    .exp-hero {
+        padding: 4rem 4%;
+        gap: 2.5rem;
+    }
+    .exp-main-section {
+        padding: 3.5rem 4%;
+    }
+    .exp-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 860px) {
+    .exp-hero {
+        grid-template-columns: 1fr;
+        padding: 3.5rem 4%;
+        text-align: center;
+        justify-items: center;
+    }
+
+    .exp-hero__col-text {
+        align-items: center;
+        text-align: center;
+    }
+
+    .exp-hero__desc {
+        text-align: center;
+    }
+
+    .exp-hero__col-card {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .exp-hero__card {
+        max-width: 480px;
+    }
+
+    .exp-filters-bar {
+        flex-wrap: wrap;
+        padding: 1rem;
+    }
+
+    .exp-search-box {
+        flex: 1 1 100%;
+    }
+
+    .exp-dropdown {
+        flex: 1 1 auto;
+    }
+
+    .exp-dropdown__btn {
+        width: 100%;
+    }
+
+    .exp-filters-clear {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    .exp-cta-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem 1.5rem;
+    }
+
+    .exp-cta-banner__left {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .exp-cta-banner__btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .exp-grid {
+        grid-template-columns: 1fr;
+    }
+    .exp-hero {
+        padding: 2.5rem 1rem;
+    }
+    .exp-main-section {
+        padding: 2.5rem 1rem;
+    }
+}

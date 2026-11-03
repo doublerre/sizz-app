@@ -10,8 +10,9 @@ export interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
-  register: (payload: RegisterPayload) => Promise<void>;
+  register: (payload: RegisterPayload) => Promise<AuthUser>;
   logout: () => void;
 }
 export const AuthContext = createContext<AuthContextValue | null>(null);

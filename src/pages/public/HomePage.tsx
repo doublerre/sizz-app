@@ -55,6 +55,7 @@ function WhatCard({
     href,
     iconBg,
     linkColor,
+    disabled,
 }: {
     icon: React.ReactNode;
     title: string;
@@ -63,6 +64,7 @@ function WhatCard({
     href: string;
     iconBg?: string;
     linkColor?: string;
+    disabled?: boolean;
 }) {
     return (
         <div
@@ -112,25 +114,45 @@ function WhatCard({
             <p style={{ color: C.textMid, fontSize: "0.9rem", margin: 0, lineHeight: 1.6 }}>
                 {desc}
             </p>
-            <a
-                href={href}
-                style={{
-                    color: linkColor ?? C.blue,
-                    fontWeight: 600,
-                    fontSize: "0.88rem",
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.2rem",
-                    marginTop: "auto",
-                    paddingTop: "0.5rem",
-                    transition: "gap 0.2s",
-                }}
-                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.gap = "0.5rem")}
-                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.gap = "0.2rem")}
-            >
-                {linkText} <ChevronRight size={16} />
-            </a>
+            {disabled ? (
+                <span
+                    style={{
+                        color: C.textLight,
+                        fontWeight: 600,
+                        fontSize: "0.88rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem",
+                        marginTop: "auto",
+                        paddingTop: "0.5rem",
+                        cursor: "not-allowed",
+                        opacity: 0.6,
+                    }}
+                    title="Próximamente"
+                >
+                    {linkText}
+                </span>
+            ) : (
+                <a
+                    href={href}
+                    style={{
+                        color: linkColor ?? C.blue,
+                        fontWeight: 600,
+                        fontSize: "0.88rem",
+                        textDecoration: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem",
+                        marginTop: "auto",
+                        paddingTop: "0.5rem",
+                        transition: "gap 0.2s",
+                    }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.gap = "0.5rem")}
+                    onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.gap = "0.2rem")}
+                >
+                    {linkText} <ChevronRight size={16} />
+                </a>
+            )}
         </div>
     );
 }
@@ -154,6 +176,7 @@ function ExperienceCard({
     desc,
     btnText,
     href,
+    disabled,
 }: {
     color: string;
     icon: React.ReactNode;
@@ -161,6 +184,7 @@ function ExperienceCard({
     desc: string;
     btnText: string;
     href: string;
+    disabled?: boolean;
 }) {
     const compact = useIsCompact();
     const [open, setOpen] = useState(false);
@@ -209,26 +233,43 @@ function ExperienceCard({
                 <p style={{ fontSize: "0.88rem", margin: 0, opacity: 0.9, lineHeight: 1.6, flexGrow: 1 }}>
                     {desc}
                 </p>
-                <a
-                    href={href}
-                    style={{
-                        ...btnBase,
-                        border: "2px solid rgba(255,255,255,0.7)",
-                        backgroundColor: "transparent",
-                        color: "#fff",
-                        fontSize: "0.85rem",
-                        alignSelf: "flex-start",
-                        textDecoration: "none",
-                    }}
-                    onMouseEnter={e => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(255,255,255,0.2)";
-                    }}
-                    onMouseLeave={e => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
-                    }}
-                >
-                    {btnText}
-                </a>
+                {disabled ? (
+                    <span
+                        style={{
+                            ...btnBase,
+                            border: "2px solid rgba(255,255,255,0.4)",
+                            backgroundColor: "transparent",
+                            color: "rgba(255,255,255,0.6)",
+                            fontSize: "0.85rem",
+                            alignSelf: "flex-start",
+                            cursor: "not-allowed",
+                        }}
+                        title="Próximamente"
+                    >
+                        {btnText}
+                    </span>
+                ) : (
+                    <a
+                        href={href}
+                        style={{
+                            ...btnBase,
+                            border: "2px solid rgba(255,255,255,0.7)",
+                            backgroundColor: "transparent",
+                            color: "#fff",
+                            fontSize: "0.85rem",
+                            alignSelf: "flex-start",
+                            textDecoration: "none",
+                        }}
+                        onMouseEnter={e => {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(255,255,255,0.2)";
+                        }}
+                        onMouseLeave={e => {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+                        }}
+                    >
+                        {btnText}
+                    </a>
+                )}
             </div>
         );
     }
@@ -301,27 +342,45 @@ function ExperienceCard({
                     <p style={{ fontSize: "0.88rem", margin: 0, opacity: 0.9, lineHeight: 1.6 }}>
                         {desc}
                     </p>
-                    <a
-                        href={href}
-                        onClick={e => e.stopPropagation()}
-                        style={{
-                            ...btnBase,
-                            border: "2px solid rgba(255,255,255,0.7)",
-                            backgroundColor: "transparent",
-                            color: "#fff",
-                            fontSize: "0.85rem",
-                            alignSelf: "flex-start",
-                            textDecoration: "none",
-                        }}
-                        onMouseEnter={e => {
-                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(255,255,255,0.2)";
-                        }}
-                        onMouseLeave={e => {
-                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
-                        }}
-                    >
-                        {btnText}
-                    </a>
+                    {disabled ? (
+                        <span
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                                ...btnBase,
+                                border: "2px solid rgba(255,255,255,0.4)",
+                                backgroundColor: "transparent",
+                                color: "rgba(255,255,255,0.6)",
+                                fontSize: "0.85rem",
+                                alignSelf: "flex-start",
+                                cursor: "not-allowed",
+                            }}
+                            title="Próximamente"
+                        >
+                            {btnText}
+                        </span>
+                    ) : (
+                        <a
+                            href={href}
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                                ...btnBase,
+                                border: "2px solid rgba(255,255,255,0.7)",
+                                backgroundColor: "transparent",
+                                color: "#fff",
+                                fontSize: "0.85rem",
+                                alignSelf: "flex-start",
+                                textDecoration: "none",
+                            }}
+                            onMouseEnter={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(255,255,255,0.2)";
+                            }}
+                            onMouseLeave={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+                            }}
+                        >
+                            {btnText}
+                        </a>
+                    )}
                 </div>
             </div>
         </div>
@@ -590,17 +649,12 @@ export default function HomePage() {
                                     borderRadius: "12px",
                                     border: "none",
                                     backgroundColor: "#FFF9ED",
-                                    cursor: "pointer",
+                                    cursor: "not-allowed",
                                     transition: "all 0.2s",
+                                    opacity: 0.6,
                                 }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.backgroundColor = "#FFF0CC";
-                                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(245,166,35,0.2)";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.backgroundColor = "#FFF9ED";
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
+                                disabled
+                                title="Próximamente"
                             >
                                 <div
                                     style={{
@@ -634,17 +688,12 @@ export default function HomePage() {
                                     borderRadius: "12px",
                                     border: "none",
                                     backgroundColor: "#EDFAF3",
-                                    cursor: "pointer",
+                                    cursor: "not-allowed",
                                     transition: "all 0.2s",
+                                    opacity: 0.6,
                                 }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.backgroundColor = "#D4F4E3";
-                                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(46,175,107,0.2)";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.backgroundColor = "#EDFAF3";
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
+                                disabled
+                                title="Próximamente"
                             >
                                 <div
                                     style={{
@@ -694,8 +743,9 @@ export default function HomePage() {
                         icon={<User size={22} />}
                         title="Soy visitante"
                         desc="Consulta fechas, horarios y actividades disponibles antes de venir."
-                        linkText="Explorar experiencias"
-                        href="/experiencias"
+                        linkText="Próximamente"
+                        href="#"
+                        disabled
                     />
                     <WhatCard
                         icon={<Users size={22} color={C.green} />}
@@ -743,8 +793,9 @@ export default function HomePage() {
                         icon={<RobotArm size={24} color="#fff" />}
                         title="Experiencias interactivas"
                         desc="Salas y actividades para explorar la ciencia y la tecnología de forma participativa."
-                        btnText="Conocer más"
-                        href="/experiencias"
+                        btnText="Próximamente"
+                        href="#"
+                        disabled
                     />
                     <ExperienceCard
                         color={C.green}
@@ -900,15 +951,25 @@ export default function HomePage() {
                         </h5>
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                             {["Experiencias", "Eventos", "Reservaciones"].map(item => (
-                                <a
-                                    key={item}
-                                    href={`/${item.toLowerCase()}`}
-                                    style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "0.88rem", transition: "color 0.2s" }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
-                                >
-                                    {item}
-                                </a>
+                                item === "Eventos" ? (
+                                    <a
+                                        key={item}
+                                        href="/eventos"
+                                        style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "0.88rem", transition: "color 0.2s" }}
+                                        onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
+                                        onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+                                    >
+                                        {item}
+                                    </a>
+                                ) : (
+                                    <span
+                                        key={item}
+                                        style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.88rem", cursor: "not-allowed" }}
+                                        title="Próximamente"
+                                    >
+                                        {item}
+                                    </span>
+                                )
                             ))}
                         </div>
                     </div>

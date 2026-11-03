@@ -15,6 +15,8 @@ const calendarTest = process.argv.includes("--calendars");
 const modalityTest = process.argv.includes("--modalities");
 const publicCallsTest = process.argv.includes("--public-calls");
 const reviewTest = process.argv.includes("--review-regressions");
+const mergeAuthTest = process.argv.includes("--merge-auth");
+const bootstrapRefreshes = [];
 let rejectAttendance = false;
 const pauseTest = process.argv.includes("--pause");
 const activationWrites = [];
@@ -383,6 +385,19 @@ if (callFlow) {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url, "http://localhost");
   if (url.pathname.startsWith("/api/")) {
+    if (mergeAuthTest && request.method === "POST" && url.pathname === "/api/auth/refresh") {
+      let body = "";
+      for await (const chunk of request) body += chunk;
+      const { refreshToken } = JSON.parse(body);
+      bootstrapRefreshes.push(refreshToken);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      response.writeHead(refreshToken === "merge-guide-refresh" ? 200 : 401, { "Content-Type": "application/json" }).end(JSON.stringify(
+        refreshToken === "merge-guide-refresh"
+          ? { accessToken: fakeToken("GUIDE"), refreshToken: "merge-rotated-refresh", tokenType: "Bearer", expiresIn: 3600 }
+          : { message: "Invalid refresh token" }
+      ));
+      return;
+    }
     if (
       reviewTest &&
       request.method === "POST" &&
@@ -572,6 +587,10 @@ const server = createServer(async (request, response) => {
       };
       const token = `test.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.test`;
       const verifyRole = url.searchParams.get("qa-verify-role");
+      const bootstrap = url.searchParams.get("qa-bootstrap");
+      const bootstrapSetup = bootstrap
+        ? `localStorage.removeItem('sizz_access_token');localStorage.setItem('sizz_refresh_token',${JSON.stringify(bootstrap)});`
+        : "";
       const verifySetup = verifyRole
         ? `history.replaceState({usr:${JSON.stringify({ firstName: "Test", lastName: "Student", email: "verify@example.test", password: "TestOnly123!", role: verifyRole })}},'');`
         : "";
@@ -579,7 +598,7 @@ const server = createServer(async (request, response) => {
         .toString()
         .replace(
           "<head>",
-          `<head><script>${verifySetup}${role === "NONE" ? "localStorage.removeItem('sizz_access_token')" : `localStorage.setItem('sizz_access_token',${JSON.stringify(token)})`};window.__errors=[];addEventListener('error',e=>window.__errors.push(e.message));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));setTimeout(()=>{window.__qaResult={case:${JSON.stringify(url.searchParams.get("qa-case"))},viewport:innerWidth,path:location.pathname,heading:document.querySelector('h1')?.textContent,errors:window.__errors,overflow:document.documentElement.scrollWidth>innerWidth,logos:[...document.querySelectorAll('img')].map(img=>({loaded:img.complete&&img.naturalWidth>0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height}))}},1500)</script>`,
+          `<head><script>${verifySetup}${role === "NONE" ? "localStorage.removeItem('sizz_access_token');localStorage.removeItem('sizz_refresh_token')" : `localStorage.setItem('sizz_access_token',${JSON.stringify(token)})`};${bootstrapSetup}window.__errors=[];addEventListener('error',e=>window.__errors.push(e.message));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));setTimeout(()=>{window.__qaResult={case:${JSON.stringify(url.searchParams.get("qa-case"))},viewport:innerWidth,path:location.pathname,heading:document.querySelector('h1')?.textContent,errors:window.__errors,overflow:document.documentElement.scrollWidth>innerWidth,logos:[...document.querySelectorAll('img')].map(img=>({loaded:img.complete&&img.naturalWidth>0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height}))}},1500)</script>`,
         );
     }
     response
@@ -781,7 +800,18 @@ try {
     }
     assert.fail("Toast entrance animation did not finish");
   }
-  if (reviewTest) {
+  if (mergeAuthTest) {
+    await render("/cuenta/becas/horas?qa-role=NONE&qa-bootstrap=merge-guide-refresh", 1440);
+    assert.equal(await evaluate(`location.pathname`), "/cuenta/becas/horas", "Bootstrap refresh must complete before the route guard redirects");
+    assert.equal(await evaluate(`localStorage.getItem('sizz_refresh_token')`), "merge-rotated-refresh");
+    await render("/cuenta/becas/horas?qa-role=NONE&qa-bootstrap=merge-invalid-refresh", 1440);
+    assert.equal(await evaluate(`location.pathname`), "/login");
+    assert.equal(await evaluate(`localStorage.getItem('sizz_refresh_token')`), null);
+    assert.deepEqual(bootstrapRefreshes, ["merge-guide-refresh", "merge-invalid-refresh"]);
+    assert.equal((await render("/app/becas?qa-role=SCHOLARSHIP_MANAGER", 1440)).path, "/app/becas");
+    assert.equal((await render("/app/becas?qa-role=USER", 1440)).path, "/");
+    console.log("PASS merged auth: bootstrap refresh, failure cleanup and scholarship role guards");
+  } else if (reviewTest) {
     for (const width of [390, 540, 1440]) {
       await render("/cuenta/reservaciones?qa-role=USER", width);
       assert.equal(

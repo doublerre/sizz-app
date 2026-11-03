@@ -86,7 +86,7 @@ export default function Verify() {
         setApiError(null)
         setIsLoading(true)
         try {
-            await registerUser({
+            const claims = await registerUser({
                 firstName: state.firstName,
                 lastName: state.lastName,
                 email: state.email,
@@ -94,8 +94,8 @@ export default function Verify() {
                 code,
                 role: state.role,
             })
-            // AuthContext ya guardó los tokens; redirigimos según el perfil
-            navigate(state.role === "GUIDE" ? "/cuenta/becas/horas" : "/cuenta/reservaciones", { replace: true })
+            // La API determina el rol de la cuenta registrada.
+            navigate(claims.role === "ADMIN" || claims.role === "SCHOLARSHIP_MANAGER" ? "/app/becas" : claims.role === "GUIDE" ? "/cuenta/becas/horas" : "/cuenta/reservaciones", { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

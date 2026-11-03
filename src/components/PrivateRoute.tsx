@@ -10,8 +10,10 @@ export default function PrivateRoute({
   requiredRole,
   allowedRoles,
 }: PrivateRouteProps) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const location = useLocation();
+
+  if (isLoading) return null;
 
   if (!isAuthenticated) {
     return (
