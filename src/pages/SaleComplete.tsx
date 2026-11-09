@@ -1,5 +1,5 @@
-import { Check, Download, Mail } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Check, Download, Mail } from 'lucide-react'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
 import './SaleComplete.css';
 
@@ -28,7 +28,17 @@ export const SaleComplete = ({
   onDownloadPdf,
   onNewSale,
 }: SaleCompleteProps) => {
+
+  //Componentes de navegación y ubicación para obtener los datos de la venta completada
   const navigate = useNavigate();
+  const location = useLocation();
+  const sale = location.state as Partial<SaleCompleteProps> | null;
+  const displayFolio = sale?.folio ?? folio;
+  const displayTicketCount = sale?.ticketCount ?? ticketCount;
+  const displayTicketType = sale?.ticketType ?? ticketType;
+  const displayTotalPaid = sale?.totalPaid ?? totalPaid;
+  const displayVisitDate = sale?.visitDate ?? visitDate;
+  const displayStatus = sale?.status ?? status;
 
   return (
     <div className="layout-container">
@@ -47,15 +57,15 @@ export const SaleComplete = ({
             </div>
 
             <h2 className="complete-title">¡Venta realizada!</h2>
-            <span className="complete-folio">Folio de venta {folio}</span>
+            <span className="complete-folio">Folio de venta {displayFolio}</span>
 
             <div className="sale-info-box">
               <div className="sale-info-text">
-                <span className="sale-info-count">{ticketCount} boletos emitidos</span>
-                <strong className="sale-info-amount">${totalPaid}</strong>
-                <span className="sale-info-detail">{ticketType} · Visita {visitDate}</span>
+                <span className="sale-info-count">{displayTicketCount} boletos emitidos</span>
+                <strong className="sale-info-amount">${displayTotalPaid}</strong>
+                <span className="sale-info-detail">{displayTicketType} · Visita {displayVisitDate}</span>
               </div>
-              <span className="status-badge">{status}</span>
+              <span className="status-badge">{displayStatus}</span>
             </div>
 
             <div className="complete-actions">

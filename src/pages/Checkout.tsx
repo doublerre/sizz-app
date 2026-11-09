@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Banknote, CreditCard, Wallet } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
 import { useAuth } from '../context/AuthContext';
 import type { SaleDraft } from '../types/boxOffice';
+import { salesHistoryService } from '../services/sales-history.service';
+import type { SaleResponse } from '../services/sales-history.service';
 import './Checkout.css';
 
 interface PaymentMethod {
@@ -12,6 +14,18 @@ interface PaymentMethod {
   detail: string;
   icon: React.ElementType;
   color: string;
+}
+
+//Información del ticket al finalizar el cobro, se trae la fecha,
+//el total de la compra y también el cambio en dado caso de que se haya pagado demás.
+interface SavedReceipt {
+  date: string;
+  ticketTypes: { name: string; quantity: number }[];
+  quantity: number;
+  change: number;
+  folio: string;
+  total: number;
+  visitDate: string;
 }
 
 const PAYMENT_METHODS: PaymentMethod[] = [
@@ -28,12 +42,47 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+function roundToCents(amount: number) {
+  return Math.round(amount * 100) / 100;
+}
+
 export const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [receivedAmount, setReceivedAmount] = useState('');
+  //Constantes para el ticket y error al generar el ticket.
+  const [receipt, setReceipt] = useState<SavedReceipt | null>(null);
+  const [chargeError, setChargeError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+
+  /*El navegador abre el dialogo de impresión. Desde ahí el usuario puede 
+  seleccionar una impresora o "Guardar como PDF".*/
+  useEffect(() => {
+    if (!receipt) return;
+
+    //Al terminar la compra se redirige a saleComplete
+    const handleAfterPrint = () => {
+      navigate('/taquilla/saleComplete', {
+        state: {
+          folio: receipt.folio,
+          ticketCount: String(receipt.quantity),
+          ticketType: receipt.ticketTypes.map(({ name }) => name).join(', '),
+          totalPaid: receipt.total.toFixed(2),
+          visitDate: receipt.visitDate,
+          status: 'Pagada',
+        },
+      });
+    };
+
+    //Ventana para "imprimir" solo una vez para luego cerrarse.
+    window.addEventListener('afterprint', handleAfterPrint, { once: true });
+    window.print();
+
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  }, [navigate, receipt]);
   
   const draft = location.state as SaleDraft | null;
   const hasSaleDraft = draft != null && Array.isArray(draft.items) && draft.items.length > 0;
@@ -63,15 +112,110 @@ export const Checkout = () => {
   const saleItems = draft.items;
   const ticketCount = saleItems.reduce((sum, item) => sum + item.quantity, 0);
   const total = saleItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-  const received = Number.parseFloat(receivedAmount) || 0;
-  const isCashPayment = selectedMethod === 'efectivo';
-  const isReceivedAmountValid = !isCashPayment || received >= total;
-  const calculatedChange = Math.max(received - total, 0);
+
+  //Si receivedAmount está vacío, asigna NaN, que significa que el valor no es un número válido para el cálculo.
+ //Si tiene un valor, lo convierte a número mediante Number(). Hace la operación del cambio
+  const received = receivedAmount === '' ? Number.NaN : Number(receivedAmount);
+  const isSaleAmountValid = saleItems.every(
+    (item) =>
+      Number.isInteger(item.quantity) &&
+      item.quantity > 0 &&
+      Number.isFinite(item.unitPrice) &&
+      item.unitPrice >= 0,
+  ) && Number.isFinite(total) && total > 0;
+  const isReceivedAmountValid = selectedMethod === 'efectivo'
+    ? Number.isFinite(received) && received >= total
+    : selectedMethod === 'tarjeta'
+      ? true
+      : selectedMethod === 'mixto'
+        ? Number.isFinite(received)
+          && roundToCents(received) > 0
+          && roundToCents(received) < roundToCents(total)
+        : false;
+  const cashAmount = selectedMethod === 'efectivo'
+    ? roundToCents(total)
+    : selectedMethod === 'mixto' && Number.isFinite(received) ? roundToCents(received) : 0;
+  const cardAmount = selectedMethod === 'tarjeta'
+    ? roundToCents(total)
+    : roundToCents(total - cashAmount);
+  const calculatedChange = selectedMethod === 'efectivo' && Number.isFinite(received)
+    ? Math.max(received - total, 0)
+    : 0;
   const visitDate = new Date(`${draft.visitDate}T00:00:00`).toLocaleDateString('es-MX', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+
+  //Validación del cobro de venta y guarda un recibo y lo imprime.
+  // También verifica que la venta sea válida antes de continuar y muestra un error si no logra guardar el recibo.
+  const canCharge = isSaleAmountValid && selectedMethod !== null && isReceivedAmountValid;
+
+  const handleChargeAndPrint = async () => {
+    if (!canCharge) return;
+
+    if (receipt) {
+      window.print();
+      return;
+    }
+    const ticketTypes = saleItems.reduce<SavedReceipt['ticketTypes']>((types, item) => {
+      const existingType = types.find(({ name }) => name === item.visitorTypeName);
+      if (existingType) {
+        existingType.quantity += item.quantity;
+      } else {
+        types.push({ name: item.visitorTypeName, quantity: item.quantity });
+      }
+      return types;
+    }, []);
+
+    setIsSaving(true);
+    try {
+      const savedSale: SaleResponse = await salesHistoryService.createSale({
+        visitDate: draft.visitDate,
+        paymentMethod: selectedMethod === 'efectivo'
+          ? 'CASH'
+          : selectedMethod === 'tarjeta' ? 'CARD' : 'MIXED',
+        cashAmount,
+        cardAmount,
+        items: saleItems.map(({ tariffId, quantity }) => ({ tariffId, quantity })),
+      });
+      const createdAt = new Date(savedSale.createdAt);
+      const savedReceipt: SavedReceipt = {
+        date: createdAt.toLocaleDateString('es-MX'),
+        ticketTypes,
+        quantity: savedSale.ticketCount,
+        change: calculatedChange,
+        folio: savedSale.folio,
+        total: savedSale.total,
+        visitDate,
+      };
+      setChargeError(null);
+      setReceipt(savedReceipt);
+    } catch {
+      setChargeError('No se pudo registrar la venta en el servidor. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancelSale = async () => {
+    setIsSaving(true);
+    try {
+      if (receipt) {
+        await salesHistoryService.cancelSale(receipt.folio);
+      } else {
+        await salesHistoryService.createCancellation({
+          visitDate: draft.visitDate,
+          items: saleItems.map(({ tariffId, quantity }) => ({ tariffId, quantity })),
+        });
+      }
+      navigate('/taquilla/dashboard');
+    } catch {
+      setChargeError('No se pudo registrar la cancelación en el servidor. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="layout-container">
@@ -131,7 +275,7 @@ export const Checkout = () => {
                 <button type="button" className="btn-link" onClick={() => navigate('/taquilla/newSale', { state: draft })}>
                   Volver
                 </button>
-                <button type="button" className="btn-link btn-danger" onClick={() => navigate('/taquilla/dashboard')}>
+                <button type="button" className="btn-link btn-danger" disabled={isSaving} onClick={handleCancelSale}>
                   Cancelar venta
                 </button>
               </div>
@@ -145,6 +289,7 @@ export const Checkout = () => {
                 <button
                   key={key}
                   type="button"
+                  disabled={receipt !== null || isSaving}
                   className={`payment-option ${selectedMethod === key ? 'payment-option-selected' : ''}`}
                   onClick={() => setSelectedMethod(key)}
                 >
@@ -162,37 +307,64 @@ export const Checkout = () => {
               ))}
             </div>
              
-            <div className="input-group">
-              <label>Recibido</label>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={receivedAmount}
-                onChange={(event) => setReceivedAmount(event.target.value)}
-                placeholder="$0.00"
-                aria-invalid={isCashPayment && !isReceivedAmountValid}
-              />
-              {isCashPayment && !isReceivedAmountValid && (
-                <small className="payment-validation-message">
-                  El efectivo recibido debe ser mayor o igual al total a cobrar.
-                </small>
-              )}
-            </div>
+            {/*Si el método de pago es efectivo o mixto, se muestra un campo para ingresar la cantidad recibida.*/}
+            {(selectedMethod === 'efectivo' || selectedMethod === 'mixto') && (
+              <div className="input-group">
+                <label htmlFor="received-amount">
+                  {selectedMethod === 'mixto' ? 'Importe pagado en efectivo' : 'Cantidad recibida'}
+                </label>
+                <input
+                  id="received-amount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={receivedAmount}
+                  disabled={receipt !== null || isSaving}
+                  onChange={(event) => setReceivedAmount(event.target.value)}
+                  placeholder="$0.00"
+                  aria-invalid={receivedAmount !== '' && !isReceivedAmountValid}
+                />
+                {selectedMethod === 'mixto' && (
+                  <small>El resto del total se cobrará a tarjeta.</small>
+                )}
+                {receivedAmount !== '' && !isReceivedAmountValid && (
+                  <small className="payment-validation-message">
+                    {selectedMethod === 'mixto'
+                      ? 'El importe en efectivo debe ser mayor que cero y menor que el total.'
+                      : 'La cantidad recibida debe ser mayor o igual al total a cobrar.'}
+                  </small>
+                )}
+              </div>
+            )}
+            {/*Si el método de pago es efectivo, se muestra el cambio calculado.*/}
+            {selectedMethod === 'efectivo' && (
+              <div className="change-box">
+                <small>Cambio</small>
+                <strong>{formatPrice(calculatedChange)}</strong>
+              </div>
+            )}
 
-            <div className="change-box">
-              <small>Cambio</small>
-              <strong>{formatPrice(calculatedChange)}</strong>
-            </div>
-
-            <p className="checkout-pending" role="status">
-              El registro del cobro estará disponible cuando se implemente el servicio de ventas.
-            </p>
-            <button type="button" className="btn-primary" disabled>
-              Cobrar e imprimir
+            {chargeError && <p className="checkout-error" role="alert">{chargeError}</p>}
+            <button type="button" className="btn-primary" disabled={!canCharge || isSaving} onClick={handleChargeAndPrint}>
+              {isSaving ? 'Registrando…' : receipt ? 'Imprimir ticket' : 'Imprimir y cobrar'}
             </button>
           </aside>
         </div>
+        {/*Se muestra el recibo de venta si se ha generado un recibo, con la fecha, tipo de entradas, cantidad y cambio.*/}
+        {receipt && (
+          <section className="checkout-receipt" aria-label="Recibo de la venta">
+            <h1>Recibo de venta</h1>
+            <p><strong>Fecha:</strong> {receipt.date}</p>
+            <div>
+              <strong>Tipo de entradas:</strong>
+              {receipt.ticketTypes.map(({ name, quantity }) => (
+                <p key={name}>{name}: {quantity}</p>
+              ))}
+            </div>
+            <p><strong>Cantidad:</strong> {receipt.quantity}</p>
+            <p><strong>Cambio:</strong> {formatPrice(receipt.change)}</p>
+          </section>
+        )}
       </main>
     </div>
   );

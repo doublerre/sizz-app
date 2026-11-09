@@ -56,11 +56,15 @@
   margin: 0 2.5rem;
 }
 
-.checkout-pending {
-  color: var(--color-text-muted);
+.checkout-error {
+  color: #d92d20;
   font-size: 0.8rem;
   line-height: 1.4;
   margin: 0 0 1rem;
+}
+
+.checkout-receipt {
+  display: none;
 }
 
 .section-block {
@@ -356,8 +360,63 @@
 .btn-primary:disabled {
   background-color: #b7c9d6;
   cursor: not-allowed;
-  cursor: not-allowed;
   opacity: 0.6;
+}
+
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  html,
+  body,
+  #root {
+    width: 80mm;
+    min-width: 0;
+    height: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body * {
+    display: none !important;
+  }
+
+  #root,
+  #root > *,
+  .layout-container,
+  .main-container {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto;
+  }
+
+  .checkout-receipt {
+    display: block !important;
+    position: static;
+    top: 0;
+    left: 0;
+    width: 80mm;
+    padding: 4mm;
+    box-sizing: border-box;
+    color: #000000;
+    font: 12px monospace;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .checkout-receipt * {
+    display: block !important;
+  }
+
+  .checkout-receipt h1 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .checkout-receipt p {
+    margin: 0 0 3mm;
+  }
 }
 
 /*responsivo*/
