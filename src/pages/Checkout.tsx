@@ -25,6 +25,8 @@ interface SavedReceipt {
   change: number;
   folio: string;
   total: number;
+  cashAmount: number;
+  cardAmount: number;
   visitDate: string;
 }
 
@@ -187,6 +189,8 @@ export const Checkout = () => {
         change: calculatedChange,
         folio: savedSale.folio,
         total: savedSale.total,
+        cashAmount: savedSale.cashAmount,
+        cardAmount: savedSale.cardAmount,
         visitDate,
       };
       setChargeError(null);
@@ -199,10 +203,28 @@ export const Checkout = () => {
   };
 
   const handleCancelSale = async () => {
+    let cancellationReason: string | null = null;
+    if (receipt) {
+      const enteredReason = window.prompt("Ingresa el motivo de cancelación.");
+      if (enteredReason === null) return;
+      cancellationReason = enteredReason.trim();
+      if (!cancellationReason) {
+        setChargeError("El motivo de cancelación es obligatorio.");
+        return;
+      }
+      const cardStatus = receipt.cardAmount > 0
+        ? `Tarjeta: ${formatPrice(receipt.cardAmount)} (reembolso pendiente de procesar en la terminal).`
+        : "Sin reembolso de tarjeta.";
+      if (!window.confirm(
+        `Folio ${receipt.folio}\nImporte a devolver: ${formatPrice(receipt.total)}\n` +
+        `Efectivo: ${formatPrice(receipt.cashAmount)}\n${cardStatus}\n¿Confirmar cancelación?`,
+      )) return;
+    }
+
     setIsSaving(true);
     try {
       if (receipt) {
-        await salesHistoryService.cancelSale(receipt.folio);
+        await salesHistoryService.cancelSale(receipt.folio, cancellationReason ?? "");
       } else {
         await salesHistoryService.createCancellation({
           visitDate: draft.visitDate,

@@ -15,6 +15,13 @@ function getToday() {
   return `${today.getFullYear()}-${month}-${day}`;
 }
 
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(price);
+}
+
 function getTicketType(visitorTypeName: string) {
   const normalizedName = visitorTypeName
     .normalize('NFD')
@@ -36,13 +43,6 @@ function getTicketType(visitorTypeName: string) {
   }
 
   return undefined;
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-  }).format(price);
 }
 
 //Datos de backend para las tarifas

@@ -283,6 +283,13 @@
   background: #f0f4f7;
 }
 
+.sale-refund-status {
+  display: block;
+  margin-top: 0.25rem;
+  color: #718198;
+  font-size: 0.65rem;
+}
+
 /* Acciones y estado vacío */
 .action-button {
   display: grid;
@@ -296,6 +303,26 @@
 
 .action-button:hover {
   color: var(--color-primary);
+}
+
+.action-button--cancel {
+  display: inline-flex;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  color: #b42318;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.action-button--cancel:hover {
+  background: #fff1f0;
+  color: #8f1b13;
+}
+
+.action-button--cancel:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .empty-state {

@@ -1,5 +1,6 @@
 //Clase para gestionar las ventas de boletos (el historial de ventas)
 import api from './api';
+import type { Refund } from './ticketboot.service';
 
 
 //Valores de estados de venta
@@ -13,6 +14,9 @@ export interface SaleHistoryRecord {
   tickets: number;
   payment: string;
   total: number;
+  cashAmount: number;
+  cardAmount: number;
+  refund: Refund | null;
   status: SaleStatus;
 }
 
@@ -41,9 +45,12 @@ export interface SaleResponse {
   createdAt: string;
   visitDate: string;
   total: number;
+  cashAmount: number;
+  cardAmount: number;
   ticketCount: number;
   paymentMethod: SalePaymentMethod | 'NONE';
   status: 'COMPLETED' | 'CANCELLED';
+  refund: Refund | null;
 }
 
 const paymentLabels: Record<SalePaymentMethod | 'NONE', string> = {
@@ -73,6 +80,9 @@ const mapSale = (sale: SaleResponse): SaleHistoryRecord => {
     tickets: sale.ticketCount,
     payment: paymentLabels[sale.paymentMethod],
     total: sale.total,
+    cashAmount: sale.cashAmount,
+    cardAmount: sale.cardAmount,
+    refund: sale.refund,
     status: sale.status === 'CANCELLED' ? 'Cancelado' : 'Activo', //Status de la venta
   };
 };
@@ -91,8 +101,11 @@ export const salesHistoryService = {
     const { data } = await api.post<SaleResponse>('/ticketboot/sales/cancellations', request);
     return data;
   },
-  cancelSale: async (folio: string): Promise<SaleResponse> => {
-    const { data } = await api.patch<SaleResponse>(`/ticketboot/sales/${encodeURIComponent(folio)}/cancel`);
+  cancelSale: async (folio: string, reason: string): Promise<SaleResponse> => {
+    const { data } = await api.patch<SaleResponse>(
+      `/ticketboot/sales/${encodeURIComponent(folio)}/cancel`,
+      { reason },
+    );
     return data;
   },
 };

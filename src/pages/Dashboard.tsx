@@ -11,7 +11,7 @@ import './Dashboard.css';
 //Ser trae la información del backend y se remplazan los mocks.
 const DASHBOARD_STATS = [
   { key: 'salesTotal', label: 'Ventas del turno', detail: (data: TicketbootDashboard) => `${data.salesCount} ventas`, icon: DollarSign, color: 'var(--color-primary)', format: formatPrice },
-  { key: 'cashInDrawer', label: 'Efectivo en caja', detail: () => 'Fondo inicial + ventas en efectivo', icon: Banknote, color: 'var(--color-success)', format: formatPrice },
+  { key: 'cashInDrawer', label: 'Efectivo en caja', detail: () => 'Fondo inicial + ventas − devoluciones en efectivo', icon: Banknote, color: 'var(--color-success)', format: formatPrice },
   { key: 'cardPayments', label: 'Pagos con tarjeta', detail: (data: TicketbootDashboard) => `${data.cardPaymentCount} operaciones`, icon: CreditCard, color: 'var(--color-warning)', format: formatPrice },
   { key: 'visitorsToday', label: 'Visitantes hoy', detail: () => 'Boletos con visita para hoy', icon: Users, color: 'var(--color-danger)', format: (value: number) => value.toLocaleString('es-MX') },
 ] as const;

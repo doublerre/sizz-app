@@ -1,19 +1,25 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, MoreHorizontal, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Search } from 'lucide-react';
+import { isAxiosError } from 'axios';
 import { Sidebar } from '../components/SideBarBox';
 import ReservationCalendar from '../components/ReservationCalendar';
+import { useAuth } from '../context/useAuth';
+import { useToast } from '../context/useToast';
 import { getLocalDateKey, salesHistoryService } from '../services/sales-history.service';
 import type { SaleHistoryRecord } from '../services/sales-history.service';
 import './SalesHistory.css';
 
 /*formato dinero mx*/
-const formatCurrency = (amount: number) => `$${amount.toLocaleString('es-MX')}`;
+const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
 interface SalesHistoryProps {
     sales?: SaleHistoryRecord[];
 }
 
 export const SalesHistory = ({ sales }: SalesHistoryProps) => {
+    const { user } = useAuth();
+    const toast = useToast();
 	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState('Todos');
     const [date, setDate] = useState<string | null>(null);
@@ -21,6 +27,7 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
     const [storedSales, setStoredSales] = useState<SaleHistoryRecord[]>([]);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(sales === undefined);
+    const [cancellingFolio, setCancellingFolio] = useState<string | null>(null);
     const pageSize = 5;
 
     //Carga las ventas, sino se han recibido como prop, desde el servicio de historial de ventas.
@@ -95,6 +102,46 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
             .then(setStoredSales)
             .catch(() => setLoadError('No se pudo cargar el historial de ventas desde el servidor.'))
             .finally(() => setIsLoading(false));
+    };
+
+    const cancelSale = async (sale: SaleHistoryRecord) => {
+        const reason = window.prompt(`Motivo para cancelar la venta ${sale.folio}:`);
+        if (reason === null) return;
+        if (!reason.trim()) {
+            toast.error('El motivo de cancelación es obligatorio.');
+            return;
+        }
+
+        const cardStatus = sale.cardAmount > 0
+            ? `Tarjeta: ${formatCurrency(sale.cardAmount)} (reembolso pendiente de procesar en la terminal).`
+            : 'No hay importe pagado con tarjeta.';
+        const confirmed = window.confirm(
+            `Importe a devolver: ${formatCurrency(sale.total)}\n` +
+            `Efectivo: ${formatCurrency(sale.cashAmount)}\n${cardStatus}\n` +
+            '¿Confirmas la cancelación?',
+        );
+        if (!confirmed) return;
+
+        setCancellingFolio(sale.folio);
+        try {
+            await salesHistoryService.cancelSale(sale.folio, reason.trim());
+            toast.success(`Venta ${sale.folio} cancelada y devolución registrada.`);
+        } catch (error: unknown) {
+            const message = isAxiosError<{ message?: string }>(error)
+                ? error.response?.data?.message
+                : null;
+            toast.error(message ?? 'No se pudo cancelar la venta. Verifica tu sesión y el turno abierto.');
+            setCancellingFolio(null);
+            return;
+        }
+
+        try {
+            setStoredSales(await salesHistoryService.getSales());
+        } catch {
+            toast.error('La cancelación se registró, pero no se pudo actualizar el historial.');
+        } finally {
+            setCancellingFolio(null);
+        }
     };
 
 	return (
@@ -188,7 +235,26 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
                                     <td>{sale.tickets}</td>
                                     <td>{sale.payment}</td>
                                     <td>{formatCurrency(sale.total)}</td>
-                                    <td><span className={`sale-status ${sale.status === 'Activo' ? 'active' : 'cancelled'}`}>{sale.status}</span></td><td><button className="action-button" type="button" aria-label={`Más acciones para ${sale.folio}`}><MoreHorizontal size={18} /></button></td></tr>)}</tbody>
+                                    <td>
+                                        <span className={`sale-status ${sale.status === 'Activo' ? 'active' : 'cancelled'}`}>{sale.status}</span>
+                                        {sale.refund && (
+                                            <small className="sale-refund-status">
+                                                {sale.refund.status === 'PENDING_CARD'
+                                                    ? `Tarjeta pendiente · ${formatCurrency(sale.refund.cardAmount)}`
+                                                    : `Devolución registrada · ${formatCurrency(sale.refund.amount)}`}
+                                            </small>
+                                        )}
+                                    </td>
+                                    <td>{user?.role === 'CASHIER' && sale.status === 'Activo' && (
+                                        <button
+                                            className="action-button action-button--cancel"
+                                            type="button"
+                                            disabled={cancellingFolio !== null}
+                                            onClick={() => void cancelSale(sale)}
+                                        >
+                                            {cancellingFolio === sale.folio ? 'Cancelando…' : 'Cancelar'}
+                                        </button>
+                                    )}</td></tr>)}</tbody>
 							</table>
                             {isLoading && <p className="empty-state" role="status">Cargando ventas…</p>}
                             {!isLoading && !loadError && visibleSales.length === 0 && <p className="empty-state">No hay ventas registradas.</p>}
