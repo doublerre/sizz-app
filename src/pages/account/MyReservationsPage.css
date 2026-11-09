@@ -112,8 +112,8 @@
     border-radius: 12px;
     background: #fff;
 }
-.reservation-filters input,
-.reservation-filters select{
+.reservation-filters > input,
+.reservation-filters > select{
     width: 100%;
     min-width: 0;
     height: 37px;
@@ -127,11 +127,11 @@
     font-size: .59rem;
     outline: 0;
 }
-.reservation-filters input:focus,
-.reservation-filters select:focus { 
+.reservation-filters > input:focus,
+.reservation-filters > select:focus {
     border-color: #0868b7; 
 }
-.reservation-filters button{
+.reservation-filters > button{
     justify-self: end;
     border: 0;
     background: transparent;
@@ -325,9 +325,9 @@
             grid-template-columns:1fr 1fr;
             gap:10px;
             padding: 12px;
-        }.reservation-filters input{
+        }.reservation-filters > input{
             grid-column: 1 / -1; 
-        }.reservation-filters button{
+        }.reservation-filters > button{
             grid-column: 1 / -1;
             justify-self: start;
             padding: 5px 0;

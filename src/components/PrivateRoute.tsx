@@ -1,25 +1,28 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuth, type AuthUser } from "../context/useAuth";
 
 interface PrivateRouteProps {
     requiredRole?: "ADMIN" | "USER" | "GUIDE";
-    requiredRoles?: ("ADMIN" | "USER" | "GUIDE" | "CASHIER")[];
 }
 
-export default function PrivateRoute({ requiredRole, requiredRoles }: PrivateRouteProps) {
+export default function PrivateRoute({ requiredRole }: PrivateRouteProps) {
     const { isAuthenticated, user, isLoading } = useAuth();
 
-    if (isLoading) {
-        return null;
-    }
+  if (isLoading) return null;
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ returnTo: location.pathname + location.search }}
+      />
+    );
+  }
 
-    if ((requiredRole && user?.role !== requiredRole) || (requiredRoles && !requiredRoles.includes(user?.role ?? "USER"))) {
+    if (requiredRole && user?.role !== requiredRole) {
         return <Navigate to="/" replace />;
     }
 
-    return <Outlet />;
+  return <Outlet />;
 }

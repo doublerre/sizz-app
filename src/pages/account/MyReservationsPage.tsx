@@ -3,7 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo_zigzag_main.svg";
 import ReservationCalendar from "@/components/ReservationCalendar";
 import { Sidebar } from "../../components/SideBarBox";
-import { useAuth } from "../../context/AuthContext";
+//import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import "./MyReservationsPage.css";
 
 type ReservationStatus = "En revisión" | "Aprobada" | "Pagada";
@@ -76,6 +77,7 @@ export default function MyReservationsPage() {
                     </Link>
                     <nav className="account-nav" aria-label="Navegación de cuenta">
                         <NavLink to="/cuenta/reservaciones" end>Mis reservaciones</NavLink>
+                        <Link to="/cuenta/becas">Mis postulaciones</Link>
                         <Link to="/eventos">Nueva reservación</Link>
                         <span aria-disabled="true">Mi perfil</span>
                     </nav>
