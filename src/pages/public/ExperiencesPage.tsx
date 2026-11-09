@@ -58,7 +58,7 @@ const btnBase: React.CSSProperties = {
     gap: "0.4rem",
 };
 
-export const CATEGORY_THEMES = {
+const CATEGORY_THEMES = {
     fisica: {
         label: "FÍSICA",
         color: C.fisica,
