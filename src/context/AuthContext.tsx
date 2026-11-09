@@ -6,12 +6,7 @@ import {
 } from "../services/auth.service";
 import { AuthContext, type AuthUser } from "./useAuth";
 
-interface JwtClaims {
-    sub: string;  // email
-    uid: string;
-    role: "USER" | "ADMIN" | "GUIDE" | "CASHIER";
-    exp: number;
-}
+export { useAuth } from "./useAuth";
 
 function decodeJwt(token: string): AuthUser {
   const payload = token.split(".")[1];
