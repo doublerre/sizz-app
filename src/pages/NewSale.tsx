@@ -130,8 +130,11 @@ export const NewSale = () => {
   );
   const userName = user?.sub ?? '';
   const userRole = user?.role === 'ADMIN' ? 'Administrador' : user?.role ?? '';
+  const isVisitDateValid = visitDate !== '' && visitDate >= getToday();
 
   const continueToCheckout = () => {
+    if (!isVisitDateValid) return;
+
     const draft: SaleDraft = { visitDate, items: saleItems };
     navigate('/taquilla/checkout', { state: draft });
   };
@@ -317,7 +320,7 @@ export const NewSale = () => {
               type="button"
               className="btn-primary"
               onClick={continueToCheckout}
-              disabled={isLoadingTariffs || !!tariffsError || !visitDate || ticketCount === 0}
+              disabled={isLoadingTariffs || !!tariffsError || !isVisitDateValid || ticketCount === 0}
             >
               Continuar al cobro
             </button>

@@ -1,6 +1,7 @@
 //Clase para gestionar las ventas de boletos (el historial de ventas)
 import api from './api';
 import type { Refund } from './ticketboot.service';
+import { assertTicketbootBackendEnabled } from './ticketboot.config';
 
 
 //Valores de estados de venta
@@ -90,18 +91,22 @@ const mapSale = (sale: SaleResponse): SaleHistoryRecord => {
 //Servicio para gestionar las ventas de boletos
 export const salesHistoryService = {
   getSales: async (): Promise<SaleHistoryRecord[]> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.get<SaleResponse[]>('/ticketboot/sales');
     return data.map(mapSale);
   },
   createSale: async (request: CreateSaleRequest): Promise<SaleResponse> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.post<SaleResponse>('/ticketboot/sales', request);
     return data;
   },
   createCancellation: async (request: CancelPendingSaleRequest): Promise<SaleResponse> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.post<SaleResponse>('/ticketboot/sales/cancellations', request);
     return data;
   },
   cancelSale: async (folio: string, reason: string): Promise<SaleResponse> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.patch<SaleResponse>(
       `/ticketboot/sales/${encodeURIComponent(folio)}/cancel`,
       { reason },

@@ -65,26 +65,8 @@ export const Checkout = () => {
   useEffect(() => {
     if (!receipt) return;
 
-    //Al terminar la compra se redirige a saleComplete
-    const handleAfterPrint = () => {
-      navigate('/taquilla/saleComplete', {
-        state: {
-          folio: receipt.folio,
-          ticketCount: String(receipt.quantity),
-          ticketType: receipt.ticketTypes.map(({ name }) => name).join(', '),
-          totalPaid: receipt.total.toFixed(2),
-          visitDate: receipt.visitDate,
-          status: 'Pagada',
-        },
-      });
-    };
-
-    //Ventana para "imprimir" solo una vez para luego cerrarse.
-    window.addEventListener('afterprint', handleAfterPrint, { once: true });
     window.print();
-
-    return () => window.removeEventListener('afterprint', handleAfterPrint);
-  }, [navigate, receipt]);
+  }, [receipt]);
   
   const draft = location.state as SaleDraft | null;
   const hasSaleDraft = draft != null && Array.isArray(draft.items) && draft.items.length > 0;
@@ -124,7 +106,7 @@ export const Checkout = () => {
       item.quantity > 0 &&
       Number.isFinite(item.unitPrice) &&
       item.unitPrice >= 0,
-  ) && Number.isFinite(total) && total > 0;
+  ) && Number.isFinite(total) && total >= 0;
   const isReceivedAmountValid = selectedMethod === 'efectivo'
     ? Number.isFinite(received) && received >= total
     : selectedMethod === 'tarjeta'
@@ -294,7 +276,15 @@ export const Checkout = () => {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="btn-link" onClick={() => navigate('/taquilla/newSale', { state: draft })}>
+                <button
+                  type="button"
+                  className="btn-link"
+                  disabled={isSaving}
+                  onClick={() => {
+                    if (isSaving) return;
+                    navigate('/taquilla/newSale', { state: draft });
+                  }}
+                >
                   Volver
                 </button>
                 <button type="button" className="btn-link btn-danger" disabled={isSaving} onClick={handleCancelSale}>

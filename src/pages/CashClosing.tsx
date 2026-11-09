@@ -120,7 +120,9 @@ export default function CashClosing() {
   const [isLoading, setIsLoading] = useState(true);
   const [isClosing, setIsClosing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [hasCountedError, setHasCountedError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     let isActive = true;
@@ -145,7 +147,7 @@ export default function CashClosing() {
         setNotes(loadedSummary.closingNotes ?? "");
       } catch (requestError) {
         if (!isActive) return;
-        setError(getErrorMessage(requestError));
+        setLoadError(getErrorMessage(requestError));
       } finally {
         if (isActive) setIsLoading(false);
       }
@@ -156,7 +158,7 @@ export default function CashClosing() {
     return () => {
       isActive = false;
     };
-  }, []);
+  }, [loadAttempt]);
 
   const countedAmount = Number(counted);
   const isCountedValid =
@@ -239,6 +241,37 @@ export default function CashClosing() {
               <section className="cash-closing-panel">
                 <p className="cash-closing-date">Cargando datos del turno abierto...</p>
               </section>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="cash-closing-page">
+        <Sidebar userName={user?.sub ?? "Cajero"} userRole="Taquilla" />
+        <main className="cash-closing-main">
+          <header className="cash-closing-header">
+            <h1>Corte de caja</h1>
+            <p>No se pudo consultar el turno.</p>
+          </header>
+          <div className="cash-closing-body">
+            <div className="cash-closing-panel" style={{ maxWidth: "720px" }}>
+              <p className="cash-count-error" role="alert">{loadError}</p>
+              <button
+                type="button"
+                className="cash-close-button"
+                onClick={() => {
+                  setLoadError(null);
+                  setIsLoading(true);
+                  setLoadAttempt((attempt) => attempt + 1);
+                }}
+                style={{ marginTop: "1.5rem" }}
+              >
+                Reintentar consulta
+              </button>
             </div>
           </div>
         </main>

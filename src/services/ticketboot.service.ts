@@ -1,4 +1,5 @@
 import api from "./api";
+import { assertTicketbootBackendEnabled } from "./ticketboot.config";
 
 export interface ActiveShift {
   id: string;
@@ -100,18 +101,22 @@ export interface CloseShiftPayload {
 
 export const ticketbootService = {
   getDashboard: async (): Promise<TicketbootDashboard> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.get<TicketbootDashboard>("/ticketboot/dashboard");
     return data;
   },
   openShift: async (payload: OpenShiftPayload): Promise<ActiveShift> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.post<ActiveShift>("/ticketboot/shifts", payload);
     return data;
   },
   getShiftSummary: async (shiftId: string): Promise<ShiftSummary> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.get<ShiftSummary>(`/ticketboot/shifts/${encodeURIComponent(shiftId)}/summary`);
     return data;
   },
   closeShift: async (shiftId: string, payload: CloseShiftPayload): Promise<ShiftSummary> => {
+    assertTicketbootBackendEnabled();
     const { data } = await api.patch<ShiftSummary>(
       `/ticketboot/shifts/${encodeURIComponent(shiftId)}/close`,
       payload,
