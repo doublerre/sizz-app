@@ -78,6 +78,7 @@ export const Checkout = () => {
 
     const handleAfterPrint = () => {
       navigate('/taquilla/saleComplete', {
+        replace: true,
         state: {
           folio: receipt.folio,
           ticketCount: String(receipt.quantity),
