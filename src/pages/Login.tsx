@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
@@ -18,6 +18,7 @@ const formSchema = z.object({
 export const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
@@ -32,7 +33,14 @@ export const Login = () => {
         setIsLoading(true);
         try {
             const claims = await login(data.email, data.password);
-            navigate(claims.role === 'ADMIN' ? '/app' : '/', { replace: true });
+
+            // Priorizar el destino que PrivateRoute guardó antes de redirigir al login
+            const returnTo = location.state?.returnTo;
+            if (typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
+                navigate(returnTo, { replace: true });
+            } else {
+                navigate(claims.role === 'ADMIN' ? '/app' : '/', { replace: true });
+            }
         } catch (err) {
             if (isAxiosError(err)) {
                 const code = err.response?.data?.code;
