@@ -21,21 +21,32 @@ function EditExperience() {
             return;
         }
 
+        let ignored = false;
+
         const fetchExperience = async () => {
             setLoading(true);
             setNotFound(false);
             try {
                 const data = await experiencesService.getActivityById(id);
-                setExperience(data);
+                if (!ignored) {
+                    setExperience(data);
+                }
             } catch (err: unknown) {
                 console.error("Error al consultar la experiencia:", err);
-                setNotFound(true);
+                if (!ignored) {
+                    setNotFound(true);
+                }
             } finally {
-                setLoading(false);
+                if (!ignored) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchExperience();
+        return () => {
+            ignored = true;
+        };
     }, [id]);
 
     if (loading) {
