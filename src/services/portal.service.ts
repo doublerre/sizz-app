@@ -21,6 +21,7 @@ export interface PublicActivity {
   minAge: number | null;
   maxAge: number | null;
   topic: ActivityTopic;
+  statusLabel: string;
   tariffs: PublicTariff[];
 }
 export const portalService = {

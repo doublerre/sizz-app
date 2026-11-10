@@ -41,13 +41,19 @@ export default function CreateUserForm() {
         setApiError(null)
         setIsLoading(true)
         try {
-            await authService.sendVerificationCode(data.email, data.name)
+            // Guarda el usuario inactivo y dispara el envío del código desde el backend
+            await authService.register({
+                firstName: data.name,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+                role: profileType,
+            })
             navigate("/register/verify-account", {
                 state: {
                     firstName: data.name,
                     lastName: data.lastName,
                     email: data.email,
-                    password: data.password,
                     role: profileType,
                 },
             })

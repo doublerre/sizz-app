@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
-import { CATEGORY_THEMES, type CategoryKey } from "../public/ExperiencesPage";
-import { AUDIENCES, LOCATIONS, type ExperienceStatus } from "./experience.data";
+import { CATEGORY_THEMES, type CategoryKey } from "../../pages/public/ExperiencesPage.tsx";
+import { AUDIENCES, LOCATIONS, type ExperienceStatus } from "./experience.data.ts";
 import "./ExperienceForm.css";
 
 /* ───────────── Tipos ───────────── */
@@ -15,7 +15,6 @@ export interface ExperienceFormValues {
     capacity: string;
     location: string;
     status: ExperienceStatus;
-    order: string; // vacío = automático
     tagLabel: string;
     showInCatalog: boolean;
     availableForBooking: boolean;
@@ -30,7 +29,6 @@ export const EMPTY_FORM: ExperienceFormValues = {
     capacity: "",
     location: "",
     status: "borrador",
-    order: "",
     tagLabel: "",
     showInCatalog: true,
     availableForBooking: true,
@@ -374,7 +372,7 @@ export default function ExperienceForm({
 
                     <h2 className="exf-section-label">Operación y aforo</h2>
                     <section className="exf-card">
-                        <div className="exf-row exf-row--3">
+                        <div className="exf-row exf-row--2">
                             <Field label="Duración" required htmlFor="exf-duration" error={errors.durationMinutes}>
                                 <div className="exf-suffix">
                                     <input
@@ -410,7 +408,9 @@ export default function ExperienceForm({
                                     <span className="exf-suffix__text">personas</span>
                                 </div>
                             </Field>
+                        </div>
 
+                        <div className="exf-row exf-row--2">
                             <Field label="Ubicación" required htmlFor="exf-location" error={errors.location}>
                                 <SelectControl
                                     id="exf-location"
@@ -422,28 +422,13 @@ export default function ExperienceForm({
                                     describedBy={err("location")}
                                 />
                             </Field>
-                        </div>
 
-                        <div className="exf-row exf-row--2">
                             <Field label="Estado" required htmlFor="exf-status">
                                 <SelectControl
                                     id="exf-status"
                                     value={values.status}
                                     onChange={(v) => set("status", v as ExperienceStatus)}
                                     options={STATUS_OPTIONS}
-                                />
-                            </Field>
-
-                            <Field label="Orden en catálogo" htmlFor="exf-order">
-                                <input
-                                    id="exf-order"
-                                    className="exf-control"
-                                    type="number"
-                                    min={1}
-                                    inputMode="numeric"
-                                    placeholder="Automático"
-                                    value={values.order}
-                                    onChange={(e) => set("order", e.target.value)}
                                 />
                             </Field>
                         </div>

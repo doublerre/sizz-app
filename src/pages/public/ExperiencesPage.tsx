@@ -278,6 +278,10 @@ export default function ExperiencesPage() {
         const durF = DURATION_FILTERS.find((f) => f.label === selectedDuration)!;
 
         return activities.filter((act) => {
+            // Solo mostrar experiencias publicadas
+            if (act.statusLabel !== "Publicada")
+                return false;
+
             const themeLabel = CATEGORY_THEMES[toCategoryKey(act.topic)].label;
 
             if (q && !normalize(`${act.name} ${act.description} ${themeLabel}`).includes(q))

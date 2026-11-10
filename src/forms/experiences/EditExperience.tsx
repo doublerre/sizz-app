@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import ExperienceForm, { type ExperienceFormValues } from "./ExperienceForm";
-import { EXPERIENCE_ROUTES, type AdminExperience } from "./experience.data";
-import { experiencesService, toFormValues } from "../../services/experiences.service";
+import ExperienceForm, { type ExperienceFormValues } from "./ExperienceForm.tsx";
+import { EXPERIENCE_ROUTES, type AdminExperience } from "./experience.data.ts";
+import { experiencesService, toFormValues } from "../../services/experiences.service.ts";
 
 function EditExperience() {
     const { id } = useParams<{ id: string }>();
