@@ -1,7 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
 import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
+import EventDetailPage from "@/pages/public/EventDetailPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -10,6 +11,7 @@ import AccountLayout from "@/layouts/AccountLayout.tsx";
 import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
 import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
 import EventsAdminPage from "@/pages/app/EventsAdminPage.tsx";
+import EventParticipantsPage from "@/pages/app/EventParticipantsPage";
 import MyReservationsPage from "@/pages/account/MyReservationsPage.tsx";
 import Register from "@/pages/auth/Register.tsx";
 import Verify from "@/pages/auth/Verify.tsx";
@@ -52,6 +54,7 @@ export default function AppRouter() {
       <Route path="/experiencias" element={<ExperiencesPage />} />
       <Route element={<PublicLayout />}>
         <Route path="/eventos" element={<EventsPage />} />
+        <Route path="/eventos/:id" element={<EventDetailPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<Register />} />
@@ -87,8 +90,10 @@ export default function AppRouter() {
       {/* Administración general */}
       <Route element={<PrivateRoute requiredRoles={["ADMIN", "CASHIER"]} />}>
         <Route path="/app" element={<AppLayout />}>
+          <Route index element={<Navigate to="eventos" replace />} />
           <Route path="reservaciones" element={<ReservationsPage />} />
           <Route path="eventos" element={<EventsAdminPage />} />
+          <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
         </Route>
         <Route path="/taquilla" element={<BoxOfficePage />}>
           <Route index element={<StartShift />} />
@@ -117,6 +122,7 @@ export default function AppRouter() {
         }
       >
         <Route path="/app" element={<AppLayout />}>
+          <Route index element={<Navigate to="becas" replace />} />
           <Route path="becas" element={<ScholarshipAdminLayout />}>
             <Route index element={<CallsAdminPage />} />
             <Route path="nueva" element={<CallEditorPage />} />
@@ -139,6 +145,7 @@ export default function AppRouter() {
           <Route element={<PrivateRoute requiredRole="ADMIN" />}>
             <Route path="reservaciones" element={<ReservationsPage />} />
             <Route path="eventos" element={<EventsAdminPage />} />
+            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
           </Route>
         </Route>
       </Route>
