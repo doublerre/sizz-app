@@ -1,0 +1,158 @@
+.event-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: rgba(11, 47, 85, 0.55);
+}
+
+.event-modal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 780px;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow: hidden;
+    border-radius: 16px;
+    background-color: var(--bg-surface);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+}
+
+.event-modal-header {
+    position: relative;
+    flex: 0 0 auto;
+    border-top: 6px solid var(--event-color);
+    padding: 22px 56px 22px 28px;
+    background-color: var(--brand-navy);
+    color: var(--text-inverse);
+}
+
+.event-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-inverse);
+    cursor: pointer;
+}
+
+.event-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.28);
+}
+
+.event-modal-category {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 5px 12px 5px 5px;
+    border-radius: 999px;
+    background-color: var(--bg-surface);
+    /* Mezclado con el color de texto para que el amarillo también se lea sobre blanco */
+    color: color-mix(in srgb, var(--event-color) 75%, var(--text-primary));
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.event-modal-category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--event-color);
+    color: var(--bg-surface);
+}
+
+/* Color explícito: las reglas globales de index.css pintan los h2 de oscuro */
+.event-modal-header h2 {
+    margin: 0;
+    color: var(--text-inverse);
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.event-modal-header p {
+    margin: 8px 0 0;
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+.event-modal-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 28px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 24px 28px 28px;
+}
+
+.event-modal-description {
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    /* Respeta los saltos de línea que escribió el administrador */
+    white-space: pre-line;
+}
+
+.event-modal-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+}
+
+.event-modal-facts dt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.event-modal-facts dd {
+    margin: 3px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.event-modal-register {
+    align-self: start;
+    padding: 20px;
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    background-color: var(--bg-canvas);
+}
+
+@media (max-width: 700px) {
+    .event-modal-backdrop {
+        padding: 12px;
+    }
+
+    .event-modal-body {
+        grid-template-columns: 1fr;
+    }
+}
