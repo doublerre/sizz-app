@@ -16,6 +16,29 @@ interface SaleCompleteProps {
   onNewSale?: () => void;
 }
 
+interface PrintableReceipt {
+  date: string;
+  ticketTypes: { name: string; quantity: number }[];
+  quantity: number;
+  change: number;
+  folio: string;
+  total: number;
+  cashAmount: number;
+  cardAmount: number;
+  visitDate: string;
+}
+
+interface SaleCompleteLocationState extends Partial<SaleCompleteProps> {
+  receipt?: PrintableReceipt;
+}
+
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(price);
+}
+
 export const SaleComplete = ({
   folio = '_',
   ticketCount = '_',
@@ -32,13 +55,15 @@ export const SaleComplete = ({
   //Componentes de navegación y ubicación para obtener los datos de la venta completada
   const navigate = useNavigate();
   const location = useLocation();
-  const sale = location.state as Partial<SaleCompleteProps> | null;
+  const sale = location.state as SaleCompleteLocationState | null;
+  const receipt = sale?.receipt;
   const displayFolio = sale?.folio ?? folio;
   const displayTicketCount = sale?.ticketCount ?? ticketCount;
   const displayTicketType = sale?.ticketType ?? ticketType;
   const displayTotalPaid = sale?.totalPaid ?? totalPaid;
   const displayVisitDate = sale?.visitDate ?? visitDate;
   const displayStatus = sale?.status ?? status;
+  const handlePrint = onPrint ?? (receipt ? () => window.print() : undefined);
 
   return (
     <div className="layout-container">
@@ -69,7 +94,7 @@ export const SaleComplete = ({
             </div>
 
             <div className="complete-actions">
-              <button type="button" className="btn-primary" onClick={onPrint}>
+              <button type="button" className="btn-primary" onClick={handlePrint}>
                 Imprimir boletos
               </button>
 
@@ -99,6 +124,25 @@ export const SaleComplete = ({
             </button>
           </section>
         </div>
+        {receipt && (
+          <section className="sale-complete-receipt" aria-label="Recibo de la venta">
+            <h1>Recibo de venta</h1>
+            <p><strong>Folio:</strong> {receipt.folio}</p>
+            <p><strong>Fecha:</strong> {receipt.date}</p>
+            <p><strong>Visita:</strong> {receipt.visitDate}</p>
+            <div>
+              <strong>Tipo de entradas:</strong>
+              {receipt.ticketTypes.map(({ name, quantity }) => (
+                <p key={name}>{name}: {quantity}</p>
+              ))}
+            </div>
+            <p><strong>Cantidad:</strong> {receipt.quantity}</p>
+            <p><strong>Total:</strong> {formatPrice(receipt.total)}</p>
+            <p><strong>Efectivo:</strong> {formatPrice(receipt.cashAmount)}</p>
+            <p><strong>Tarjeta:</strong> {formatPrice(receipt.cardAmount)}</p>
+            <p><strong>Cambio:</strong> {formatPrice(receipt.change)}</p>
+          </section>
+        )}
       </main>
     </div>
   );

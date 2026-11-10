@@ -89,7 +89,7 @@ export default function AppRouter() {
                     <Route path="eventos" element={<EventsAdminPage />} />
                 </Route>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
-                    <Route index element={<Dashboard />} />
+                    <Route index element={<StartShift />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="inicio-turno" element={<StartShift />} />
                     <Route path="newsale" element={<NewSale />} />
@@ -107,7 +107,7 @@ export default function AppRouter() {
             {/* Temporal: sin AppLayout porque BoxOfficePage trae su propio menú.
              Pendiente: sacar SideBarBox a un BoxOfficeLayout y anidar aquí. */}
             <Route path="/taquilla" element={<BoxOfficePage />}>
-                <Route index element={<Dashboard />} />
+                <Route index element={<StartShift />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="newsale" element={<NewSale />} />
                 <Route path="historial" element={<SalesHistory />} />
@@ -155,7 +155,7 @@ export default function AppRouter() {
       </Route>
       <Route element={<PrivateRoute requiredRole="ADMIN" />}>
         <Route path="/taquilla" element={<BoxOfficePage />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<StartShift />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="newsale" element={<NewSale />} />
           <Route path="historial" element={<SalesHistory />} />

@@ -78,7 +78,6 @@ export const Checkout = () => {
 
     const handleAfterPrint = () => {
       navigate('/taquilla/saleComplete', {
-        replace: true,
         state: {
           folio: receipt.folio,
           ticketCount: String(receipt.quantity),
@@ -88,6 +87,7 @@ export const Checkout = () => {
           totalPaid: receipt.total.toFixed(2),
           visitDate: receipt.visitDate,
           status: 'Pagada',
+          receipt,
         },
       });
     };
@@ -130,7 +130,10 @@ export const Checkout = () => {
  //Si tiene un valor, lo convierte a número mediante Number(). Hace la operación del cambio
   const received = receivedAmount === '' ? Number.NaN : Number(receivedAmount);
   const mixedCash = mixedCashAmount === '' ? Number.NaN : Number(mixedCashAmount);
-  const mixedCard = Number.isFinite(mixedCash) ? roundToCents(total - mixedCash) : Number.NaN;
+  const roundedMixedCash = Number.isFinite(mixedCash) ? roundToCents(mixedCash) : Number.NaN;
+  const mixedCard = Number.isFinite(roundedMixedCash)
+    ? roundToCents(total - roundedMixedCash)
+    : Number.NaN;
   const isSaleAmountValid = saleItems.every(
     (item) =>
       Number.isInteger(item.quantity) &&
@@ -143,13 +146,13 @@ export const Checkout = () => {
     : selectedMethod === 'tarjeta'
       ? true
       : selectedMethod === 'mixto'
-      ? Number.isFinite(mixedCash)
-        && roundToCents(mixedCash) > 0
+      ? Number.isFinite(roundedMixedCash)
+        && roundedMixedCash > 0
         && roundToCents(mixedCard) > 0
       : false;
   const cashAmount = selectedMethod === 'efectivo'
     ? roundToCents(total)
-    : selectedMethod === 'mixto' && Number.isFinite(mixedCash) ? roundToCents(mixedCash) : 0;
+    : selectedMethod === 'mixto' && Number.isFinite(roundedMixedCash) ? roundedMixedCash : 0;
   const cardAmount = selectedMethod === 'tarjeta'
     ? roundToCents(total)
     : selectedMethod === 'mixto' && Number.isFinite(mixedCard) ? mixedCard : 0;
