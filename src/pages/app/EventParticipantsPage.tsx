@@ -29,10 +29,12 @@ function downloadCsv(event: ApiEvent | null, participants: Participant[]) {
     ];
     const csv = "\uFEFF" + rows.map((r) => r.map(quote).join(",")).join("\n");
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    link.href = url;
     link.download = `inscritos-${(event?.title ?? "evento").toLowerCase().replace(/\s+/g, "-")}.csv`;
     link.click();
-    URL.revokeObjectURL(link.href);
+    // Se libera un momento después: revocarla de inmediato puede cancelar la descarga en algunos navegadores
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export default function EventParticipantsPage() {

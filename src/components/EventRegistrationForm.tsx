@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAxiosError } from "axios";
 import * as z from "zod";
 import { CheckCircle2 } from "lucide-react";
 import { registerToEvent, type RegistrationResult } from "@/services/eventsApi";
@@ -22,14 +21,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 function errorMessage(err: unknown): string {
-    if (isAxiosError(err)) {
-        const details = err.response?.data?.details;
-        if (Array.isArray(details) && details.length > 0) {
-            return details.map((d: { message: string }) => d.message).join(" ");
-        }
-        return err.response?.data?.message ?? "No pudimos completar tu inscripción. Intenta de nuevo.";
-    }
-    return "No pudimos completar tu inscripción. Intenta de nuevo.";
+    return err instanceof Error ? err.message : "No pudimos completar tu inscripción. Intenta de nuevo.";
 }
 
 export default function EventRegistrationForm({

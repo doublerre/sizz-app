@@ -96,8 +96,18 @@ export type Participant = {
 };
 
 export async function registerToEvent(eventId: string, payload: RegistrationPayload): Promise<RegistrationResult> {
-    const { data } = await api.post<RegistrationResult>(`/events/${eventId}/registrations`, payload);
-    return data;
+    const response = await fetch(`/api/events/${eventId}/registrations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+        // El backend responde { code, message, details: [{ field, message }] }
+        const details = Array.isArray(data?.details) ? data.details.map((d: { message: string }) => d.message).join(" ") : "";
+        throw new Error(details || data?.message || "No pudimos completar tu inscripción. Intenta de nuevo.");
+    }
+    return data as RegistrationResult;
 }
 
 // Solo ADMIN y CONTROL
