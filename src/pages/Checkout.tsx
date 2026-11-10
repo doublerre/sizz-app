@@ -125,7 +125,7 @@ export const Checkout = () => {
 
   const saleItems = draft.items;
   const ticketCount = saleItems.reduce((sum, item) => sum + item.quantity, 0);
-  const total = saleItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+  const total = roundToCents(saleItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0));
 
   //Si receivedAmount está vacío, asigna NaN, que significa que el valor no es un número válido para el cálculo.
  //Si tiene un valor, lo convierte a número mediante Number(). Hace la operación del cambio
@@ -149,13 +149,13 @@ export const Checkout = () => {
       : selectedMethod === 'mixto'
       ? Number.isFinite(roundedMixedCash)
         && roundedMixedCash > 0
-        && roundToCents(mixedCard) > 0
+        && roundToCents(total - roundedMixedCash) > 0
       : false;
   const cashAmount = selectedMethod === 'efectivo'
-    ? roundToCents(total)
+    ? total
     : selectedMethod === 'mixto' && Number.isFinite(roundedMixedCash) ? roundedMixedCash : 0;
   const cardAmount = selectedMethod === 'tarjeta'
-    ? roundToCents(total)
+    ? total
     : selectedMethod === 'mixto' && Number.isFinite(mixedCard) ? mixedCard : 0;
   const calculatedChange = selectedMethod === 'efectivo' && Number.isFinite(received)
     ? Math.max(received - total, 0)

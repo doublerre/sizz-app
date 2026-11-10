@@ -77,7 +77,7 @@ const buildReportHtml = (summary: ShiftSummary, cashierName: string) => {
       </div>
 
       <div class="meta">
-        <div><span>Cajero</span><strong>${cashierName}</strong></div>
+        <div><span>Cajero</span><strong>${escapeHtml(cashierName)}</strong></div>
         <div><span>Turno</span><strong>${summary.id}</strong></div>
         <div><span>Fondo inicial</span><strong>${money(summary.openingAmount)}</strong></div>
         <div><span>Apertura</span><strong>${dateTime(summary.openedAt)}</strong></div>
