@@ -175,6 +175,29 @@
   font-weight: 600;
   line-height: 1.4;
 }
+
+.mixed-payment-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.mixed-payment-fields .input-group {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.mixed-payment-fields > small {
+  grid-column: 1 / -1;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.mixed-payment-fields > .payment-validation-message {
+  color: #d92d20;
+  font-weight: 600;
+}
 /*Aqui termina el mensaje de error para cuando no se selecciona un metodo de pago*/
 
 /*Botones*/

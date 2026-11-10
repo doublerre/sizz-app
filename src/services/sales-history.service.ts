@@ -92,23 +92,23 @@ const mapSale = (sale: SaleResponse): SaleHistoryRecord => {
 export const salesHistoryService = {
   getSales: async (): Promise<SaleHistoryRecord[]> => {
     assertTicketbootBackendEnabled();
-    const { data } = await api.get<SaleResponse[]>('/ticketboot/sales');
+    const { data } = await api.get<SaleResponse[]>('/ticketboot/dashboard/sales');
     return data.map(mapSale);
   },
   createSale: async (request: CreateSaleRequest): Promise<SaleResponse> => {
     assertTicketbootBackendEnabled();
-    const { data } = await api.post<SaleResponse>('/ticketboot/sales', request);
+    const { data } = await api.post<SaleResponse>('/ticketboot/dashboard/sales', request);
     return data;
   },
   createCancellation: async (request: CancelPendingSaleRequest): Promise<SaleResponse> => {
     assertTicketbootBackendEnabled();
-    const { data } = await api.post<SaleResponse>('/ticketboot/sales/cancellations', request);
+    const { data } = await api.post<SaleResponse>('/ticketboot/dashboard/sales/cancellations', request);
     return data;
   },
   cancelSale: async (folio: string, reason: string): Promise<SaleResponse> => {
     assertTicketbootBackendEnabled();
     const { data } = await api.patch<SaleResponse>(
-      `/ticketboot/sales/${encodeURIComponent(folio)}/cancel`,
+      `/ticketboot/dashboard/sales/${encodeURIComponent(folio)}/cancel`,
       { reason },
     );
     return data;

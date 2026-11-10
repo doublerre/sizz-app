@@ -349,10 +349,6 @@ export default function CashClosing() {
                       <div className={`cash-icon ${iconClass}`} style={{ width: 30, height: 30, borderRadius: 8 }}>
                         <Icon size={15} />
                       </div>
-                      <p className="cash-closing-date">
-                        Devoluciones: {money(summary.refundTotal)} total · {money(summary.cashRefunds)} en efectivo
-                        · {money(summary.cardRefunds)} con tarjeta (pendientes de terminal).
-                      </p>
                       <span>{label}</span>
                     </div>
                     <strong className={`cash-amount ${className}`}>{amount}</strong>

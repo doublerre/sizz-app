@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { isAxiosError } from 'axios';
 import { Banknote, CreditCard, Wallet } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
@@ -48,12 +49,22 @@ function roundToCents(amount: number) {
   return Math.round(amount * 100) / 100;
 }
 
+function getSaleErrorMessage(error: unknown) {
+  if (isAxiosError<{ message?: string; detail?: string }>(error)) {
+    return error.response?.data?.message
+      ?? error.response?.data?.detail
+      ?? 'No se pudo registrar la venta. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.';
+  }
+  return 'No se pudo registrar la venta. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.';
+}
+
 export const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [receivedAmount, setReceivedAmount] = useState('');
+  const [mixedCashAmount, setMixedCashAmount] = useState('');
   //Constantes para el ticket y error al generar el ticket.
   const [receipt, setReceipt] = useState<SavedReceipt | null>(null);
   const [chargeError, setChargeError] = useState<string | null>(null);
@@ -65,8 +76,26 @@ export const Checkout = () => {
   useEffect(() => {
     if (!receipt) return;
 
+    const handleAfterPrint = () => {
+      navigate('/taquilla/saleComplete', {
+        replace: true,
+        state: {
+          folio: receipt.folio,
+          ticketCount: String(receipt.quantity),
+          ticketType: receipt.ticketTypes
+            .map(({ name, quantity }) => `${name} (${quantity})`)
+            .join(', '),
+          totalPaid: receipt.total.toFixed(2),
+          visitDate: receipt.visitDate,
+          status: 'Pagada',
+        },
+      });
+    };
+
+    window.addEventListener('afterprint', handleAfterPrint, { once: true });
     window.print();
-  }, [receipt]);
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  }, [navigate, receipt]);
   
   const draft = location.state as SaleDraft | null;
   const hasSaleDraft = draft != null && Array.isArray(draft.items) && draft.items.length > 0;
@@ -100,6 +129,8 @@ export const Checkout = () => {
   //Si receivedAmount está vacío, asigna NaN, que significa que el valor no es un número válido para el cálculo.
  //Si tiene un valor, lo convierte a número mediante Number(). Hace la operación del cambio
   const received = receivedAmount === '' ? Number.NaN : Number(receivedAmount);
+  const mixedCash = mixedCashAmount === '' ? Number.NaN : Number(mixedCashAmount);
+  const mixedCard = Number.isFinite(mixedCash) ? roundToCents(total - mixedCash) : Number.NaN;
   const isSaleAmountValid = saleItems.every(
     (item) =>
       Number.isInteger(item.quantity) &&
@@ -112,16 +143,16 @@ export const Checkout = () => {
     : selectedMethod === 'tarjeta'
       ? true
       : selectedMethod === 'mixto'
-        ? Number.isFinite(received)
-          && roundToCents(received) > 0
-          && roundToCents(received) < roundToCents(total)
-        : false;
+      ? Number.isFinite(mixedCash)
+        && roundToCents(mixedCash) > 0
+        && roundToCents(mixedCard) > 0
+      : false;
   const cashAmount = selectedMethod === 'efectivo'
     ? roundToCents(total)
-    : selectedMethod === 'mixto' && Number.isFinite(received) ? roundToCents(received) : 0;
+    : selectedMethod === 'mixto' && Number.isFinite(mixedCash) ? roundToCents(mixedCash) : 0;
   const cardAmount = selectedMethod === 'tarjeta'
     ? roundToCents(total)
-    : roundToCents(total - cashAmount);
+    : selectedMethod === 'mixto' && Number.isFinite(mixedCard) ? mixedCard : 0;
   const calculatedChange = selectedMethod === 'efectivo' && Number.isFinite(received)
     ? Math.max(received - total, 0)
     : 0;
@@ -177,8 +208,8 @@ export const Checkout = () => {
       };
       setChargeError(null);
       setReceipt(savedReceipt);
-    } catch {
-      setChargeError('No se pudo registrar la venta en el servidor. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.');
+    } catch (error) {
+      setChargeError(getSaleErrorMessage(error));
     } finally {
       setIsSaving(false);
     }
@@ -303,7 +334,11 @@ export const Checkout = () => {
                   type="button"
                   disabled={receipt !== null || isSaving}
                   className={`payment-option ${selectedMethod === key ? 'payment-option-selected' : ''}`}
-                  onClick={() => setSelectedMethod(key)}
+                  onClick={() => {
+                    setSelectedMethod(key);
+                    setReceivedAmount('');
+                    setMixedCashAmount('');
+                  }}
                 >
                   <div className="payment-icon" style={{ backgroundColor: color }}>
                     <Icon size={20} color="#ffffff" />
@@ -322,30 +357,67 @@ export const Checkout = () => {
             {/*Si el método de pago es efectivo o mixto, se muestra un campo para ingresar la cantidad recibida.*/}
             {(selectedMethod === 'efectivo' || selectedMethod === 'mixto') && (
               <div className="input-group">
-                <label htmlFor="received-amount">
-                  {selectedMethod === 'mixto' ? 'Importe pagado en efectivo' : 'Cantidad recibida'}
-                </label>
-                <input
-                  id="received-amount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={receivedAmount}
-                  disabled={receipt !== null || isSaving}
-                  onChange={(event) => setReceivedAmount(event.target.value)}
-                  placeholder="$0.00"
-                  aria-invalid={receivedAmount !== '' && !isReceivedAmountValid}
-                />
-                {selectedMethod === 'mixto' && (
-                  <small>El resto del total se cobrará a tarjeta.</small>
+                {selectedMethod === 'efectivo' ? (
+                  <>
+                    <label htmlFor="received-amount">Cantidad recibida</label>
+                    <input
+                      id="received-amount"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={receivedAmount}
+                      disabled={receipt !== null || isSaving}
+                      onChange={(event) => setReceivedAmount(event.target.value)}
+                      placeholder="$0.00"
+                      aria-invalid={receivedAmount !== '' && !isReceivedAmountValid}
+                    />
+                    {receivedAmount !== '' && !isReceivedAmountValid && (
+                      <small className="payment-validation-message">
+                        La cantidad recibida debe ser mayor o igual al total a cobrar.
+                      </small>
+                    )}
+                  </>
+                ) : (
+                  <div className="mixed-payment-fields">
+                    <div className="input-group">
+                      <label htmlFor="mixed-cash-amount">Pago en efectivo</label>
+                      <input
+                        id="mixed-cash-amount"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={mixedCashAmount}
+                        disabled={receipt !== null || isSaving}
+                        onChange={(event) => setMixedCashAmount(event.target.value)}
+                        placeholder="$0.00"
+                        aria-invalid={mixedCashAmount !== '' && !isReceivedAmountValid}
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label htmlFor="mixed-card-amount">Pago con tarjeta (restante)</label>
+                      <input
+                        id="mixed-card-amount"
+                        type="number"
+                        value={Number.isFinite(mixedCard) && mixedCard > 0 ? mixedCard.toFixed(2) : ''}
+                        disabled
+                        readOnly
+                        aria-label="Importe restante que se cobrará a tarjeta"
+                      />
+                    </div>
+                    <small>El pago con tarjeta cubre el importe restante.</small>
+                    {mixedCashAmount !== '' && !isReceivedAmountValid && (
+                      <small className="payment-validation-message">
+                        El pago en efectivo debe ser mayor que cero y menor que el total.
+                      </small>
+                    )}
+                  </div>
                 )}
-                {receivedAmount !== '' && !isReceivedAmountValid && (
-                  <small className="payment-validation-message">
-                    {selectedMethod === 'mixto'
-                      ? 'El importe en efectivo debe ser mayor que cero y menor que el total.'
-                      : 'La cantidad recibida debe ser mayor o igual al total a cobrar.'}
-                  </small>
-                )}
+              </div>
+            )}
+            {selectedMethod === 'tarjeta' && (
+              <div className="change-box">
+                <small>Se cobrará a tarjeta</small>
+                <strong>{formatPrice(total)}</strong>
               </div>
             )}
             {/*Si el método de pago es efectivo, se muestra el cambio calculado.*/}
