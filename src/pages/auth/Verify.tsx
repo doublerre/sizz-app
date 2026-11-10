@@ -13,7 +13,6 @@ interface VerifyState {
     firstName: string
     lastName: string
     email: string
-    password: string
     role: "USER" | "GUIDE"
 }
 
@@ -22,7 +21,7 @@ const CODE_TTL_SECONDS = 600 // 10 minutos, igual que el backend
 export default function Verify() {
     const location = useLocation()
     const navigate = useNavigate()
-    const { register: registerUser } = useAuth()
+    const { loginWithTokens } = useAuth()
 
     const state = location.state as VerifyState | null
 
@@ -73,7 +72,7 @@ export default function Verify() {
         inputRefs.current[Math.min(pasted.length, 5)]?.focus()
     }
 
-    // ── Submit: llama a /auth/register con todos los datos + código ───────────
+    // ── Submit: llama a /auth/verify con email + código ──────────────────────
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -86,18 +85,9 @@ export default function Verify() {
         setApiError(null)
         setIsLoading(true)
         try {
-            const claims = await registerUser({
-                firstName: state.firstName,
-                lastName: state.lastName,
-                email: state.email,
-                password: state.password,
-                code,
-                role: state.role,
-            })
-            // GUIDE no tiene acceso a /app (requiere ADMIN); usamos los claims
-            // recién devueltos para decidir y enviamos USER y GUIDE a la misma
-            // ruta autenticada disponible para ambos roles.
-            navigate(claims.role === "ADMIN" ? "/app" : "/cuenta/reservaciones", { replace: true })
+            const tokens = await authService.verifyAccount(state.email, code)
+            const claims = loginWithTokens(tokens)
+            navigate(claims.role === "ADMIN" ? "/app" : "/", { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

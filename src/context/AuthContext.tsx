@@ -15,7 +15,8 @@ interface AuthContextValue {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (email: string, password: string) => Promise<JwtClaims>;
-    register: (payload: RegisterPayload) => Promise<JwtClaims>;
+    register: (payload: RegisterPayload) => Promise<void>;
+    loginWithTokens: (tokens: TokenResponse) => JwtClaims;
     logout: () => void;
 }
 
@@ -24,7 +25,7 @@ function decodeJwt(token: string): JwtClaims {
     return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
 }
 
-function persistTokens(tokens: TokenResponse): JwtClaims {
+export function persistTokens(tokens: TokenResponse): JwtClaims {
     localStorage.setItem("sizz_access_token", tokens.accessToken);
     localStorage.setItem("sizz_refresh_token", tokens.refreshToken);
     return decodeJwt(tokens.accessToken);
@@ -113,8 +114,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return claims;
     }, []);
 
-    const register = useCallback(async (payload: RegisterPayload): Promise<JwtClaims> => {
-        const tokens = await authService.register(payload);
+    /** Registra al usuario (lo guarda inactivo y envía el código). No setea sesión. */
+    const register = useCallback(async (payload: RegisterPayload): Promise<void> => {
+        await authService.register(payload);
+    }, []);
+
+    /** Persiste tokens ya obtenidos (ej. tras verificar OTP) y setea al usuario en contexto. */
+    const loginWithTokens = useCallback((tokens: TokenResponse): JwtClaims => {
         const claims = persistTokens(tokens);
         setUser(claims);
         return claims;
@@ -127,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, register, loginWithTokens, logout }}>
             {children}
         </AuthContext.Provider>
     );

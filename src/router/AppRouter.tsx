@@ -21,9 +21,13 @@ import SaleComplete from "@/pages/SaleComplete";
 import ReservationFee from "@/pages/ReservationFee";
 import PrivateRoute from "@/components/PrivateRoute";
 import ExperiencesAdministrationPage from "@/pages/app/ExperiencesAdministrationPage";
-import NewExperience from "@/pages/experiences/NewExperience";
-import EditExperience from "@/pages/experiences/EditExperience";
+import NewExperience from "@/forms/experiences/NewExperience";
+import EditExperience from "@/forms/experiences/EditExperience";
 import AdminDashboard from "@/pages/app/AdminDashboard";
+import UserAdminPage from "@/pages/app/UserAdminPage";
+import UserForm from "@/forms/users/UserForm";
+import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 
 export default function AppRouter() {
     return (
@@ -35,6 +39,8 @@ export default function AppRouter() {
                 <Route path="/eventos" element={<EventsPage />} />
             </Route>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
+            <Route path="/recuperar-contrasena/restablecer" element={<ResetPasswordPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register/verify-account" element={<Verify />} />
 
@@ -47,6 +53,9 @@ export default function AppRouter() {
                     <Route path="experiences/:id/edit" element={<EditExperience />} />
                     <Route path="reservaciones" element={<ReservationsPage />} />
                     <Route path="eventos" element={<EventsAdminPage />} />
+                    <Route path="users" element={<UserAdminPage />} />
+                    <Route path="users/new" element={<UserForm mode="create" />} />
+                    <Route path="users/:id/edit" element={<UserForm mode="edit" />} />
                 </Route>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />

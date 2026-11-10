@@ -1,7 +1,7 @@
 import api from "@/services/api.ts";
 import type  { CategoryKey } from "@/pages/public/ExperiencesPage.tsx";
-import type { AdminExperience, ExperienceStatus } from "@/pages/experiences/experience.data.ts";
-import type  { ExperienceFormValues } from "@/pages/experiences/ExperienceForm.tsx";
+import type { AdminExperience, ExperienceStatus } from "@/forms/experiences/experience.data.ts";
+import type  { ExperienceFormValues } from "@/forms/experiences/ExperienceForm.tsx";
 
 export type BackendTopic = "FISICA" | "ASTRONOMIA" | "OPTICA" | "INFANTIL" | "AMBIENTE" | "TECNOLOGIA";
 export type BackendStatus = "DRAFT" | "PUBLISHED" | "INACTIVE" | "REVIEW";
@@ -119,7 +119,7 @@ export const toActivityRequest = (form: ExperienceFormValues): ActivityRequest =
         maxCapacity: Number(form.capacity) || 1,
         location: form.location.trim() || "Sala principal",
         targetAudience: form.audiences.join(", "),
-        catalogOrder: form.order ? Number(form.order) : null,
+        catalogOrder: null,
         color: null,
         tag: form.tagLabel.trim() || null,
         showInCatalog: form.showInCatalog,
@@ -138,7 +138,6 @@ export const toFormValues = (dto: ActivityResponse | AdminExperience): Experienc
             capacity: String(dto.capacity),
             location: dto.location,
             status: dto.status,
-            order: dto.order == null ? "" : String(dto.order),
             tagLabel: dto.tagLabel,
             showInCatalog: dto.showInCatalog,
             availableForBooking: dto.availableForBooking,

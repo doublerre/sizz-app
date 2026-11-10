@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ExperienceForm, { type ExperienceFormValues } from "./ExperienceForm";
-import { EXPERIENCE_ROUTES } from "./experience.data";
-import { experiencesService } from "../../services/experiences.service";
+import ExperienceForm, { type ExperienceFormValues } from "./ExperienceForm.tsx";
+import { EXPERIENCE_ROUTES } from "./experience.data.ts";
+import { experiencesService } from "../../services/experiences.service.ts";
 
 function NewExperience() {
     const navigate = useNavigate();

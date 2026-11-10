@@ -1,4 +1,4 @@
-import type { CategoryKey } from "../public/ExperiencesPage";
+import type { CategoryKey } from "../../pages/public/ExperiencesPage.tsx";
 
 export type ExperienceStatus = "publicada" | "borrador" | "revision" | "desactivada";
 

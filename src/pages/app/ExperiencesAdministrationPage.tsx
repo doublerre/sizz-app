@@ -5,7 +5,6 @@ import {
   ChevronDown,
   LayoutGrid,
   List,
-  Loader2,
   MoreHorizontal,
   PencilLine,
   Plus,
@@ -20,7 +19,7 @@ import {
   EXPERIENCE_ROUTES,
   type AdminExperience,
   type ExperienceStatus,
-} from "../experiences/experience.data";
+} from "@/forms/experiences/experience.data";
 import { experiencesService } from "../../services/experiences.service";
 import "./ExperiencesAdministrationPage.css";
 
@@ -319,43 +318,57 @@ function ExperiencesAdministrationPage() {
         <div className="adm-content">
           {/* Resumen */}
           <section className="adm-stats" aria-label="Resumen del catálogo">
-            <div className="adm-stat">
-              <div className="adm-stat__icon adm-stat__icon--blue"><BookOpen size={20} /></div>
-              <div>
-                <span className="adm-stat__label">Catálogo total</span>
-                <div className="adm-stat__value">{stats.total}</div>
-              </div>
-            </div>
+            {loading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="adm-stat adm-stat--skeleton">
+                        <div className="adm-skeleton__icon adm-skeleton" />
+                        <div className="adm-skeleton__stat-text">
+                            <div className="adm-skeleton__label adm-skeleton" />
+                            <div className="adm-skeleton__value adm-skeleton" />
+                        </div>
+                    </div>
+                ))
+                : (
+                    <>
+                        <div className="adm-stat">
+                          <div className="adm-stat__icon adm-stat__icon--blue"><BookOpen size={20} /></div>
+                          <div>
+                            <span className="adm-stat__label">Catálogo total</span>
+                            <div className="adm-stat__value">{stats.total}</div>
+                          </div>
+                        </div>
 
-            <div className="adm-stat">
-              <div className="adm-stat__icon adm-stat__icon--green"><Check size={20} /></div>
-              <div>
-                <span className="adm-stat__label">Publicadas</span>
-                <div className="adm-stat__value">
-                  {stats.published}
-                  <span className="adm-stat__hint adm-stat__hint--green">{stats.publishedPct}%</span>
-                </div>
-              </div>
-            </div>
+                        <div className="adm-stat">
+                          <div className="adm-stat__icon adm-stat__icon--green"><Check size={20} /></div>
+                          <div>
+                            <span className="adm-stat__label">Publicadas</span>
+                            <div className="adm-stat__value">
+                              {stats.published}
+                              <span className="adm-stat__hint adm-stat__hint--green">{stats.publishedPct}%</span>
+                            </div>
+                          </div>
+                        </div>
 
-            <div className="adm-stat">
-              <div className="adm-stat__icon adm-stat__icon--yellow"><PencilLine size={20} /></div>
-              <div>
-                <span className="adm-stat__label">En borrador</span>
-                <div className="adm-stat__value">{stats.draft}</div>
-              </div>
-            </div>
+                        <div className="adm-stat">
+                          <div className="adm-stat__icon adm-stat__icon--yellow"><PencilLine size={20} /></div>
+                          <div>
+                            <span className="adm-stat__label">En borrador</span>
+                            <div className="adm-stat__value">{stats.draft}</div>
+                          </div>
+                        </div>
 
-            <div className="adm-stat">
-              <div className="adm-stat__icon adm-stat__icon--red"><X size={20} /></div>
-              <div>
-                <span className="adm-stat__label">Requieren revisión</span>
-                <div className="adm-stat__value">
-                  {stats.review}
-                  <span className="adm-stat__hint">sin horario</span>
-                </div>
-              </div>
-            </div>
+                        <div className="adm-stat">
+                          <div className="adm-stat__icon adm-stat__icon--red"><X size={20} /></div>
+                          <div>
+                            <span className="adm-stat__label">Requieren revisión</span>
+                            <div className="adm-stat__value">
+                              {stats.review}
+                              <span className="adm-stat__hint">sin horario</span>
+                            </div>
+                          </div>
+                        </div>
+                    </>
+                )}
           </section>
 
           {/* Filtros */}
@@ -410,9 +423,27 @@ function ExperiencesAdministrationPage() {
             </p>
 
             {loading ? (
-                <div style={{ display: "flex", justifyContent: "center", padding: "3rem", gap: "0.5rem", color: "#64748B" }}>
-                  <Loader2 className="animate-spin" size={24} />
-                  <span>Cargando catálogo de experiencias...</span>
+                <div className={`adm-grid${view === "list" ? " adm-grid--list" : ""}`}>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                      <article key={i} className="adm-card adm-card--skeleton">
+                        <div className="adm-skeleton__banner adm-skeleton" />
+                        <div className="adm-skeleton__card-body">
+                          <div className="adm-skeleton__title adm-skeleton" />
+                          <div className="adm-skeleton__audience adm-skeleton" />
+                          <div className="adm-skeleton__meta-row">
+                            <div className="adm-skeleton__meta-item adm-skeleton" />
+                            <div className="adm-skeleton__meta-item adm-skeleton" />
+                            <div className="adm-skeleton__meta-item adm-skeleton" />
+                          </div>
+                        </div>
+                        <div className="adm-skeleton__card-footer">
+                          <div className="adm-skeleton__status adm-skeleton" />
+                          <div className="adm-skeleton__actions">
+                            <div className="adm-skeleton__action-btn adm-skeleton" />
+                          </div>
+                        </div>
+                      </article>
+                  ))}
                 </div>
             ) : error ? (
                 <div style={{ textAlign: "center", padding: "3rem", color: "#DC2626" }}>

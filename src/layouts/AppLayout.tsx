@@ -14,7 +14,7 @@ const mainMenu = [
 const adminMenu = [
     { label: "Boletos", to: "", available: false, color: "var(--brand-blue)" },
     { label: "Becas y Guias", to: "", available: false, color: "var(--brand-green)" },
-    { label: "Usuarios", to: "", available: false, color: "var(--brand-yellow)" },
+    { label: "Usuarios", to: "/app/users", available: true, color: "var(--brand-yellow)" },
     { label: "Configuracion", to: "", available: false, color: "var(--brand-red)" }
 ]
 

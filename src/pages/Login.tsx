@@ -7,6 +7,7 @@ import { isAxiosError } from 'axios';
 import * as z from 'zod';
 import logo from '../assets/logo_zigzag.png';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/auth.service';
 import './Login.css';
 
 const formSchema = z.object({
@@ -31,12 +32,25 @@ export const Login = () => {
         setIsLoading(true);
         try {
             const claims = await login(data.email, data.password);
-            // Usamos los claims recién devueltos por login(), no el estado de React
-            // que pertenece al render anterior y aún contiene null.
-            navigate(claims.role === 'ADMIN' ? '/app' : '/cuenta/reservaciones', { replace: true });
+            navigate(claims.role === 'ADMIN' ? '/app' : '/', { replace: true });
         } catch (err) {
             if (isAxiosError(err)) {
-                const msg = err.response?.data?.message;
+                const code = err.response?.data?.code;
+                const msg  = err.response?.data?.message;
+
+                // Cuenta registrada pero sin verificar → reenviar código y redirigir
+                if (code === 'ACCOUNT_NOT_VERIFIED') {
+                    try {
+                        await authService.sendVerificationCode(data.email, '');
+                    } catch {
+                        // Si el reenvío falla no bloqueamos la navegación
+                    }
+                    navigate('/register/verify-account', {
+                        state: { firstName: '', lastName: '', email: data.email, role: 'USER' },
+                    });
+                    return;
+                }
+
                 setApiError(msg ?? 'Ocurrió un error. Intenta de nuevo.');
             }
         } finally {
@@ -92,6 +106,12 @@ export const Login = () => {
                             </button>
                         </div>
                         {errors.password && <span className="login-field-error">{errors.password.message}</span>}
+                        <div style={{textAlign: 'right', marginTop: '0.4rem'}}>
+                            <Link to="/recuperar-contrasena" style={{ fontSize: '0.78rem', color: '#0868b7', textDecoration: 'none', fontWeight: 600 }}>
+                                ¿Olvidaste tu contraseña?
+                            </Link>
+
+                        </div>
                     </div>
 
                     {apiError && <p className="login-api-error">{apiError}</p>}
