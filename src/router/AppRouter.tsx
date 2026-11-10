@@ -88,7 +88,7 @@ export default function AppRouter() {
         }
       >
         <Route path="/app" element={<AppLayout />}>
-          <Route index element={<Navigate to="eventos" replace />} />
+          <Route index element={<Navigate to="becas" replace />} />
           <Route path="becas" element={<ScholarshipAdminLayout />}>
             <Route index element={<CallsAdminPage />} />
             <Route path="nueva" element={<CallEditorPage />} />

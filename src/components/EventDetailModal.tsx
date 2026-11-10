@@ -18,11 +18,20 @@ export default function EventDetailModal({
 }) {
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
+    const modalRef = useRef<HTMLDivElement>(null);
+    const closeRef = useRef<HTMLButtonElement>(null);
+
+    // Al cerrar, el foco regresa al botón que abrió el modal
+    useEffect(() => {
+        const opener = document.activeElement as HTMLElement | null;
+        return () => opener?.focus();
+    }, []);
     // Si se abrió con el botón Inscribirme, el cursor queda en el formulario
     // (y en celular, donde el formulario queda abajo, la ventana baja hasta él)
     const registerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (goToForm) registerRef.current?.querySelector("input")?.focus();
+        else closeRef.current?.focus();
     }, [goToForm]);
 
     // true cuando hay datos escritos en el formulario sin enviar
@@ -37,10 +46,25 @@ export default function EventDetailModal({
     }, [onClose]);
 
     useEffect(() => {
-        const closeOnEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape") requestClose();
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") return requestClose();
+            if (e.key !== "Tab" || !modalRef.current) return;
+
+            // Tab no sale del modal: del último salta al primero y al revés
+            const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+                "button:not([disabled]), input:not([disabled]), select, textarea, a[href]"
+            );
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
         };
-        document.addEventListener("keydown", closeOnEscape);
+        document.addEventListener("keydown", handleKeyDown);
 
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         const previous = { overflow: document.body.style.overflow, paddingRight: document.body.style.paddingRight };
@@ -48,7 +72,7 @@ export default function EventDetailModal({
         if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
 
         return () => {
-            document.removeEventListener("keydown", closeOnEscape);
+            document.removeEventListener("keydown", handleKeyDown);
             document.body.style.overflow = previous.overflow;
             document.body.style.paddingRight = previous.paddingRight;
         };
@@ -58,6 +82,7 @@ export default function EventDetailModal({
         <div className="event-modal-backdrop" onClick={requestClose}>
             <div
                 className="event-modal"
+                ref={modalRef}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="event-modal-title"
@@ -65,7 +90,7 @@ export default function EventDetailModal({
                 onClick={(e) => e.stopPropagation()}
             >
                 <header className="event-modal-header">
-                    <button type="button" className="event-modal-close" aria-label="Cerrar" onClick={requestClose}>
+                    <button type="button" className="event-modal-close" ref={closeRef} aria-label="Cerrar" onClick={requestClose}>
                         <X size={20} />
                     </button>
                     <span className="event-modal-category">
