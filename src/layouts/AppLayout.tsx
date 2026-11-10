@@ -6,11 +6,11 @@ import { useAuth } from "@/context/useAuth";
 import { useLocation } from "react-router-dom";
 
 const mainMenu = [
-  { label: "Inicio", to: "", available: false, color: "var(--brand-blue)" },
+  { label: "Inicio", to: "/app/", available: true, color: "var(--brand-blue)" },
   {
     label: "Experiencias",
-    to: "",
-    available: false,
+    to: "/app/experiences",
+    available: true,
     color: "var(--brand-green)",
   },
   {
@@ -37,7 +37,7 @@ const adminMenu = [
     available: true,
     color: "var(--brand-yellow)",
   },
-  { label: "Usuarios", to: "", available: false, color: "var(--brand-yellow)" },
+  { label: "Usuarios", to: "/app/users", available: true, color: "var(--brand-yellow)" },
   {
     label: "Configuracion",
     to: "",
