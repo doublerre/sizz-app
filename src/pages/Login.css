@@ -234,7 +234,7 @@ body {
     border-color: #E84040;
 }
 
-/*Media querie para pantallas grandes*/
+/*Media query para pantallas grandes*/
 @media(min-width: 1024px) {
     .login-card {
         max-width: 50rem;
@@ -251,28 +251,28 @@ body {
 
 /* Tablet (≤ 860px) */
 @media (max-width: 860px) {
-        .login-wrapper {
-            flex-direction: column;
-        }
-        .login-banner {
-            flex: 0 0 auto;
-            min-width: 0;
-            padding: 2.5rem 2rem;
-        }
-        .login-banner h1 {
-            margin-bottom: 1.5rem;
-        }
-        .login-banner p {
-            font-size: 0.75rem;
-        }
-        .login-form-container {
-            padding: 1rem;
-        }
-        .login-card {
-            margin: 1rem;
-            max-width: none;
-        }
+    .login-wrapper {
+        flex-direction: column;
     }
+    .login-banner {
+        flex: 0 0 auto;
+        min-width: 0;
+        padding: 2.5rem 2rem;
+    }
+    .login-banner h1 {
+        margin-bottom: 1.5rem;
+    }
+    .login-banner p {
+        font-size: 0.75rem;
+    }
+    .login-form-container {
+        padding: 1rem;
+    }
+    .login-card {
+        margin: 1rem;
+        max-width: none;
+    }
+}
 
 /* Móvil (≤ 540px) */
 @media (max-width: 540px) {

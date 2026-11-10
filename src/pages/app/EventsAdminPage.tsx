@@ -1,190 +1,534 @@
+
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
+import * as z from "zod";
+import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { getEvents, type ApiEvent } from "@/services/eventsApi";
+import {
+    createEvent,
+    deleteEvent,
+    getAllEvents,
+    publishEvent,
+    updateEvent,
+    type ApiEvent,
+    type EventPayload,
+} from "@/services/eventsApi";
+import { categories } from "@/data/eventCategories";
+import "./EventsAdminPage.css";
 
-type EventDraft = {
-  id?: string;
-  title: string;
-  description: string;
-  category: string;
-  audience: string;
-  venue: string;
-  startDate: string;
-  endDate: string;
-  capacity: string;
-  cost: string;
-  status: ApiEvent["status"];
+const formSchema = z
+    .object({
+        title: z.string().trim().min(1, "El título es obligatorio").max(300, "Máximo 300 caracteres"),
+        category: z.string(),
+        audience: z.string().max(60, "Máximo 60 caracteres"),
+        venue: z.string().max(200, "Máximo 200 caracteres"),
+        description: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
+        capacity: z
+            .string()
+            .refine((v) => v === "" || (/^\d+$/.test(v) && Number(v) > 0), "Debe ser un número entero mayor a 0"),
+        cost: z
+            .string()
+            .refine((v) => v === "" || /^\d{1,8}(\.\d{1,2})?$/.test(v), "Monto inválido (hasta 2 decimales)"),
+    })
+    .refine((d) => !d.endDate || !!d.startDate, {
+        message: "Indica primero la fecha de inicio",
+        path: ["startDate"],
+    })
+    .refine((d) => !d.endDate || !d.startDate || new Date(d.endDate) >= new Date(d.startDate), {
+        message: "La fecha de fin no puede ser anterior a la de inicio",
+        path: ["endDate"],
+    });
+
+type FormValues = z.infer<typeof formSchema>;
+
+const emptyForm: FormValues = {
+    title: "",
+    category: "",
+    audience: "",
+    venue: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    capacity: "",
+    cost: "0",
 };
 
-const emptyDraft: EventDraft = {
-  title: "",
-  description: "",
-  category: "",
-  audience: "",
-  venue: "",
-  startDate: "",
-  endDate: "",
-  capacity: "",
-  cost: "0",
-  status: "DRAFT",
+const statusLabels: Record<ApiEvent["status"], string> = {
+    DRAFT: "Borrador",
+    PUBLISHED: "Publicado",
+    CLOSED: "Cerrado",
+    CANCELLED: "Cancelado",
 };
+
+function errorMessage(err: unknown): string {
+    if (isAxiosError(err)) {
+        const details = err.response?.data?.details;
+        if (Array.isArray(details) && details.length > 0) {
+            return details.map((d: { message: string }) => d.message).join(" ");
+        }
+        return err.response?.data?.message ?? "Ocurrió un error. Intenta de nuevo.";
+    }
+    return "Ocurrió un error. Intenta de nuevo.";
+}
+
+function formatDate(iso: string | null): string {
+    if (!iso) return "Sin fecha";
+    return new Date(iso).toLocaleString("es-MX", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+}
+
+function formatCost(cost: number): string {
+    if (cost === 0) return "Gratis";
+    return cost.toLocaleString("es-MX", { style: "currency", currency: "MXN" });
+}
+
+const emptyToNull = (v: string) => (v.trim() === "" ? null : v.trim());
+
+const toIso = (v: string) => (v ? new Date(v).toISOString() : null);
+
+const toLocalInput = (iso: string | null) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+const valuesFromEvent = (e: ApiEvent): FormValues => ({
+    title: e.title,
+    category: e.category ?? "",
+    audience: e.audience ?? "",
+    venue: e.venue ?? "",
+    description: e.description ?? "",
+    startDate: toLocalInput(e.startDate),
+    endDate: toLocalInput(e.endDate),
+    capacity: e.capacity === null ? "" : String(e.capacity),
+    cost: String(e.cost),
+});
+
+type Notice = { type: "success" | "error"; text: string };
 
 export default function EventsAdminPage() {
-  const [events, setEvents] = useState<ApiEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [draft, setDraft] = useState<EventDraft>(emptyDraft);
-  const [editingId, setEditingId] = useState<string | null>(null);
+    const [events, setEvents] = useState<ApiEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+    const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [notice, setNotice] = useState<Notice | null>(null);
+    const [apiError, setApiError] = useState<string | null>(null);
+    const [publishingId, setPublishingId] = useState<string | null>(null);
 
-  const loadEvents = () => {
-    setLoading(true);
-    getEvents()
-      .then(setEvents)
-      .catch(() => setError("No se pudieron cargar los eventos."))
-      .finally(() => setLoading(false));
-  };
+    const {
+        register,
+        handleSubmit,
+        reset,
+        control,
+        formState: { errors, isSubmitting },
+    } = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: emptyForm,
+    });
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const reload = () => setRefreshKey((k) => k + 1);
 
-  const sortedEvents = useMemo(
-    () => [...events].sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? "")),
-    [events],
-  );
+    useEffect(() => {
+        let cancelled = false;
 
-  const submitEvent = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+        getAllEvents()
+            .then((data) => {
+                if (cancelled) return;
+                setEvents(data);
+                setLoadError("");
+            })
+            .catch(() => {
+                if (!cancelled) setLoadError("No pudimos cargar los eventos. Intenta de nuevo más tarde.");
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
 
-    const nextEvent = {
-      ...draft,
-      id: editingId ?? crypto.randomUUID(),
-      capacity: draft.capacity === "" ? null : Number(draft.capacity),
-      cost: Number(draft.cost || 0),
+        return () => {
+            cancelled = true;
+        };
+    }, [refreshKey]);
+
+    const openForm = () => {
+        setNotice(null);
+        setApiError(null);
+        setEditingId(null);
+        reset(emptyForm);
+        setShowForm(true);
     };
 
-    setEvents((current) => {
-      if (editingId) {
-        return current.map((item) => (item.id === editingId ? { ...item, ...nextEvent } : item));
-      }
-      return [
-        {
-          id: nextEvent.id ?? crypto.randomUUID(),
-          title: nextEvent.title,
-          description: nextEvent.description || null,
-          category: nextEvent.category || null,
-          audience: nextEvent.audience || null,
-          venue: nextEvent.venue || null,
-          startDate: nextEvent.startDate || null,
-          endDate: nextEvent.endDate || null,
-          capacity: nextEvent.capacity,
-          cost: nextEvent.cost,
-          status: nextEvent.status,
-        },
-        ...current,
-      ];
-    });
+    const openEdit = (event: ApiEvent) => {
+        setNotice(null);
+        setApiError(null);
+        setEditingId(event.id);
+        reset(valuesFromEvent(event));
+        setShowForm(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
-    setDraft(emptyDraft);
-    setEditingId(null);
-    setError("");
-  };
+    const closeForm = () => {
+        setShowForm(false);
+        setApiError(null);
+    };
 
-  const onDelete = (id: string) => {
-    setEvents((current) => current.filter((event) => event.id !== id));
-  };
+    const onSubmit = async (values: FormValues) => {
+        setApiError(null);
 
-  const onPublish = (id: string) => {
-    setEvents((current) =>
-      current.map((event) =>
-        event.id === id ? { ...event, status: event.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED" } : event,
-      ),
+        const payload: EventPayload = {
+            title: values.title.trim(),
+            description: emptyToNull(values.description),
+            category: emptyToNull(values.category),
+            audience: emptyToNull(values.audience),
+            venue: emptyToNull(values.venue),
+            startDate: toIso(values.startDate),
+            endDate: toIso(values.endDate),
+            capacity: values.capacity ? Number(values.capacity) : null,
+            cost: values.cost ? Number(values.cost) : 0,
+        };
+
+        try {
+            if (editingId) {
+                await updateEvent(editingId, payload);
+                setNotice({ type: "success", text: "Cambios guardados." });
+            } else {
+                await createEvent(payload);
+                setNotice({ type: "success", text: "Evento creado como borrador. Publícalo cuando esté listo." });
+            }
+
+            setShowForm(false);
+            setEditingId(null);
+            reload();
+        } catch (err) {
+            setApiError(errorMessage(err));
+        }
+    };
+
+    const handleDelete = async (event: ApiEvent) => {
+        if (!window.confirm(`¿Eliminar el borrador "${event.title}"? No se puede deshacer.`)) return;
+
+        setNotice(null);
+
+        try {
+            await deleteEvent(event.id);
+            setNotice({ type: "success", text: `Borrador "${event.title}" eliminado.` });
+            reload();
+        } catch (err) {
+            setNotice({ type: "error", text: errorMessage(err) });
+        }
+    };
+
+    const handlePublish = async (event: ApiEvent) => {
+        if (!window.confirm(`¿Publicar "${event.title}"? Será visible en el portal público.`)) return;
+
+        setPublishingId(event.id);
+        setNotice(null);
+
+        try {
+            await publishEvent(event.id);
+            setNotice({ type: "success", text: `"${event.title}" ya es visible en el portal.` });
+            reload();
+        } catch (err) {
+            setNotice({ type: "error", text: errorMessage(err) });
+        } finally {
+            setPublishingId(null);
+        }
+    };
+
+    const currentCategory = useWatch({ control, name: "category" });
+    const isLegacyCategory = currentCategory !== "" && !categories.some((c) => c.name === currentCategory);
+
+    const published = events.filter((e) => e.status === "PUBLISHED").length;
+    const drafts = events.filter((e) => e.status === "DRAFT").length;
+
+    return (
+        <div className="admin-event-page">
+            <header className="admin-event-header">
+                <div>
+                    <h1>Eventos</h1>
+                    <p>Crea, revisa y publica los eventos del portal.</p>
+                </div>
+
+                {!showForm && (
+                    <button type="button" className="admin-event-btn" onClick={openForm}>
+                        <Plus size={18} /> Nuevo evento
+                    </button>
+                )}
+            </header>
+
+            {notice && (
+                <p className={`admin-event-notice admin-event-notice--${notice.type}`} role="status">
+                    {notice.text}
+                </p>
+            )}
+
+            <section className="admin-event-stats">
+                <div className="admin-event-stat">
+                    <span>Total</span>
+                    <strong>{events.length}</strong>
+                </div>
+
+                <div className="admin-event-stat">
+                    <span>Publicados</span>
+                    <strong>{published}</strong>
+                </div>
+
+                <div className="admin-event-stat">
+                    <span>En borrador</span>
+                    <strong>{drafts}</strong>
+                </div>
+            </section>
+
+            {showForm && (
+                <form className="admin-event-card admin-event-form" onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <h2>{editingId ? "Editar evento" : "Nuevo evento"}</h2>
+
+                    <p className="admin-event-hint">
+                        {editingId
+                            ? "Los cambios se ven en el portal de inmediato si el evento ya está publicado."
+                            : "Se guarda como borrador: no aparece en el portal hasta que lo publiques."}
+                    </p>
+
+                    <h3>Información general</h3>
+
+                    <div className="admin-event-grid">
+                        <div className="admin-event-field admin-event-field--wide">
+                            <label htmlFor="ev-title">Título</label>
+                            <input
+                                id="ev-title"
+                                type="text"
+                                placeholder="Ej. Noche de astronomía"
+                                {...register("title")}
+                                className={errors.title ? "admin-event-input--error" : ""}
+                            />
+                            {errors.title && <span className="admin-event-error">{errors.title.message}</span>}
+                        </div>
+
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-category">Categoría</label>
+                            <select id="ev-category" {...register("category")}>
+                                <option value="">Sin categoría</option>
+                                {isLegacyCategory && <option value={currentCategory}>{currentCategory}</option>}
+                                {categories.map((c) => (
+                                    <option key={c.name} value={c.name}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-audience">Público</label>
+                            <input
+                                id="ev-audience"
+                                type="text"
+                                placeholder="Ej. Desde 8 años"
+                                {...register("audience")}
+                                className={errors.audience ? "admin-event-input--error" : ""}
+                            />
+                            {errors.audience && <span className="admin-event-error">{errors.audience.message}</span>}
+                        </div>
+
+                        <div className="admin-event-field admin-event-field--wide">
+                            <label htmlFor="ev-description">Descripción</label>
+                            <textarea id="ev-description" rows={3} {...register("description")} />
+                        </div>
+
+                        <div className="admin-event-field admin-event-field--wide">
+                            <label htmlFor="ev-venue">Sede</label>
+                            <input
+                                id="ev-venue"
+                                type="text"
+                                placeholder="Ej. Terraza ZigZag"
+                                {...register("venue")}
+                                className={errors.venue ? "admin-event-input--error" : ""}
+                            />
+                            {errors.venue && <span className="admin-event-error">{errors.venue.message}</span>}
+                        </div>
+                    </div>
+
+                    <h3>Fechas</h3>
+
+                    <div className="admin-event-grid">
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-start">Inicio</label>
+                            <input
+                                id="ev-start"
+                                type="datetime-local"
+                                {...register("startDate")}
+                                className={errors.startDate ? "admin-event-input--error" : ""}
+                            />
+                            {errors.startDate && <span className="admin-event-error">{errors.startDate.message}</span>}
+                        </div>
+
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-end">Fin</label>
+                            <input
+                                id="ev-end"
+                                type="datetime-local"
+                                {...register("endDate")}
+                                className={errors.endDate ? "admin-event-input--error" : ""}
+                            />
+                            {errors.endDate && <span className="admin-event-error">{errors.endDate.message}</span>}
+                        </div>
+                    </div>
+
+                    <h3>Aforo y costo</h3>
+
+                    <div className="admin-event-grid">
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-capacity">Aforo (opcional)</label>
+                            <input
+                                id="ev-capacity"
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="Sin límite"
+                                {...register("capacity")}
+                                className={errors.capacity ? "admin-event-input--error" : ""}
+                            />
+                            {errors.capacity && <span className="admin-event-error">{errors.capacity.message}</span>}
+                        </div>
+
+                        <div className="admin-event-field">
+                            <label htmlFor="ev-cost">Costo (MXN)</label>
+                            <input
+                                id="ev-cost"
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="0 = gratis"
+                                {...register("cost")}
+                                className={errors.cost ? "admin-event-input--error" : ""}
+                            />
+                            {errors.cost && <span className="admin-event-error">{errors.cost.message}</span>}
+                        </div>
+                    </div>
+
+                    {apiError && (
+                        <p className="admin-event-notice admin-event-notice--error" role="alert">
+                            {apiError}
+                        </p>
+                    )}
+
+                    <div className="admin-event-actions">
+                        <button
+                            type="button"
+                            className="admin-event-btn admin-event-btn--ghost"
+                            onClick={closeForm}
+                        >
+                            Cancelar
+                        </button>
+
+                        <button type="submit" className="admin-event-btn" disabled={isSubmitting}>
+                            {isSubmitting ? "Guardando..." : editingId ? "Guardar cambios" : "Guardar evento"}
+                        </button>
+                    </div>
+                </form>
+            )}
+
+            <section className="admin-event-card">
+                {loading ? (
+                    <p className="admin-event-empty">Cargando eventos...</p>
+                ) : loadError ? (
+                    <p className="admin-event-empty">{loadError}</p>
+                ) : events.length === 0 ? (
+                    <p className="admin-event-empty">
+                        Todavía no hay eventos. Crea el primero con "Nuevo evento".
+                    </p>
+                ) : (
+                    <div className="admin-event-table-wrap">
+                        <table className="admin-event-table">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Inicio</th>
+                                    <th>Público</th>
+                                    <th>Costo</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {events.map((event) => (
+                                    <tr key={event.id}>
+                                        <td>
+                                            <strong>{event.title}</strong>
+                                            <span className="admin-event-sub">
+                                                {event.category ?? "Sin categoría"}
+                                            </span>
+                                        </td>
+
+                                        <td>{formatDate(event.startDate)}</td>
+                                        <td>{event.audience ?? "—"}</td>
+                                        <td>{formatCost(event.cost)}</td>
+
+                                        <td>
+                                            <span className={`admin-event-badge admin-event-badge--${event.status.toLowerCase()}`}>
+                                                {statusLabels[event.status]}
+                                            </span>
+                                        </td>
+
+                                        <td className="admin-event-row-actions">
+                                            {/* Un evento cerrado o cancelado ya es historia: no se edita */}
+                                            {(event.status === "DRAFT" || event.status === "PUBLISHED") && (
+                                                <button
+                                                    type="button"
+                                                    className="admin-event-btn admin-event-btn--ghost admin-event-btn--small"
+                                                    onClick={() => openEdit(event)}
+                                                >
+                                                    Editar
+                                                </button>
+                                            )}
+
+                                            {event.status === "PUBLISHED" && (
+                                                <Link
+                                                    className="admin-event-btn admin-event-btn--ghost admin-event-btn--small"
+                                                    to={`/app/eventos/${event.id}/inscritos`}
+                                                >
+                                                    Inscritos
+                                                </Link>
+                                            )}
+
+                                            {event.status === "DRAFT" && (
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        className="admin-event-btn admin-event-btn--small"
+                                                        disabled={publishingId === event.id}
+                                                        onClick={() => handlePublish(event)}
+                                                    >
+                                                        {publishingId === event.id ? "Publicando..." : "Publicar"}
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="admin-event-btn admin-event-btn--danger admin-event-btn--small"
+                                                        onClick={() => handleDelete(event)}
+                                                    >
+                                                        Eliminar
+                                                    </button>
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </section>
+        </div>
     );
-  };
-
-  const startEdit = (event: ApiEvent) => {
-    setEditingId(event.id);
-    setDraft({
-      id: event.id,
-      title: event.title,
-      description: event.description ?? "",
-      category: event.category ?? "",
-      audience: event.audience ?? "",
-      venue: event.venue ?? "",
-      startDate: event.startDate ?? "",
-      endDate: event.endDate ?? "",
-      capacity: event.capacity?.toString() ?? "",
-      cost: String(event.cost),
-      status: event.status,
-    });
-  };
-
-  return (
-    <div className="container" style={{ padding: "2rem 1rem", display: "grid", gap: "1.5rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-        <h1>Eventos Admin</h1>
-      </div>
-
-      <form onSubmit={submitEvent} style={{ display: "grid", gap: "0.75rem", background: "#f8fafc", padding: "1rem", borderRadius: 12 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
-          <input value={draft.title} onChange={(e) => setDraft((current) => ({ ...current, title: e.target.value }))} placeholder="Título" required />
-          <input value={draft.category} onChange={(e) => setDraft((current) => ({ ...current, category: e.target.value }))} placeholder="Categoría" />
-          <input value={draft.audience} onChange={(e) => setDraft((current) => ({ ...current, audience: e.target.value }))} placeholder="Audiencia" />
-          <input value={draft.venue} onChange={(e) => setDraft((current) => ({ ...current, venue: e.target.value }))} placeholder="Lugar" />
-          <input type="datetime-local" value={draft.startDate} onChange={(e) => setDraft((current) => ({ ...current, startDate: e.target.value }))} />
-          <input type="datetime-local" value={draft.endDate} onChange={(e) => setDraft((current) => ({ ...current, endDate: e.target.value }))} />
-          <input type="number" min={0} value={draft.capacity} onChange={(e) => setDraft((current) => ({ ...current, capacity: e.target.value }))} placeholder="Capacidad" />
-          <input type="number" min={0} step="0.01" value={draft.cost} onChange={(e) => setDraft((current) => ({ ...current, cost: e.target.value }))} placeholder="Costo" />
-          <select value={draft.status} onChange={(e) => setDraft((current) => ({ ...current, status: e.target.value as ApiEvent["status"] }))}>
-            <option value="DRAFT">Borrador</option>
-            <option value="PUBLISHED">Publicado</option>
-            <option value="CLOSED">Cerrado</option>
-            <option value="CANCELLED">Cancelado</option>
-          </select>
-        </div>
-
-        <textarea value={draft.description} onChange={(e) => setDraft((current) => ({ ...current, description: e.target.value }))} placeholder="Descripción" rows={4} />
-
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <button type="submit" className="btn btn-primary">{editingId ? "Guardar cambios" : "Nuevo evento"}</button>
-          {editingId && (
-            <button type="button" className="btn btn-secondary" onClick={() => { setEditingId(null); setDraft(emptyDraft); }}>
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
-
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-
-      {loading ? (
-        <p>Cargando eventos...</p>
-      ) : (
-        <div style={{ display: "grid", gap: "0.75rem" }}>
-          {sortedEvents.length === 0 ? (
-            <p>No hay eventos registrados.</p>
-          ) : (
-            sortedEvents.map((event) => (
-              <div key={event.id} style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: "1rem", display: "grid", gap: "0.75rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                  <div>
-                    <strong>{event.title}</strong>
-                    <div>{event.category ?? "Sin categoría"}</div>
-                  </div>
-                  <span style={{ borderRadius: 999, background: "#e0f2fe", padding: "0.3rem 0.7rem" }}>{event.status}</span>
-                </div>
-                <div>{event.description ?? "Sin descripción"}</div>
-                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                  <button type="button" onClick={() => startEdit(event)}>Editar</button>
-                  <button type="button" onClick={() => onPublish(event.id)}>Publicar</button>
-                  <Link to={`/app/eventos/${event.id}/inscritos`}>Inscritos</Link>
-                  <button type="button" onClick={() => onDelete(event.id)}>Eliminar</button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
-  );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
 import logo from "../../assets/logo_zigzag_main.png";
-import PublicNavigation from "../../components/PublicNavigation";
 import "./HomePage.css";
 import {
     User,
@@ -444,7 +444,9 @@ function StepCircle({
 export default function HomePage() {
     return (
         <div className="sizz-page">
-            <PublicNavigation />
+
+            {/* Barra de navegación */}
+            <Navbar />
 
             {/* Hero */}
             <section
