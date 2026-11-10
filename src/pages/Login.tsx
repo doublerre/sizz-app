@@ -41,7 +41,7 @@ export const Login = () => {
                 // Cuenta registrada pero sin verificar → reenviar código y redirigir
                 if (code === 'ACCOUNT_NOT_VERIFIED') {
                     try {
-                        await authService.resendCode({ email: data.email, firstName: '' });
+                        await authService.resendCode({ email: data.email });
                     } catch {
                         // Si el reenvío falla no bloqueamos la navegación
                     }

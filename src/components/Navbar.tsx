@@ -8,7 +8,7 @@ import "./Navbar.css";
 const navLinks = [
     { label: "Inicio", to: "/", available: true },
     { label: "Experiencias", to: "/experiencias", available: true },
-    { label: "Reservaciones", to: "/reservaciones", available: false },
+    { label: "Reservaciones", to: "/cuenta/reservaciones", available: true },
     { label: "Eventos", to: "/eventos", available: true },
     { label: "Ayuda", to: "/ayuda", available: false },
 ];
@@ -54,8 +54,7 @@ export default function Navbar() {
 
                 <div className="navbar-actions">
                     <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
-                    {/* Sin ruta todavía: deshabilitado hasta que exista /planear-visita */}
-                    <button type="button" className="navbar-cta" disabled>Planear visita</button>
+                    <Link className="navbar-cta" to="/cuenta/reservaciones" onClick={closeMenu}>Planear visita</Link>
                 </div>
             </div>
         </nav>

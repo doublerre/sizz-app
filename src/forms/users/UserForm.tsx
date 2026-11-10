@@ -371,7 +371,8 @@ export default function UserForm({
                                     placeholder="Ej. Roberto"
                                     value={values.firstName}
                                     onChange={(e) => handleChange("firstName", e.target.value)}
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isEdit}
+                                    readOnly={isEdit}
                                 />
                                 {errors.firstName && (
                                     <span className="usr-form-field-error">{errors.firstName}</span>
@@ -389,7 +390,8 @@ export default function UserForm({
                                     placeholder="Ej. Pérez Márquez"
                                     value={values.lastName}
                                     onChange={(e) => handleChange("lastName", e.target.value)}
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isEdit}
+                                    readOnly={isEdit}
                                 />
                                 {errors.lastName && (
                                     <span className="usr-form-field-error">{errors.lastName}</span>
@@ -410,7 +412,8 @@ export default function UserForm({
                                     placeholder="nombre.apellido@zigzag.gob.mx"
                                     value={values.email}
                                     onChange={(e) => handleChange("email", e.target.value)}
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isEdit}
+                                    readOnly={isEdit}
                                 />
                             </div>
                             {errors.email && (
@@ -611,31 +614,35 @@ export default function UserForm({
                     <section className="usr-form-card usr-form-card--side">
                         <h3 className="usr-form-side-title">Flujo de activación</h3>
 
-                        <label className="usr-form-switch-row">
-                            <div className="usr-form-switch-text">
-                                <strong>Enviar correo con código de verificación</strong>
-                                <span>El usuario recibirá un código de 6 dígitos para validar su cuenta.</span>
-                            </div>
-                            <input
-                                type="checkbox"
-                                className="usr-form-toggle"
-                                checked={values.sendVerificationEmail}
-                                onChange={(e) => handleChange("sendVerificationEmail", e.target.checked)}
-                            />
-                        </label>
+                        {!isEdit && (
+                            <>
+                                <label className="usr-form-switch-row">
+                                    <div className="usr-form-switch-text">
+                                        <strong>Enviar correo con código de verificación</strong>
+                                        <span>El usuario recibirá un código de 6 dígitos para validar su cuenta.</span>
+                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        className="usr-form-toggle"
+                                        checked={values.sendVerificationEmail}
+                                        onChange={(e) => handleChange("sendVerificationEmail", e.target.checked)}
+                                    />
+                                </label>
 
-                        <label className="usr-form-switch-row">
-                            <div className="usr-form-switch-text">
-                                <strong>Activar cuenta de inmediato</strong>
-                                <span>Omite la verificación previa (el usuario ya queda con isActive=true).</span>
-                            </div>
-                            <input
-                                type="checkbox"
-                                className="usr-form-toggle"
-                                checked={values.isActiveImmediately}
-                                onChange={(e) => handleChange("isActiveImmediately", e.target.checked)}
-                            />
-                        </label>
+                                <label className="usr-form-switch-row">
+                                    <div className="usr-form-switch-text">
+                                        <strong>Activar cuenta de inmediato</strong>
+                                        <span>Omite la verificación previa (el usuario ya queda con isActive=true).</span>
+                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        className="usr-form-toggle"
+                                        checked={values.isActiveImmediately}
+                                        onChange={(e) => handleChange("isActiveImmediately", e.target.checked)}
+                                    />
+                                </label>
+                            </>
+                        )}
 
                         <div className="usr-form-notice">
                             <Info size={16} className="usr-form-notice-icon" />

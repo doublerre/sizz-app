@@ -27,7 +27,6 @@ export interface VerifyPayload {
 
 export interface ResendCodePayload {
     email: string;
-    firstName: string;
 }
 
 export const authService = {
@@ -39,9 +38,9 @@ export const authService = {
     verify: (payload: VerifyPayload): Promise<TokenResponse> =>
         api.post<TokenResponse>("/auth/verify", payload).then((r) => r.data),
 
-    /** Reenvía el código OTP al correo del usuario. */
+    /** Reenvía el código OTP al correo del usuario. Usa el endpoint existente del backend. */
     resendCode: (payload: ResendCodePayload): Promise<void> =>
-        api.post("/auth/resend-code", payload).then(() => {}),
+        api.post("/auth/send-verification-code", payload).then(() => {}),
 
     login: (email: string, password: string): Promise<TokenResponse> =>
         api.post<TokenResponse>("/auth/login", { email, password }).then((r) => r.data),

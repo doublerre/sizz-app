@@ -109,7 +109,6 @@ export default function Verify() {
         try {
             await authService.resendCode({
                 email: state.email,
-                firstName: state.firstName,
             })
             setSecondsLeft(CODE_TTL_SECONDS)
             inputRefs.current.forEach((r) => { if (r) r.value = "" })

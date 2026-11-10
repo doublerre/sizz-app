@@ -91,20 +91,26 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Administración de becas: ADMIN y SCHOLARSHIP_MANAGER */}
-            <Route
-                element={
-                    <PrivateRoute allowedRoles={["ADMIN", "SCHOLARSHIP_MANAGER"]} />
-                }
-            >
+            {/* Administración: solo ADMIN */}
+            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
                 <Route path="/app" element={<AppLayout />}>
                     <Route index element={<AdminDashboard />} />
+
+                    {/* Experiencias: solo ADMIN */}
                     <Route path="experiences" element={<ExperiencesAdministrationPage />} />
                     <Route path="experiences/new" element={<NewExperience />} />
                     <Route path="experiences/:id/edit" element={<EditExperience />} />
+
+                    {/* Usuarios: solo ADMIN */}
                     <Route path="users" element={<UserAdminPage />} />
                     <Route path="users/new" element={<UserForm mode="create" />} />
                     <Route path="users/:id/edit" element={<UserForm mode="edit" />} />
+
+                    {/* Reservaciones y eventos admin: solo ADMIN */}
+                    <Route path="reservaciones" element={<ReservationsPage />} />
+                    <Route path="eventos" element={<EventsAdminPage />} />
+
+                    {/* Becas admin: ADMIN y SCHOLARSHIP_MANAGER */}
                     <Route path="becas" element={<ScholarshipAdminLayout />}>
                         <Route index element={<CallsAdminPage />} />
                         <Route path="nueva" element={<CallEditorPage />} />
@@ -124,9 +130,25 @@ export default function AppRouter() {
                             <Route path=":callId/horas" element={<HoursAdminPage />} />
                         </Route>
                     </Route>
-                    <Route element={<PrivateRoute requiredRole="ADMIN" />}>
-                        <Route path="reservaciones" element={<ReservationsPage />} />
-                        <Route path="eventos" element={<EventsAdminPage />} />
+                </Route>
+            </Route>
+
+            {/* Becas admin: SCHOLARSHIP_MANAGER accede solo a becas */}
+            <Route
+                element={<PrivateRoute allowedRoles={["ADMIN", "SCHOLARSHIP_MANAGER"]} />}
+            >
+                <Route path="/app" element={<AppLayout />}>
+                    <Route path="becas" element={<ScholarshipAdminLayout />}>
+                        <Route index element={<CallsAdminPage />} />
+                        <Route path="nueva" element={<CallEditorPage />} />
+                        <Route path="catalogos" element={<CatalogsPage />} />
+                        <Route path="formularios" element={<FormsAdminPage />} />
+                        <Route path="formularios/:formId" element={<FormsAdminPage />} />
+                        <Route path=":callId/editar" element={<CallEditorPage />} />
+                        <Route
+                            path=":callId/postulaciones"
+                            element={<ApplicationsAdminPage />}
+                        />
                     </Route>
                 </Route>
             </Route>
