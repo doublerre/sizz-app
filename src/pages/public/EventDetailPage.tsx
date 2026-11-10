@@ -6,6 +6,7 @@ import { getEvent, type ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle } from "@/data/eventCategories";
 import { formatCost, formatLongDate, formatTimeRange } from "@/utils/eventFormat";
 import "./EventDetailPage.css";
+import EventRegistrationForm from "@/components/EventRegistrationForm";
 
 type Result = {
     id: string;
@@ -64,7 +65,7 @@ export default function EventDetailPage() {
     const Icon = category.icon;
 
     return (
-        
+
         <div className="event-detail" style={{ "--event-color": category.color } as CSSProperties}>
             <header className="event-detail-hero">
                 <div className="container">
@@ -128,9 +129,7 @@ export default function EventDetailPage() {
                         </div>
                     </dl>
 
-                    <button type="button" className="event-detail-cta" disabled>
-                        Inscripción próximamente
-                    </button>
+                    {finished ? null : <EventRegistrationForm eventId={event.id} />}
                 </aside>
             </div>
         </div>

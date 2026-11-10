@@ -1,0 +1,113 @@
+.event-register {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.event-register h3 {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.event-register label {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.event-register input[type="text"],
+.event-register input[type="email"] {
+    padding: 11px 12px;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.event-register input:focus {
+    outline: 2px solid var(--bg-brand-default);
+}
+
+.event-register-input--error {
+    border-color: var(--brand-red);
+}
+
+.event-register-error {
+    font-size: 12px;
+    color: var(--brand-red);
+}
+
+.event-register-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.event-register-alert {
+    margin: 8px 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--brand-red) 10%, var(--bg-surface));
+    color: var(--brand-red);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.event-register-submit {
+    margin-top: 14px;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--bg-brand-default);
+    color: var(--text-inverse);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.event-register-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---- inscripción lista ---- */
+.event-register-done {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    text-align: center;
+    color: var(--brand-green);
+}
+
+.event-register-done h3 {
+    margin: 4px 0 0;
+    color: var(--text-primary);
+}
+
+.event-register-done p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.event-register-done .event-register-folio {
+    margin: 6px 0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--brand-green) 14%, var(--bg-surface));
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+}

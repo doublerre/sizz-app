@@ -279,3 +279,7 @@
         grid-template-columns: 1fr;
     }
 }
+
+.admin-event-row-actions a.admin-event-btn {
+    text-decoration: none;
+}

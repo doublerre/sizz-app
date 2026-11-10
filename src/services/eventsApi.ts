@@ -68,3 +68,40 @@ export async function updateEvent(id: string, payload: EventPayload): Promise<Ap
 export async function deleteEvent(id: string): Promise<void> {
     await api.delete(`/events/${id}`);
 }
+
+
+// Se inscribe con nombre y correo, sin cuenta
+export type RegistrationPayload = {
+    name: string;
+    email: string;
+    phone: string | null;
+    privacyAccepted: boolean;
+};
+
+// emailSent: false si el correo no pudo salir la inscripcion si se quedara 
+export type RegistrationResult = {
+    folio: string;
+    eventTitle: string;
+    email: string;
+    emailSent: boolean;
+};
+
+export type Participant = {
+    id: string;
+    folio: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    registeredAt: string;
+};
+
+export async function registerToEvent(eventId: string, payload: RegistrationPayload): Promise<RegistrationResult> {
+    const { data } = await api.post<RegistrationResult>(`/events/${eventId}/registrations`, payload);
+    return data;
+}
+
+// Solo ADMIN y CONTROL
+export async function getParticipants(eventId: string): Promise<Participant[]> {
+    const { data } = await api.get<Participant[]>(`/events/${eventId}/registrations`);
+    return data;
+}

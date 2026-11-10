@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import * as z from "zod";
 import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
     createEvent,
     deleteEvent,
@@ -466,6 +467,14 @@ export default function EventsAdminPage() {
                                                 >
                                                     Editar
                                                 </button>
+                                            )}
+                                            {event.status === "PUBLISHED" && (
+                                                <Link
+                                                    className="admin-event-btn admin-event-btn--ghost admin-event-btn--small"
+                                                    to={`/app/eventos/${event.id}/inscritos`}
+                                                >
+                                                    Inscritos
+                                                </Link>
                                             )}
                                             {event.status === "DRAFT" && (
                                                 <>

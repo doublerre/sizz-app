@@ -10,6 +10,7 @@ import AccountLayout from "@/layouts/AccountLayout.tsx";
 import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
 import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
 import EventsAdminPage from "@/pages/app/EventsAdminPage.tsx";
+import EventParticipantsPage from "@/pages/app/EventParticipantsPage.tsx";
 import MyReservationsPage from "@/pages/account/MyReservationsPage.tsx";
 import Register from "@/pages/auth/Register.tsx";
 import Verify from "@/pages/auth/Verify.tsx";
@@ -87,7 +88,7 @@ export default function AppRouter() {
         }
       >
         <Route path="/app" element={<AppLayout />}>
-          <Route index element={<Navigate to="eventos" replace />}/>
+          <Route index element={<Navigate to="eventos" replace />} />
           <Route path="becas" element={<ScholarshipAdminLayout />}>
             <Route index element={<CallsAdminPage />} />
             <Route path="nueva" element={<CallEditorPage />} />
@@ -110,6 +111,7 @@ export default function AppRouter() {
           <Route element={<PrivateRoute requiredRole="ADMIN" />}>
             <Route path="reservaciones" element={<ReservationsPage />} />
             <Route path="eventos" element={<EventsAdminPage />} />
+            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
           </Route>
         </Route>
       </Route>
