@@ -245,7 +245,7 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
                                             </small>
                                         )}
                                     </td>
-                                    <td>{user?.role === 'CASHIER' && sale.status === 'Activo' && (
+                                    <td>{(user?.role === 'ADMIN' || user?.role === 'CASHIER') && sale.status === 'Activo' && (
                                         <button
                                             className="action-button action-button--cancel"
                                             type="button"
