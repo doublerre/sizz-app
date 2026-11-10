@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
+import logo from "../../assets/logo_zigzag_main.png";
 import "./HomePage.css";
 import "./ExperiencesPage.css";
 import {

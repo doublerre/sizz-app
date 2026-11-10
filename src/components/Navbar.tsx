@@ -58,7 +58,7 @@ export default function Navbar() {
                 <div className="navbar-actions">
                     {user ? (
                         <>
-                            <Link className="navbar-login" to="/cuenta" onClick={closeMenu}>Mi cuenta</Link>
+                            <Link className="navbar-login" to={user.role === "ADMIN" || user.role === "SCHOLARSHIP_MANAGER" ? "/app/becas" : "/cuenta/becas"} onClick={closeMenu}>Mi cuenta</Link>
                             <button type="button" className="navbar-cta" onClick={() => { logout(); closeMenu(); }}>Cerrar sesión</button>
                         </>
                     ) : (

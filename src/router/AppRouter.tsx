@@ -60,6 +60,7 @@ export default function AppRouter() {
             <Route path="/experiencias" element={<ExperiencesPage />} />
             <Route element={<PublicLayout />}>
                 <Route path="/eventos" element={<EventsPage />} />
+                <Route path="/eventos/:id" element={<EventDetailPage />} />
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
@@ -148,26 +149,11 @@ export default function AppRouter() {
                     <Route path="saleComplete" element={<SaleComplete />} />
                 </Route>
             </Route>
-          </Route>
-          <Route element={<PrivateRoute requiredRole="ADMIN" />}>
-            <Route path="reservaciones" element={<ReservationsPage />} />
-            <Route path="eventos" element={<EventsAdminPage />} />
-            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
-          </Route>
-        </Route>
-      </Route>
-      <Route element={<PrivateRoute requiredRole="ADMIN" />}>
-        <Route path="/taquilla" element={<BoxOfficePage />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="newsale" element={<NewSale />} />
-          <Route path="historial" element={<SalesHistory />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="corte" element={<CashClosing />} />
-          <Route path="reservationFee" element={<ReservationFee />} />
-          <Route path="saleComplete" element={<SaleComplete />} />
-        </Route>
-      </Route>
+
+            {/* Inscritos a eventos: solo ADMIN */}
+            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+                <Route path="/app/eventos/:id/inscritos" element={<EventParticipantsPage />} />
+            </Route>
 
             {/* Autenticados (cualquier rol) */}
             <Route element={<PrivateRoute />}>
