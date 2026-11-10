@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { ArrowRight } from "lucide-react";
 import { getEvents, type ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle, normalize } from "@/data/eventCategories";
+import EventDetailModal from "@/components/EventDetailModal";
 
 
 function formatDate(iso: string | null): string {
@@ -24,7 +24,7 @@ export default function EventsPage() {
     const [events, setEvents] = useState<ApiEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    const [selected, setSelected] = useState<ApiEvent | null>(null);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -133,9 +133,9 @@ export default function EventsPage() {
                                             <span className={event.cost === 0 ? "event-cost event-cost-free" : "event-cost"}>
                                                 {formatCost(event.cost)}
                                             </span>
-                                            <Link className="event-link" to={"/eventos/" + event.id}>
+                                            <button type="button" className="event-link" onClick={() => setSelected(event)}>
                                                 Ver detalle <ArrowRight size={14} />
-                                            </Link>
+                                            </button>
                                         </div>
                                     </div>
                                 </article>
@@ -150,6 +150,7 @@ export default function EventsPage() {
                     </p>
                 )}
             </div>
+            {selected && <EventDetailModal event={selected} onClose={() => setSelected(null)} />}
         </>
     )
 }
