@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import Navbar from "@/components/Navbar";
 import logo from "../../assets/logo_zigzag_main.png";
 import "./HomePage.css";
 import "./ExperiencesPage.css";
@@ -58,7 +59,7 @@ const btnBase: React.CSSProperties = {
     gap: "0.4rem",
 };
 
-const CATEGORY_THEMES = {
+export const CATEGORY_THEMES = {
     fisica: {
         label: "FÍSICA",
         color: C.fisica,
@@ -234,7 +235,6 @@ const DURATION_FILTERS = [
 export default function ExperiencesPage() {
     const [activities, setActivities] = useState<PublicActivity[]>([]);
     const [loading, setLoading] = useState(true);
-    const [menuOpen, setMenuOpen] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTopic, setSelectedTopic] = useState("Todos los temas");
@@ -252,12 +252,6 @@ export default function ExperiencesPage() {
 
     const AGES = AGE_FILTERS.map((f) => f.label);
     const DURATIONS = DURATION_FILTERS.map((f) => f.label);
-
-    const navLinks = [
-        { label: "Inicio", href: "/" },
-        { label: "Experiencias", href: "/experiencias" },
-        { label: "Eventos", href: "/eventos" },
-    ];
 
     const handleClearFilters = () => {
         setSearchQuery("");
@@ -278,6 +272,10 @@ export default function ExperiencesPage() {
         const durF = DURATION_FILTERS.find((f) => f.label === selectedDuration)!;
 
         return activities.filter((act) => {
+            // Solo mostrar experiencias publicadas
+            if (act.statusLabel !== "Publicada")
+                return false;
+
             const themeLabel = CATEGORY_THEMES[toCategoryKey(act.topic)].label;
 
             if (q && !normalize(`${act.name} ${act.description} ${themeLabel}`).includes(q))
@@ -299,107 +297,7 @@ export default function ExperiencesPage() {
 
     return (
         <div className="sizz-page exp-page">
-            <nav className="sizz-nav">
-                <img src={logo} alt="Logo Zigzag" className="sizz-nav__logo" />
-
-                <div className="sizz-nav__links">
-                    {navLinks.map(({ label, href }) => (
-                        <a key={href} href={href} className="sizz-nav__link">
-                            {label}
-                        </a>
-                    ))}
-                </div>
-
-                <div className="sizz-nav__actions">
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: "transparent",
-                            color: C.blue,
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.backgroundColor = C.blue;
-                            e.currentTarget.style.color = "#fff";
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.backgroundColor = "transparent";
-                            e.currentTarget.style.color = C.blue;
-                        }}
-                        onClick={() => window.location.href = "/login"}
-                    >
-                        Iniciar sesión
-                    </button>
-                    {/* Reservaciones no está disponible aún como ruta pública */}
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid #CBD5E0`,
-                            backgroundColor: "#EDF2F7",
-                            color: "#A0AEC0",
-                            cursor: "not-allowed",
-                        }}
-                        disabled
-                        title="Próximamente"
-                    >
-                        Planear visita
-                    </button>
-                </div>
-
-                <button
-                    className="sizz-nav__hamburger"
-                    onClick={() => setMenuOpen(o => !o)}
-                    aria-label="Abrir menú"
-                >
-                    <span style={{ transform: menuOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
-                    <span style={{ opacity: menuOpen ? 0 : 1 }} />
-                    <span style={{ transform: menuOpen ? "rotate(-45deg) translate(5px, -5px)" : "none" }} />
-                </button>
-            </nav>
-
-            <div className={`sizz-nav__mobile-menu${menuOpen ? " open" : ""}`}>
-                {navLinks.map(({ label, href }) => (
-                    <a
-                        key={href}
-                        href={href}
-                        className="sizz-nav__mobile-link"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        {label}
-                    </a>
-                ))}
-                <div className="sizz-nav__mobile-actions">
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid ${C.blue}`,
-                            backgroundColor: "transparent",
-                            color: C.blue,
-                            flex: "1 1 auto",
-                            justifyContent: "center",
-                        }}
-                        onClick={() => { window.location.href = "/login"; setMenuOpen(false); }}
-                    >
-                        Iniciar sesión
-                    </button>
-                    {/* Reservaciones no está disponible aún como ruta pública */}
-                    <button
-                        style={{
-                            ...btnBase,
-                            border: `2px solid #CBD5E0`,
-                            backgroundColor: "#EDF2F7",
-                            color: "#A0AEC0",
-                            cursor: "not-allowed",
-                            flex: "1 1 auto",
-                            justifyContent: "center",
-                        }}
-                        disabled
-                        title="Próximamente"
-                    >
-                        Planear visita
-                    </button>
-                </div>
-            </div>
+            <Navbar />
 
             <section className="exp-hero" style={{ backgroundColor: C.blueDark }}>
                 <div style={{ position: "absolute", top: "-60px", left: "25%", width: "240px", height: "240px", borderRadius: "50%", backgroundColor: "#2EAF6B", opacity: 0.16, filter: "blur(45px)", pointerEvents: "none" }} />
