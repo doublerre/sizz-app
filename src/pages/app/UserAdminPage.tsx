@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/useAuth";
 import {
     Search,
     ChevronDown,
@@ -54,10 +54,10 @@ export default function UserAdminPage() {
     const loadUsers = async () => {
         setLoading(true);
         try {
-            const res = await adminUsersService.listUsers(0, 20);
-            setUsersList(res.content || []);
+            const users = await adminUsersService.listUsers();
+            setUsersList(users);
         } catch (err) {
-            console.error("Error al cargar usuarios:", err);
+            console.error('[UserAdminPage] Error al cargar usuarios:', err);
         } finally {
             setLoading(false);
         }
@@ -367,11 +367,11 @@ export default function UserAdminPage() {
                                             <span
                                                 className="user-admin__badge"
                                                 style={{
-                                                    backgroundColor: user.isActive ? "#edf8e9" : "#fff7d6",
-                                                    color: user.isActive ? "#398a1e" : "#8b6b00",
+                                                    backgroundColor: "#edf8e9",
+                                                    color: "#398a1e",
                                                 }}
                                             >
-                                                {user.isActive ? "Activo" : "Por verificar"}
+                                                Activo
                                             </span>
                                         </div>
 

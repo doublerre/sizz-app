@@ -94,7 +94,7 @@ export const toAdminExperience = (dto: ActivityResponse): AdminExperience => {
         location: dto.location || "General",
         status: STATUS_FROM_BACKEND[dto.status] || "borrador",
         order: dto.catalogOrder ?? null,
-        tagLabel: dto.tag || dto.topic,
+        tagLabel: dto.tag || dto.topic || "",
         showInCatalog: dto.showInCatalog ?? true,
         availableForBooking: dto.isReservable ?? true,
         updatedAt: dto.updatedAt
@@ -121,7 +121,7 @@ export const toActivityRequest = (form: ExperienceFormValues): ActivityRequest =
         targetAudience: form.audiences.join(", "),
         catalogOrder: null,
         color: null,
-        tag: form.tagLabel.trim() || null,
+        tag: (form.tagLabel || "").trim() || null,
         showInCatalog: form.showInCatalog,
         isReservable: form.availableForBooking,
     };

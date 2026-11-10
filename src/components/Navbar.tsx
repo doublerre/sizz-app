@@ -7,7 +7,7 @@ import "./Navbar.css";
 //poner true cuando la ruta este disponible
 const navLinks = [
     { label: "Inicio", to: "/", available: true },
-    { label: "Experiencias", to: "/experiencias", available: false },
+    { label: "Experiencias", to: "/experiencias", available: true },
     { label: "Reservaciones", to: "/reservaciones", available: false },
     { label: "Eventos", to: "/eventos", available: true },
     { label: "Ayuda", to: "/ayuda", available: false },

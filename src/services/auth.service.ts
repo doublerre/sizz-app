@@ -18,25 +18,34 @@ export interface RegisterPayload {
     lastName: string;
     email: string;
     password: string;
-    role?: "USER" | "GUIDE";
+}
+
+export interface VerifyPayload {
+    email: string;
+    code: string;
+}
+
+export interface ResendCodePayload {
+    email: string;
+    firstName: string;
 }
 
 export const authService = {
-    /** Guarda el usuario inactivo en BD y envía el código al correo. No devuelve tokens. */
+    /** Registra un nuevo usuario (sin code, sin role). El backend envía el OTP. */
     register: (payload: RegisterPayload): Promise<void> =>
         api.post("/auth/register", payload).then(() => {}),
 
-    /** Verifica el código OTP, activa la cuenta y devuelve tokens de sesión. */
-    verifyAccount: (email: string, code: string): Promise<TokenResponse> =>
-        api.post<TokenResponse>("/auth/verify", { email, code }).then((r) => r.data),
+    /** Verifica el código OTP y activa la cuenta, devolviendo tokens de sesión. */
+    verify: (payload: VerifyPayload): Promise<TokenResponse> =>
+        api.post<TokenResponse>("/auth/verify", payload).then((r) => r.data),
+
+    /** Reenvía el código OTP al correo del usuario. */
+    resendCode: (payload: ResendCodePayload): Promise<void> =>
+        api.post("/auth/resend-code", payload).then(() => {}),
 
     login: (email: string, password: string): Promise<TokenResponse> =>
         api.post<TokenResponse>("/auth/login", { email, password }).then((r) => r.data),
 
     refresh: (refreshToken: string): Promise<TokenResponse> =>
         api.post<TokenResponse>("/auth/refresh", { refreshToken }).then((r) => r.data),
-
-    /** Reenvía el código a un usuario inactivo existente. */
-    sendVerificationCode: (email: string, firstName: string): Promise<void> =>
-        api.post("/auth/send-verification-code", { email, firstName }).then(() => {}),
 };

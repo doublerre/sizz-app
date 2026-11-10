@@ -239,25 +239,13 @@ export default function UserForm({
             if (onSubmit) {
                 await onSubmit(values);
             } else if (isEdit && id) {
-                // Modo edición: actualizar usuario existente
-                await adminUsersService.updateUser(id, {
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    email: values.email,
-                    role: values.role,
-                    isActive: values.isActiveImmediately,
-                });
+                // Modo edición: el backend solo permite cambiar el rol
+                await adminUsersService.updateRole(id, values.role);
             } else {
-                // Modo creación
-                await adminUsersService.createUser({
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    email: values.email,
-                    password: values.password,
-                    role: values.role,
-                    sendVerificationEmail: values.sendVerificationEmail,
-                    isActiveImmediately: values.isActiveImmediately
-                });
+                // Modo creación: el backend no expone POST /admin/users aún.
+                setSubmitError("La creación de usuarios aún no está disponible. Contacta al administrador del sistema.");
+                setIsSubmitting(false);
+                return;
             }
             setSubmitSuccess(true);
             setTimeout(() => {

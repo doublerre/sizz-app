@@ -4,16 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { isAxiosError } from "axios"
 import { AuthBanner } from "../../components/AuthBanner"
 import { authService } from "../../services/auth.service"
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/useAuth"
 import "../../General.css"
 import "../auth/Register.css"
 import "./Verify.css"
 
 interface VerifyState {
     firstName: string
-    lastName: string
     email: string
-    role: "USER" | "GUIDE"
 }
 
 const CODE_TTL_SECONDS = 600 // 10 minutos, igual que el backend
@@ -85,7 +83,11 @@ export default function Verify() {
         setApiError(null)
         setIsLoading(true)
         try {
-            const tokens = await authService.verifyAccount(state.email, code)
+            // Verifica el código OTP; el backend activa la cuenta y devuelve tokens
+            const tokens = await authService.verify({
+                email: state.email,
+                code,
+            })
             const claims = loginWithTokens(tokens)
             navigate(claims.role === "ADMIN" ? "/app" : "/", { replace: true })
         } catch (err) {
@@ -105,7 +107,10 @@ export default function Verify() {
         setApiError(null)
         setIsResending(true)
         try {
-            await authService.sendVerificationCode(state.email, state.firstName)
+            await authService.resendCode({
+                email: state.email,
+                firstName: state.firstName,
+            })
             setSecondsLeft(CODE_TTL_SECONDS)
             inputRefs.current.forEach((r) => { if (r) r.value = "" })
             inputRefs.current[0]?.focus()

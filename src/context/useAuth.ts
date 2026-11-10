@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { RegisterPayload } from "../services/auth.service";
+import type { TokenResponse } from "../services/auth.service";
 
 export interface AuthUser {
   sub: string;
@@ -7,12 +7,12 @@ export interface AuthUser {
   role: "USER" | "ADMIN" | "GUIDE" | "SCHOLARSHIP_MANAGER";
   exp: number;
 }
-interface AuthContextValue {
+export interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
-  register: (payload: RegisterPayload) => Promise<AuthUser>;
+  loginWithTokens: (tokens: TokenResponse) => AuthUser;
   logout: () => void;
 }
 export const AuthContext = createContext<AuthContextValue | null>(null);

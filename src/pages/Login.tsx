@@ -6,7 +6,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { isAxiosError } from 'axios';
 import * as z from 'zod';
 import logo from '../assets/logo_zigzag.png';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { authService } from '../services/auth.service';
 import './Login.css';
 
@@ -41,12 +41,12 @@ export const Login = () => {
                 // Cuenta registrada pero sin verificar → reenviar código y redirigir
                 if (code === 'ACCOUNT_NOT_VERIFIED') {
                     try {
-                        await authService.sendVerificationCode(data.email, '');
+                        await authService.resendCode({ email: data.email, firstName: '' });
                     } catch {
                         // Si el reenvío falla no bloqueamos la navegación
                     }
                     navigate('/register/verify-account', {
-                        state: { firstName: '', lastName: '', email: data.email, role: 'USER' },
+                        state: { firstName: '', email: data.email },
                     });
                     return;
                 }
@@ -110,7 +110,6 @@ export const Login = () => {
                             <Link to="/recuperar-contrasena" style={{ fontSize: '0.78rem', color: '#0868b7', textDecoration: 'none', fontWeight: 600 }}>
                                 ¿Olvidaste tu contraseña?
                             </Link>
-
                         </div>
                     </div>
 

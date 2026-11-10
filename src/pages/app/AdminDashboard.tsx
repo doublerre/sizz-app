@@ -10,6 +10,7 @@ import {
     Star,
     User,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import "./AdminDashboard.css";
 
 const weeklyTraffic = [
@@ -180,12 +181,12 @@ function AdminDashboard() {
                         <p className="adm-dashboard-card__subtitle">Atajos de uso frecuente</p>
 
                         <div className="adm-dashboard-actions">
-                            <button type="button" className="adm-dashboard-action adm-dashboard-action--blue">
+                            <Link to="/app/experiences/new" className="adm-dashboard-action adm-dashboard-action--blue" style={{ textDecoration: "none" }}>
                                 <span className="adm-dashboard-action__icon">
                                     <Plus size={18} strokeWidth={3} />
                                 </span>
                                 Nueva experiencia
-                            </button>
+                            </Link>
 
                             <button type="button" className="adm-dashboard-action adm-dashboard-action--green">
                                 <span className="adm-dashboard-action__icon">

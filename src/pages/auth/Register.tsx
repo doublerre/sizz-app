@@ -41,26 +41,29 @@ export default function CreateUserForm() {
         setApiError(null)
         setIsLoading(true)
         try {
-            // Guarda el usuario inactivo y dispara el envío del código desde el backend
+            // Registra el usuario con datos completos; el backend envía el OTP
             await authService.register({
                 firstName: data.name,
                 lastName: data.lastName,
                 email: data.email,
                 password: data.password,
-                role: profileType,
             })
+            // Redirige a verificación de correo
             navigate("/register/verify-account", {
                 state: {
                     firstName: data.name,
-                    lastName: data.lastName,
                     email: data.email,
-                    role: profileType,
                 },
             })
         } catch (err) {
             if (isAxiosError(err)) {
-                const msg = err.response?.data?.message
-                setApiError(msg ?? "Ocurrió un error. Intenta de nuevo.")
+                const code = err.response?.data?.code
+                if (code === "EMAIL_ALREADY_REGISTERED") {
+                    setApiError("Este correo ya está registrado. Si no recuerdas tu contraseña, usa '¿Olvidaste tu contraseña?'.")
+                } else {
+                    const msg = err.response?.data?.message
+                    setApiError(msg ?? "Ocurrió un error. Intenta de nuevo.")
+                }
             }
         } finally {
             setIsLoading(false)
