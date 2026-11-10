@@ -7,9 +7,23 @@ import { formatCost, formatLongDate, formatTimeRange } from "@/utils/eventFormat
 import EventRegistrationForm from "@/components/EventRegistrationForm";
 import "./EventDetailModal.css";
 
-export default function EventDetailModal({ event, onClose }: { event: ApiEvent; onClose: () => void }) {
+export default function EventDetailModal({
+    event,
+    onClose,
+    goToForm = false,
+}: {
+    event: ApiEvent;
+    onClose: () => void;
+    goToForm?: boolean;
+}) {
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
+    // Si se abrió con el botón Inscribirme, el cursor queda en el formulario
+    // (y en celular, donde el formulario queda abajo, la ventana baja hasta él)
+    const registerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (goToForm) registerRef.current?.querySelector("input")?.focus();
+    }, [goToForm]);
 
     // true cuando hay datos escritos en el formulario sin enviar
     const dirtyRef = useRef(false);
@@ -105,7 +119,7 @@ export default function EventDetailModal({ event, onClose }: { event: ApiEvent; 
                         </dl>
                     </div>
 
-                    <div className="event-modal-register">
+                    <div className="event-modal-register" ref={registerRef}>
                         <EventRegistrationForm eventId={event.id} onDirtyChange={handleDirtyChange} />
                     </div>
                 </div>

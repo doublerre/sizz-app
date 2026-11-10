@@ -24,7 +24,7 @@ export default function EventsPage() {
     const [events, setEvents] = useState<ApiEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [selected, setSelected] = useState<ApiEvent | null>(null);
+    const [selected, setSelected] = useState<{ event: ApiEvent; goToForm: boolean } | null>(null);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -133,10 +133,19 @@ export default function EventsPage() {
                                             <span className={event.cost === 0 ? "event-cost event-cost-free" : "event-cost"}>
                                                 {formatCost(event.cost)}
                                             </span>
-                                            <button type="button" className="event-link" onClick={() => setSelected(event)}>
+                                            <button type="button" className="event-link" onClick={() => setSelected({ event, goToForm: false })}>
                                                 Ver detalle <ArrowRight size={14} />
                                             </button>
                                         </div>
+                                        {/* Se oculta por ahora: la inscripción irá dentro de la ventana de detalle
+                                        <button
+                                            type="button"
+                                            className="event-card-register"
+                                            onClick={() => setSelected({ event, goToForm: true })}
+                                        >
+                                            Inscribirme
+                                        </button>
+                                        */}
                                     </div>
                                 </article>
                             );
@@ -150,7 +159,9 @@ export default function EventsPage() {
                     </p>
                 )}
             </div>
-            {selected && <EventDetailModal event={selected} onClose={() => setSelected(null)} />}
+            {selected && (
+                <EventDetailModal event={selected.event} goToForm={selected.goToForm} onClose={() => setSelected(null)} />
+            )}
         </>
     )
 }
