@@ -1,62 +1,12 @@
-import { Link } from "react-router-dom";
 import "./EventsPage.css"
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
-import { Atom, Orbit, ScanEye, Baby, TreePine, Share2, Sparkles, ArrowRight } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getEvents, type ApiEvent } from "@/services/eventsApi";
+import { getCategoryStyle, normalize } from "@/data/eventCategories";
+import EventDetailModal from "@/components/EventDetailModal";
 
-// Categorías del diseño con su color y su ícono.
-type CategoryStyle = { name: string; color: string; icon: LucideIcon };
 
-const categories: CategoryStyle[] = [
-    { name: "Física", color: "var(--brand-blue)", icon: Atom },
-    { name: "Astronomía", color: "var(--brand-green)", icon: Orbit },
-    { name: "Óptica", color: "var(--brand-red-light)", icon: ScanEye },
-    { name: "Infantil", color: "var(--brand-yellow)", icon: Baby },
-    { name: "Ambiente", color: "var(--brand-teal)", icon: TreePine },
-    { name: "Tecnología", color: "var(--brand-purple)", icon: Share2 },
-];
-
-// Colores disponibles para categorías que no están en la lista
-const palette = [
-    "var(--brand-blue)",
-    "var(--brand-purple)",
-    "var(--brand-green)",
-    "var(--brand-yellow)",
-    "var(--brand-red-light)",
-];
-
-// Quita acentos y mayusculas para comprobar textos y
-// quedan iguales. normalize("NFD") separa cada letra de su acento y el
-// replace borra los acentos sueltos.
-function normalize(text: string): string {
-    return text
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-}
-
-// Convierte el nombre de la categoría en un número y lo usa para elegir
-// un color de la paleta
-function fallbackColor(category: string): string {
-    let hash = 0;
-    for (const char of category) {
-        hash = (hash * 31 + char.charCodeAt(0)) % 1000003;
-    }
-    return palette[hash % palette.length];
-}
-
-// Busca la categoría sin importar acentos ni mayúsculas.
-function getCategoryStyle(category: string | null): CategoryStyle {
-    const name = category ?? "General";
-    const found = categories.find((c) => normalize(c.name) === normalize(name));
-    return found ?? { name, color: fallbackColor(name), icon: Sparkles };
-}
-
-// La API entrega la fecha y la hora juntas en un solo texto ISO.
-// El navegador la convierte a la zona horaria de quien la ve.
 function formatDate(iso: string | null): string {
     if (!iso) return "Fecha por definir";
     const date = new Date(iso);
@@ -74,14 +24,13 @@ export default function EventsPage() {
     const [events, setEvents] = useState<ApiEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    const [selected, setSelected] = useState<{ event: ApiEvent; goToForm: boolean } | null>(null);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
     // Carga única al abrir la página ([] = sin dependencias)
     useEffect(() => {
-        // Si el usuario sale de la página antes de que responda la API,
-        // no se actualiza el estado de un componente que ya no existe
+        // Si el usuario sale de la página antes de que responda la API no se actualiza
         let cancelled = false;
 
         getEvents()
@@ -184,10 +133,19 @@ export default function EventsPage() {
                                             <span className={event.cost === 0 ? "event-cost event-cost-free" : "event-cost"}>
                                                 {formatCost(event.cost)}
                                             </span>
-                                            <Link className="event-link" to={"/eventos/" + event.id}>
+                                            <button type="button" className="event-link" onClick={() => setSelected({ event, goToForm: false })}>
                                                 Ver detalle <ArrowRight size={14} />
-                                            </Link>
+                                            </button>
                                         </div>
+                                        {/* Se oculta por ahora: la inscripción irá dentro de la ventana de detalle
+                                        <button
+                                            type="button"
+                                            className="event-card-register"
+                                            onClick={() => setSelected({ event, goToForm: true })}
+                                        >
+                                            Inscribirme
+                                        </button>
+                                        */}
                                     </div>
                                 </article>
                             );
@@ -201,6 +159,9 @@ export default function EventsPage() {
                     </p>
                 )}
             </div>
+            {selected && (
+                <EventDetailModal event={selected.event} goToForm={selected.goToForm} onClose={() => setSelected(null)} />
+            )}
         </>
     )
 }

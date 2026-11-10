@@ -1,7 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
 import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
+import EventDetailPage from "@/pages/public/EventDetailPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -10,6 +11,7 @@ import AccountLayout from "@/layouts/AccountLayout.tsx";
 import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
 import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
 import EventsAdminPage from "@/pages/app/EventsAdminPage.tsx";
+import EventParticipantsPage from "@/pages/app/EventParticipantsPage.tsx";
 import MyReservationsPage from "@/pages/account/MyReservationsPage.tsx";
 import Register from "@/pages/auth/Register.tsx";
 import Verify from "@/pages/auth/Verify.tsx";
@@ -166,6 +168,26 @@ export default function AppRouter() {
                     <Route path="saleComplete" element={<SaleComplete />} />
                 </Route>
             </Route>
+          </Route>
+          <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+            <Route path="reservaciones" element={<ReservationsPage />} />
+            <Route path="eventos" element={<EventsAdminPage />} />
+            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
+          </Route>
+        </Route>
+      </Route>
+      <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+        <Route path="/taquilla" element={<BoxOfficePage />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="newsale" element={<NewSale />} />
+          <Route path="historial" element={<SalesHistory />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="corte" element={<CashClosing />} />
+          <Route path="reservationFee" element={<ReservationFee />} />
+          <Route path="saleComplete" element={<SaleComplete />} />
+        </Route>
+      </Route>
 
             {/* Autenticados (cualquier rol) */}
             <Route element={<PrivateRoute />}>
