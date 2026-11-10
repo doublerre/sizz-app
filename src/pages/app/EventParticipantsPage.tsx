@@ -17,7 +17,12 @@ function formatDate(iso: string): string {
 
 // Excel necesita el BOM para mostrar bien los acentos
 function downloadCsv(event: ApiEvent | null, participants: Participant[]) {
-    const quote = (v: string | null) => `"${(v ?? "").replace(/"/g, '""')}"`;
+    // Excel ejecuta como fórmula lo que empieza con = + - @ ; el apóstrofo lo vuelve texto
+    const quote = (v: string | null) => {
+        const text = v ?? "";
+        const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+        return `"${safe.replace(/"/g, '""')}"`;
+    };
     const rows = [
         ["Folio", "Nombre", "Correo", "Teléfono", "Fecha de inscripción"],
         ...participants.map((p) => [p.folio, p.name, p.email, p.phone, formatDate(p.registeredAt)]),
