@@ -18,16 +18,29 @@ export interface RegisterPayload {
     lastName: string;
     email: string;
     password: string;
+}
+
+export interface VerifyPayload {
+    email: string;
     code: string;
-    role?: "USER" | "GUIDE";
+}
+
+export interface ResendCodePayload {
+    email: string;
 }
 
 export const authService = {
-    sendVerificationCode: (email: string): Promise<void> =>
-        api.post("/auth/send-verification-code", { email }),
+    /** Registra un nuevo usuario (sin code, sin role). El backend envía el OTP. */
+    register: (payload: RegisterPayload): Promise<void> =>
+        api.post("/auth/register", payload).then(() => {}),
 
-    register: (payload: RegisterPayload): Promise<TokenResponse> =>
-        api.post<TokenResponse>("/auth/register", payload).then((r) => r.data),
+    /** Verifica el código OTP y activa la cuenta, devolviendo tokens de sesión. */
+    verify: (payload: VerifyPayload): Promise<TokenResponse> =>
+        api.post<TokenResponse>("/auth/verify", payload).then((r) => r.data),
+
+    /** Reenvía el código OTP al correo del usuario. Usa el endpoint existente del backend. */
+    resendCode: (payload: ResendCodePayload): Promise<void> =>
+        api.post("/auth/send-verification-code", payload).then(() => {}),
 
     login: (email: string, password: string): Promise<TokenResponse> =>
         api.post<TokenResponse>("/auth/login", { email, password }).then((r) => r.data),

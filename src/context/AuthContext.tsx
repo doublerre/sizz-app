@@ -1,9 +1,5 @@
 import { useState, useEffect, useCallback, type ReactNode } from "react";
-import {
-  authService,
-  type RegisterPayload,
-  type TokenResponse,
-} from "../services/auth.service";
+import { authService, type TokenResponse } from "../services/auth.service";
 import { AuthContext, type AuthUser } from "./useAuth";
 
 function decodeJwt(token: string): AuthUser {
@@ -11,7 +7,7 @@ function decodeJwt(token: string): AuthUser {
   return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
 }
 
-function persistTokens(tokens: TokenResponse): AuthUser {
+export function persistTokens(tokens: TokenResponse): AuthUser {
   const claims = decodeJwt(tokens.accessToken);
   localStorage.setItem("sizz_access_token", tokens.accessToken);
   localStorage.setItem("sizz_refresh_token", tokens.refreshToken);
@@ -93,15 +89,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string): Promise<AuthUser> => {
     const tokens = await authService.login(email, password);
     const claims = persistTokens(tokens);
     setUser(claims);
     return claims;
   }, []);
 
-  const register = useCallback(async (payload: RegisterPayload) => {
-    const tokens = await authService.register(payload);
+  /** Persiste tokens ya obtenidos (ej. tras verificar OTP) y setea al usuario en contexto. */
+  const loginWithTokens = useCallback((tokens: TokenResponse): AuthUser => {
     const claims = persistTokens(tokens);
     setUser(claims);
     return claims;
@@ -115,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, isLoading, login, register, logout }}
+      value={{ user, isAuthenticated: !!user, isLoading, login, loginWithTokens, logout }}
     >
       {children}
     </AuthContext.Provider>

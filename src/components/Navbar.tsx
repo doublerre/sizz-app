@@ -2,13 +2,15 @@ import { NavLink, Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo_zigzag_main.svg";
+import { useAuth } from "@/context/useAuth";
 import "./Navbar.css";
 
 //poner true cuando la ruta este disponible
 const navLinks = [
     { label: "Inicio", to: "/", available: true },
-    { label: "Experiencias", to: "/experiencias", available: false },
-    { label: "Reservaciones", to: "/reservaciones", available: false },
+    { label: "Experiencias", to: "/experiencias", available: true },
+    { label: "Becas", to: "/becas", available: true },
+    { label: "Reservaciones", to: "/cuenta/reservaciones", available: true },
     { label: "Eventos", to: "/eventos", available: true },
     { label: "Ayuda", to: "/ayuda", available: false },
 ];
@@ -17,6 +19,7 @@ export default function Navbar() {
     // Solo importa en pantallas angostas: ahí el menú se esconde detrás del botón
     const [open, setOpen] = useState(false);
     const closeMenu = () => setOpen(false);
+    const { user, logout } = useAuth();
 
     return (
         <nav className="navbar">
@@ -53,9 +56,17 @@ export default function Navbar() {
                 </div>
 
                 <div className="navbar-actions">
-                    <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
-                    {/* Sin ruta todavía: deshabilitado hasta que exista /planear-visita */}
-                    <button type="button" className="navbar-cta" disabled>Planear visita</button>
+                    {user ? (
+                        <>
+                            <Link className="navbar-login" to={user.role === "ADMIN" || user.role === "SCHOLARSHIP_MANAGER" ? "/app/becas" : "/cuenta/becas"} onClick={closeMenu}>Mi cuenta</Link>
+                            <button type="button" className="navbar-cta" onClick={() => { logout(); closeMenu(); }}>Cerrar sesión</button>
+                        </>
+                    ) : (
+                        <>
+                            <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
+                            <Link className="navbar-cta" to="/cuenta/reservaciones" onClick={closeMenu}>Planear visita</Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>
