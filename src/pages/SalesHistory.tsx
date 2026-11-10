@@ -13,6 +13,14 @@ import './SalesHistory.css';
 const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
+const roleLabels: Record<string, string> = {
+    ADMIN: 'Administrador',
+    CASHIER: 'Taquilla',
+    GUIDE: 'Guía',
+    SCHOLARSHIP_MANAGER: 'Gestor Becas',
+    USER: 'Visitante',
+};
+
 interface SalesHistoryProps {
     sales?: SaleHistoryRecord[];
 }
@@ -20,6 +28,8 @@ interface SalesHistoryProps {
 export const SalesHistory = ({ sales }: SalesHistoryProps) => {
     const { user } = useAuth();
     const toast = useToast();
+    const userName = user?.sub ?? 'Usuario';
+    const userRole = user ? roleLabels[user.role] ?? user.role : '';
 	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState('Todos');
     const [date, setDate] = useState<string | null>(null);
@@ -103,7 +113,7 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
             .catch(() => setLoadError('No se pudo cargar el historial de ventas desde el servidor.'))
             .finally(() => setIsLoading(false));
     };
-
+    //Cancelación de venta. Si no se agrega un motivo se manda llamar un toast.
     const cancelSale = async (sale: SaleHistoryRecord) => {
         const reason = window.prompt(`Motivo para cancelar la venta ${sale.folio}:`);
         if (reason === null) return;
@@ -114,7 +124,7 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
 
         const cardStatus = sale.cardAmount > 0
             ? `Tarjeta: ${formatCurrency(sale.cardAmount)} (reembolso pendiente de procesar en la terminal).`
-            : 'No hay importe pagado con tarjeta.';
+            : 'No hay importe pagado con tarjeta.'; //Solo es provisional ya que no se ejecuta niguna terminal
         const confirmed = window.confirm(
             `Importe a devolver: ${formatCurrency(sale.total)}\n` +
             `Efectivo: ${formatCurrency(sale.cashAmount)}\n${cardStatus}\n` +
@@ -146,7 +156,7 @@ export const SalesHistory = ({ sales }: SalesHistoryProps) => {
 
 	return (
 		<div className="history-layout">
-			<Sidebar userName="_" userRole="_" />
+			<Sidebar userName={userName} userRole={userRole} />
 			<main className="history-main">
 				<header className="history-header"><h1>Historial de ventas</h1><p>Consulta, reimprime o cancela operaciones</p></header>
 				<div className="history-body">

@@ -322,9 +322,6 @@ export const Checkout = () => {
                 >
                   Volver
                 </button>
-                <button type="button" className="btn-link btn-danger" disabled={isSaving} onClick={handleCancelSale}>
-                  Cancelar venta
-                </button>
               </div>
             </section>
 
