@@ -1,5 +1,5 @@
 
-import { Navigate, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HomePage from "@/pages/public/HomePage";
 import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
@@ -23,6 +23,7 @@ import NewSale from "@/pages/NewSale";
 import SaleComplete from "@/pages/SaleComplete";
 import ReservationFee from "@/pages/ReservationFee";
 import CashClosing from "@/pages/CashClosing";
+import StartShift from "@/pages/OpenShift";
 import PrivateRoute from "@/components/PrivateRoute";
 
 import ExperiencesAdministrationPage from "@/pages/app/ExperiencesAdministrationPage";
@@ -201,6 +202,7 @@ export default function AppRouter() {
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="inicio-turno" element={<StartShift />} />
                     <Route path="newsale" element={<NewSale />} />
                     <Route path="historial" element={<SalesHistory />} />
                     <Route path="checkout" element={<Checkout />} />
