@@ -2,6 +2,7 @@ import api from "./api";
 
 export interface PublicTariff {
   visitorTypeName: string;
+  /** Price in integer cents. */
   price: number;
 }
 

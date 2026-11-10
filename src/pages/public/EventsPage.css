@@ -22,6 +22,7 @@
     .events-grid {
         padding: 16px;
     }
+}
 
     .events-header {
         padding: 40px 16px;
@@ -30,7 +31,6 @@
     .events-header h1 {
         font-size: 1.6rem;
     }
-}
 
 .event-banner {
     height: 112px;

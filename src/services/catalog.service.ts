@@ -8,11 +8,11 @@ export interface Tariff {
   visitorTypeName: string;
   price: number;
   validFrom: string;
-  validUntil?: string;
+  validUntil: string | null;
   active: boolean;
 }
 export const catalogService = {
-  getTarrifs: async (): Promise<Tariff[]> => {
+  getTariffs: async (): Promise<Tariff[]> => {
     const { data } = await api.get<Tariff[]>("/catalog/tariffs");
     return data;
   },

@@ -148,7 +148,7 @@
 }
 .reservation-row{
     display: grid;
-    grid-template-columns:minmax(220px, 1.35fr) minmax(150px, 1fr) minmax(180px, 1fr) 100px 90px;
+    grid-template-columns:minmax(220px, 1.35fr) minmax(150px, 1fr) minmax(180px, 1fr) 100px;
     align-items: center;
     gap: 16px;
     min-height: 95px;

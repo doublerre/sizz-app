@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,7 +64,6 @@ const statusLabels: Record<ApiEvent["status"], string> = {
     CANCELLED: "Cancelado",
 };
 
-
 function errorMessage(err: unknown): string {
     if (isAxiosError(err)) {
         const details = err.response?.data?.details;
@@ -92,12 +92,9 @@ function formatCost(cost: number): string {
     return cost.toLocaleString("es-MX", { style: "currency", currency: "MXN" });
 }
 
-
 const emptyToNull = (v: string) => (v.trim() === "" ? null : v.trim());
 
-
 const toIso = (v: string) => (v ? new Date(v).toISOString() : null);
-
 
 const toLocalInput = (iso: string | null) => {
     if (!iso) return "";
@@ -105,7 +102,6 @@ const toLocalInput = (iso: string | null) => {
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
-
 
 const valuesFromEvent = (e: ApiEvent): FormValues => ({
     title: e.title,
@@ -180,7 +176,6 @@ export default function EventsAdminPage() {
         setEditingId(event.id);
         reset(valuesFromEvent(event));
         setShowForm(true);
-        // El formulario aparece arriba de la tabla
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
@@ -191,6 +186,7 @@ export default function EventsAdminPage() {
 
     const onSubmit = async (values: FormValues) => {
         setApiError(null);
+
         const payload: EventPayload = {
             title: values.title.trim(),
             description: emptyToNull(values.description),
@@ -202,6 +198,7 @@ export default function EventsAdminPage() {
             capacity: values.capacity ? Number(values.capacity) : null,
             cost: values.cost ? Number(values.cost) : 0,
         };
+
         try {
             if (editingId) {
                 await updateEvent(editingId, payload);
@@ -210,6 +207,7 @@ export default function EventsAdminPage() {
                 await createEvent(payload);
                 setNotice({ type: "success", text: "Evento creado como borrador. Publícalo cuando esté listo." });
             }
+
             setShowForm(false);
             setEditingId(null);
             reload();
@@ -220,7 +218,9 @@ export default function EventsAdminPage() {
 
     const handleDelete = async (event: ApiEvent) => {
         if (!window.confirm(`¿Eliminar el borrador "${event.title}"? No se puede deshacer.`)) return;
+
         setNotice(null);
+
         try {
             await deleteEvent(event.id);
             setNotice({ type: "success", text: `Borrador "${event.title}" eliminado.` });
@@ -231,10 +231,11 @@ export default function EventsAdminPage() {
     };
 
     const handlePublish = async (event: ApiEvent) => {
-        // Publicar lo hace visible para todos
         if (!window.confirm(`¿Publicar "${event.title}"? Será visible en el portal público.`)) return;
+
         setPublishingId(event.id);
         setNotice(null);
+
         try {
             await publishEvent(event.id);
             setNotice({ type: "success", text: `"${event.title}" ya es visible en el portal.` });
@@ -259,6 +260,7 @@ export default function EventsAdminPage() {
                     <h1>Eventos</h1>
                     <p>Crea, revisa y publica los eventos del portal.</p>
                 </div>
+
                 {!showForm && (
                     <button type="button" className="admin-event-btn" onClick={openForm}>
                         <Plus size={18} /> Nuevo evento
@@ -277,10 +279,12 @@ export default function EventsAdminPage() {
                     <span>Total</span>
                     <strong>{events.length}</strong>
                 </div>
+
                 <div className="admin-event-stat">
                     <span>Publicados</span>
                     <strong>{published}</strong>
                 </div>
+
                 <div className="admin-event-stat">
                     <span>En borrador</span>
                     <strong>{drafts}</strong>
@@ -290,6 +294,7 @@ export default function EventsAdminPage() {
             {showForm && (
                 <form className="admin-event-card admin-event-form" onSubmit={handleSubmit(onSubmit)} noValidate>
                     <h2>{editingId ? "Editar evento" : "Nuevo evento"}</h2>
+
                     <p className="admin-event-hint">
                         {editingId
                             ? "Los cambios se ven en el portal de inmediato si el evento ya está publicado."
@@ -297,6 +302,7 @@ export default function EventsAdminPage() {
                     </p>
 
                     <h3>Información general</h3>
+
                     <div className="admin-event-grid">
                         <div className="admin-event-field admin-event-field--wide">
                             <label htmlFor="ev-title">Título</label>
@@ -354,6 +360,7 @@ export default function EventsAdminPage() {
                     </div>
 
                     <h3>Fechas</h3>
+
                     <div className="admin-event-grid">
                         <div className="admin-event-field">
                             <label htmlFor="ev-start">Inicio</label>
@@ -365,6 +372,7 @@ export default function EventsAdminPage() {
                             />
                             {errors.startDate && <span className="admin-event-error">{errors.startDate.message}</span>}
                         </div>
+
                         <div className="admin-event-field">
                             <label htmlFor="ev-end">Fin</label>
                             <input
@@ -378,6 +386,7 @@ export default function EventsAdminPage() {
                     </div>
 
                     <h3>Aforo y costo</h3>
+
                     <div className="admin-event-grid">
                         <div className="admin-event-field">
                             <label htmlFor="ev-capacity">Aforo (opcional)</label>
@@ -391,6 +400,7 @@ export default function EventsAdminPage() {
                             />
                             {errors.capacity && <span className="admin-event-error">{errors.capacity.message}</span>}
                         </div>
+
                         <div className="admin-event-field">
                             <label htmlFor="ev-cost">Costo (MXN)</label>
                             <input
@@ -412,9 +422,14 @@ export default function EventsAdminPage() {
                     )}
 
                     <div className="admin-event-actions">
-                        <button type="button" className="admin-event-btn admin-event-btn--ghost" onClick={closeForm}>
+                        <button
+                            type="button"
+                            className="admin-event-btn admin-event-btn--ghost"
+                            onClick={closeForm}
+                        >
                             Cancelar
                         </button>
+
                         <button type="submit" className="admin-event-btn" disabled={isSubmitting}>
                             {isSubmitting ? "Guardando..." : editingId ? "Guardar cambios" : "Guardar evento"}
                         </button>
@@ -428,7 +443,9 @@ export default function EventsAdminPage() {
                 ) : loadError ? (
                     <p className="admin-event-empty">{loadError}</p>
                 ) : events.length === 0 ? (
-                    <p className="admin-event-empty">Todavía no hay eventos. Crea el primero con "Nuevo evento".</p>
+                    <p className="admin-event-empty">
+                        Todavía no hay eventos. Crea el primero con "Nuevo evento".
+                    </p>
                 ) : (
                     <div className="admin-event-table-wrap">
                         <table className="admin-event-table">
@@ -442,21 +459,27 @@ export default function EventsAdminPage() {
                                     <th></th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {events.map((event) => (
                                     <tr key={event.id}>
                                         <td>
                                             <strong>{event.title}</strong>
-                                            <span className="admin-event-sub">{event.category ?? "Sin categoría"}</span>
+                                            <span className="admin-event-sub">
+                                                {event.category ?? "Sin categoría"}
+                                            </span>
                                         </td>
+
                                         <td>{formatDate(event.startDate)}</td>
                                         <td>{event.audience ?? "—"}</td>
                                         <td>{formatCost(event.cost)}</td>
+
                                         <td>
                                             <span className={`admin-event-badge admin-event-badge--${event.status.toLowerCase()}`}>
                                                 {statusLabels[event.status]}
                                             </span>
                                         </td>
+
                                         <td className="admin-event-row-actions">
                                             {/* Un evento cerrado o cancelado ya es historia: no se edita */}
                                             {(event.status === "DRAFT" || event.status === "PUBLISHED") && (
@@ -468,6 +491,7 @@ export default function EventsAdminPage() {
                                                     Editar
                                                 </button>
                                             )}
+
                                             {event.status === "PUBLISHED" && (
                                                 <Link
                                                     className="admin-event-btn admin-event-btn--ghost admin-event-btn--small"
@@ -476,6 +500,7 @@ export default function EventsAdminPage() {
                                                     Inscritos
                                                 </Link>
                                             )}
+
                                             {event.status === "DRAFT" && (
                                                 <>
                                                     <button
@@ -486,6 +511,7 @@ export default function EventsAdminPage() {
                                                     >
                                                         {publishingId === event.id ? "Publicando..." : "Publicar"}
                                                     </button>
+
                                                     <button
                                                         type="button"
                                                         className="admin-event-btn admin-event-btn--danger admin-event-btn--small"

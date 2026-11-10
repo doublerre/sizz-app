@@ -1,7 +1,13 @@
+
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Download } from "lucide-react";
-import { getAllEvents, getParticipants, type ApiEvent, type Participant } from "@/services/eventsApi";
+import {
+    getAllEvents,
+    getParticipants,
+    type ApiEvent,
+    type Participant,
+} from "@/services/eventsApi";
 import "./EventsAdminPage.css";
 
 function formatDate(iso: string): string {
@@ -15,51 +21,80 @@ function formatDate(iso: string): string {
     });
 }
 
-// Excel necesita el BOM para mostrar bien los acentos
+// Excel necesita el BOM para mostrar correctamente los acentos.
 function downloadCsv(event: ApiEvent | null, participants: Participant[]) {
-    // Excel ejecuta como fórmula lo que empieza con = + - @ ; el apóstrofo lo vuelve texto
+    // Evita que Excel interprete los valores como fórmulas.
     const quote = (v: string | null) => {
         const text = v ?? "";
         const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
         return `"${safe.replace(/"/g, '""')}"`;
     };
+
     const rows = [
         ["Folio", "Nombre", "Correo", "Teléfono", "Fecha de inscripción"],
-        ...participants.map((p) => [p.folio, p.name, p.email, p.phone, formatDate(p.registeredAt)]),
+        ...participants.map((p) => [
+            p.folio,
+            p.name,
+            p.email,
+            p.phone,
+            formatDate(p.registeredAt),
+        ]),
     ];
-    const csv = "\uFEFF" + rows.map((r) => r.map(quote).join(",")).join("\n");
+
+    const csv =
+        "\uFEFF" +
+        rows.map((r) => r.map(quote).join(",")).join("\n");
+
     const link = document.createElement("a");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const url = URL.createObjectURL(
+        new Blob([csv], { type: "text/csv;charset=utf-8" })
+    );
+
     link.href = url;
-    link.download = `inscritos-${(event?.title ?? "evento").toLowerCase().replace(/\s+/g, "-")}.csv`;
+    link.download = `inscritos-${(event?.title ?? "evento")
+        .toLowerCase()
+        .replace(/\s+/g, "-")}.csv`;
+
     link.click();
-    // Se libera un momento después: revocarla de inmediato puede cancelar la descarga en algunos navegadores
+
+    // Se libera después para evitar cancelar la descarga.
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export default function EventParticipantsPage() {
     const { id } = useParams();
+
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [event, setEvent] = useState<ApiEvent | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (!id) return;
-        // Si el usuario sale antes de que responda la API, no se actualiza el estado
+        if (!id) {
+            setError("No se encontró el identificador del evento.");
+            setLoading(false);
+            return;
+        }
+
+        // Evita actualizar el estado si el componente se desmonta.
         let cancelled = false;
 
         Promise.all([getParticipants(id), getAllEvents()])
             .then(([people, events]) => {
                 if (cancelled) return;
+
                 setParticipants(people);
                 setEvent(events.find((e) => e.id === id) ?? null);
             })
             .catch(() => {
-                if (!cancelled) setError("No pudimos cargar los inscritos.");
+                if (!cancelled) {
+                    setError("No pudimos cargar los inscritos.");
+                }
             })
             .finally(() => {
-                if (!cancelled) setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             });
 
         return () => {
@@ -76,9 +111,11 @@ export default function EventParticipantsPage() {
                     <Link to="/app/eventos" className="admin-event-sub">
                         <ArrowLeft size={14} /> Volver a eventos
                     </Link>
+
                     <h1>Inscritos</h1>
                     <p>{event?.title ?? "Evento"}</p>
                 </div>
+
                 <button
                     type="button"
                     className="admin-event-btn"
@@ -94,23 +131,33 @@ export default function EventParticipantsPage() {
                     <span>Inscritos</span>
                     <strong>{participants.length}</strong>
                 </div>
+
                 <div className="admin-event-stat">
                     <span>Aforo</span>
                     <strong>{capacity ?? "Sin límite"}</strong>
                 </div>
+
                 <div className="admin-event-stat">
                     <span>Lugares disponibles</span>
-                    <strong>{capacity === null ? "—" : Math.max(capacity - participants.length, 0)}</strong>
+                    <strong>
+                        {capacity === null
+                            ? "—"
+                            : Math.max(capacity - participants.length, 0)}
+                    </strong>
                 </div>
             </section>
 
             <section className="admin-event-card">
                 {loading ? (
-                    <p className="admin-event-empty">Cargando inscritos...</p>
+                    <p className="admin-event-empty">
+                        Cargando inscritos...
+                    </p>
                 ) : error ? (
                     <p className="admin-event-empty">{error}</p>
                 ) : participants.length === 0 ? (
-                    <p className="admin-event-empty">Todavía no hay inscritos en este evento.</p>
+                    <p className="admin-event-empty">
+                        Todavía no hay inscritos en este evento.
+                    </p>
                 ) : (
                     <div className="admin-event-table-wrap">
                         <table className="admin-event-table">
@@ -123,6 +170,7 @@ export default function EventParticipantsPage() {
                                     <th>Inscripción</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {participants.map((p) => (
                                     <tr key={p.id}>

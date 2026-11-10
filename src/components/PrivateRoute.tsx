@@ -3,11 +3,13 @@ import { useAuth, type AuthUser } from "../context/useAuth";
 
 interface PrivateRouteProps {
   requiredRole?: AuthUser["role"];
+  requiredRoles?: AuthUser["role"][];
   allowedRoles?: AuthUser["role"][];
 }
 
 export default function PrivateRoute({
   requiredRole,
+  requiredRoles,
   allowedRoles,
 }: PrivateRouteProps) {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -25,9 +27,13 @@ export default function PrivateRoute({
     );
   }
 
+  const roleLists = [requiredRoles, allowedRoles].filter(
+    (roles): roles is AuthUser["role"][] => roles !== undefined,
+  );
   if (
     (requiredRole && user?.role !== requiredRole) ||
-    (allowedRoles && (!user || !allowedRoles.includes(user.role)))
+    (roleLists.length > 0 &&
+      (!user || roleLists.some((roles) => !roles.includes(user.role))))
   ) {
     return <Navigate to="/" replace />;
   }

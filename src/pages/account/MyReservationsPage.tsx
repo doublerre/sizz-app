@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo_zigzag_main.svg";
 import ReservationCalendar from "@/components/ReservationCalendar";
 import { Sidebar } from "../../components/SideBarBox";
+//import { useAuth } from "../../context/AuthContext";
 import { useAuth } from "../../context/useAuth";
 import "./MyReservationsPage.css";
 

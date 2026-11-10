@@ -184,6 +184,8 @@ body {
     text-align: center;
 }
 
+
+/* Pantallas grandes (≥ 1024px) */
 .login-password-wrapper {
     position: relative;
     display: flex;

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -10,8 +11,8 @@ import EventRegistrationForm from "@/components/EventRegistrationForm";
 
 type Result = {
     id: string;
-    event: ApiEvent | null; // null = no existe, no está publicado o falló la petición
-    finished: boolean; // el evento ya terminó
+    event: ApiEvent | null;
+    finished: boolean;
 };
 
 export default function EventDetailPage() {
@@ -20,17 +21,24 @@ export default function EventDetailPage() {
 
     useEffect(() => {
         if (!id) return;
+
         let cancelled = false;
 
         getEvent(id)
             .then((event) => {
                 if (cancelled) return;
+
                 const reference = event.endDate ?? event.startDate;
-                const finished = reference !== null && new Date(reference).getTime() < Date.now();
+                const finished =
+                    reference !== null &&
+                    new Date(reference).getTime() < Date.now();
+
                 setResult({ id, event, finished });
             })
             .catch(() => {
-                if (!cancelled) setResult({ id, event: null, finished: false });
+                if (!cancelled) {
+                    setResult({ id, event: null, finished: false });
+                }
             });
 
         return () => {
@@ -53,7 +61,11 @@ export default function EventDetailPage() {
             <div className="container event-detail-missing">
                 <h1>No encontramos este evento</h1>
                 <p>Puede que ya no esté disponible o que el enlace sea incorrecto.</p>
-                <Link to="/eventos" className="event-detail-back event-detail-back--dark">
+
+                <Link
+                    to="/eventos"
+                    className="event-detail-back event-detail-back--dark"
+                >
                     <ArrowLeft size={16} /> Ver todos los eventos
                 </Link>
             </div>
@@ -65,32 +77,48 @@ export default function EventDetailPage() {
     const Icon = category.icon;
 
     return (
-
-        <div className="event-detail" style={{ "--event-color": category.color } as CSSProperties}>
+        <div
+            className="event-detail"
+            style={{ "--event-color": category.color } as CSSProperties}
+        >
             <header className="event-detail-hero">
                 <div className="container">
                     <Link to="/eventos" className="event-detail-back">
                         <ArrowLeft size={16} /> Volver a eventos
                     </Link>
+
                     <span className="event-detail-category">
                         <span className="event-detail-category-icon">
                             <Icon size={16} />
                         </span>
                         {category.name}
                     </span>
+
                     <h1>{event.title}</h1>
-                    {event.audience && <p className="event-detail-audience">{event.audience}</p>}
+
+                    {event.audience && (
+                        <p className="event-detail-audience">
+                            {event.audience}
+                        </p>
+                    )}
                 </div>
             </header>
 
             <div className="container event-detail-body">
                 <section className="event-detail-main">
                     <h2>Sobre este evento</h2>
-                    <p>{event.description ?? "Pronto compartiremos más detalles de este evento."}</p>
+                    <p>
+                        {event.description ??
+                            "Pronto compartiremos más detalles de este evento."}
+                    </p>
                 </section>
 
                 <aside className="event-detail-card">
-                    {finished && <p className="event-detail-finished">Este evento ya terminó.</p>}
+                    {finished && (
+                        <p className="event-detail-finished">
+                            Este evento ya terminó.
+                        </p>
+                    )}
 
                     <dl className="event-detail-facts">
                         <div>
@@ -99,12 +127,19 @@ export default function EventDetailPage() {
                             </dt>
                             <dd>{formatLongDate(event.startDate)}</dd>
                         </div>
+
                         <div>
                             <dt>
                                 <Clock size={16} /> Horario
                             </dt>
-                            <dd>{formatTimeRange(event.startDate, event.endDate)}</dd>
+                            <dd>
+                                {formatTimeRange(
+                                    event.startDate,
+                                    event.endDate
+                                )}
+                            </dd>
                         </div>
+
                         {event.venue && (
                             <div>
                                 <dt>
@@ -113,6 +148,7 @@ export default function EventDetailPage() {
                                 <dd>{event.venue}</dd>
                             </div>
                         )}
+
                         {event.capacity !== null && (
                             <div>
                                 <dt>
@@ -121,6 +157,7 @@ export default function EventDetailPage() {
                                 <dd>{event.capacity} personas</dd>
                             </div>
                         )}
+
                         <div>
                             <dt>
                                 <Ticket size={16} /> Costo
@@ -129,7 +166,9 @@ export default function EventDetailPage() {
                         </div>
                     </dl>
 
-                    {finished ? null : <EventRegistrationForm eventId={event.id} />}
+                    {finished ? null : (
+                        <EventRegistrationForm eventId={event.id} />
+                    )}
                 </aside>
             </div>
         </div>

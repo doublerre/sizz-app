@@ -205,6 +205,63 @@
   background-color: #45940e;
 }
 
+.sale-complete-receipt {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  html,
+  body,
+  #root {
+    width: 80mm;
+    min-width: 0;
+    height: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body * {
+    display: none !important;
+  }
+
+  #root,
+  #root > *,
+  .layout-container,
+  .main-content {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto;
+  }
+
+  .sale-complete-receipt {
+    display: block !important;
+    width: 80mm;
+    padding: 4mm;
+    box-sizing: border-box;
+    color: #000000;
+    font: 12px monospace;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .sale-complete-receipt * {
+    display: block !important;
+  }
+
+  .sale-complete-receipt h1 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .sale-complete-receipt p {
+    margin: 0 0 3mm;
+  }
+}
+
 @media (max-width: 1024px) {
   .header-title {
     padding-left: 4.5rem;

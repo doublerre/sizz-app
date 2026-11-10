@@ -28,6 +28,14 @@ export default function ReservationFee() {
 	const received = Number.parseFloat(receivedAmount) || 0;
 	const change = Math.max(received - total, 0);
 
+	const handleCharge = () => {
+		if (!paymentMethod || !isConfirmed || received < total) {
+			return;
+		}
+
+		navigate("/taquilla/saleComplete");
+	};
+
 	return (
 		<div className="reservation-fee-page">
 			<Sidebar userName="_" userRole="_" />
@@ -115,7 +123,7 @@ export default function ReservationFee() {
 							<span>Confirmo el desglose y el oficio</span>
 						</label>
 
-						<button className="charge-button" type="button" disabled={!isConfirmed || received < total} onClick={() => navigate("/taquilla/saleComplete")}>
+						<button className="charge-button" type="button" disabled={!paymentMethod || !isConfirmed || received < total} onClick={handleCharge}>
 							Cobrar e imprimir boletos
 						</button>
 						<p className="print-note">Se imprimirán _ boletos térmicos</p>
@@ -125,4 +133,3 @@ export default function ReservationFee() {
 		</div>
 	);
 }
-

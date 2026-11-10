@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { authService, type TokenResponse } from "../services/auth.service";
 import { AuthContext, type AuthUser } from "./useAuth";
 
+export { useAuth } from "./useAuth";
+
 function decodeJwt(token: string): AuthUser {
   const payload = token.split(".")[1];
   return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));

@@ -4,7 +4,7 @@ import type { TokenResponse } from "../services/auth.service";
 export interface AuthUser {
   sub: string;
   uid: string;
-  role: "USER" | "ADMIN" | "GUIDE" | "SCHOLARSHIP_MANAGER";
+  role: "USER" | "ADMIN" | "GUIDE" | "CASHIER" | "SCHOLARSHIP_MANAGER";
   exp: number;
 }
 export interface AuthContextValue {
