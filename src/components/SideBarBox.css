@@ -18,7 +18,8 @@
 
 /* Logo section */
 .sidebar-logo img {
-    max-width: 260px;
+    width: 100%;
+    max-width: 100%;
     margin-bottom: 1.5rem;
     height: auto;
     display: block;
@@ -71,12 +72,16 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     border-radius: 16px;
     background-color: #f9fafb;
     margin-top: auto;
 }
 
 .sidebar-close-menu {
+    display: none;
     width: 100%;
     margin-top: 0.75rem;
     border: 1px solid rgba(239, 64, 80, 0.25);
@@ -109,19 +114,26 @@
 
 .sidebar-user-info {
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: center;
+    min-width: 0;
 }
 
 .sidebar-user-name {
+    display: block;
     font-size: 0.875rem;
     font-weight: 700;
     color: #1b2559;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .sidebar-user-role {
     font-size: 0.75rem;
     color: #9ca3af;
+    overflow-wrap: anywhere;
 }
 
 /*Puntos de color*/
@@ -207,6 +219,12 @@
     }
 
     .sidebar-overlay {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .sidebar-close-menu {
         display: block;
     }
 }

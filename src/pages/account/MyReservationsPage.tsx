@@ -3,9 +3,16 @@ import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo_zigzag_main.svg";
 import ReservationCalendar from "@/components/ReservationCalendar";
 import { Sidebar } from "../../components/SideBarBox";
-//import { useAuth } from "../../context/AuthContext";
 import { useAuth } from "../../context/useAuth";
 import "./MyReservationsPage.css";
+
+const roleLabels: Record<string, string> = {
+    ADMIN: "Administrador",
+    CASHIER: "Taquilla",
+    GUIDE: "Guía",
+    SCHOLARSHIP_MANAGER: "Gestor Becas",
+    USER: "Visitante",
+};
 
 type ReservationStatus = "En revisión" | "Aprobada" | "Pagada";
 
@@ -31,7 +38,10 @@ const formatReservationDate = (iso: string) => {
 };
 
 export default function MyReservationsPage() {
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
+    const userName = user?.sub ?? "Usuario";
+    const userRole = user ? roleLabels[user.role] ?? user.role : "";
+    const initials = userName.slice(0, 2).toUpperCase();
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("Todos los estados");
     const [date, setDate] = useState<string | null>(null);
@@ -68,7 +78,7 @@ export default function MyReservationsPage() {
 
     return (
         <div className="account-reservations-page">
-            <Sidebar userName="_" userRole="_" />
+            <Sidebar userName={userName} userRole={userRole} />
 
             <div className="account-page-main">
                 <header className="account-header">
@@ -82,8 +92,12 @@ export default function MyReservationsPage() {
                         <span aria-disabled="true">Mi perfil</span>
                     </nav>
                     <div className="account-user">
-                        <span className="account-avatar">_</span>
-                        <span className="account-user-copy"><strong>_</strong><Link to="/login" onClick={logout}>Cerrar sesión</Link></span>
+                        <span className="account-avatar">{initials}</span>
+                        <span className="account-user-copy">
+                            <strong>{userName}</strong>
+                            <small>{userRole}</small>
+                            <Link to="/login" onClick={logout}>Cerrar sesión</Link>
+                        </span>
                     </div>
                 </header>
 
