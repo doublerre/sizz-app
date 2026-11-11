@@ -1,5 +1,11 @@
 # React + TypeScript + Vite
 
+## API en desarrollo
+
+Define `API_PROXY_TARGET=http://localhost:8080` en `.env` para configurar el destino del proxy `/api`. Si el backend corre en otra máquina, usa su IP o dominio. Reinicia Vite después de cambiar esta variable.
+
+Para acceder desde otro dispositivo en la misma red, inicia con `pnpm dev --host 0.0.0.0` y abre `http://<IP-de-tu-PC>:5173`. El destino del proxy se resuelve desde la máquina que ejecuta Vite; puede seguir siendo `localhost` si el backend corre ahí. Este proxy solo aplica al servidor de desarrollo.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
