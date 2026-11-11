@@ -1,6 +1,7 @@
 import { Check, Download, Mail } from 'lucide-react'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/SideBarBox';
+import { useAuth } from '../context/AuthContext';
 import './SaleComplete.css';
 
 interface SaleCompleteProps {
@@ -55,6 +56,7 @@ export const SaleComplete = ({
   //Componentes de navegación y ubicación para obtener los datos de la venta completada
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const sale = location.state as SaleCompleteLocationState | null;
   const receipt = sale?.receipt;
   const displayFolio = sale?.folio ?? folio;
@@ -63,11 +65,13 @@ export const SaleComplete = ({
   const displayTotalPaid = sale?.totalPaid ?? totalPaid;
   const displayVisitDate = sale?.visitDate ?? visitDate;
   const displayStatus = sale?.status ?? status;
+  const userName = user?.sub ?? '';
+  const userRole = user?.role === 'ADMIN' ? 'Administrador' : user?.role ?? '';
   const handlePrint = onPrint ?? (receipt ? () => window.print() : undefined);
 
   return (
     <div className="layout-container">
-      <Sidebar userName="_" userRole="_" />
+      <Sidebar userName={userName} userRole={userRole} />
 
       <main className="main-content">
         <header className="header-title">

@@ -219,43 +219,6 @@ export const Checkout = () => {
     }
   };
 
-  const handleCancelSale = async () => {
-    let cancellationReason: string | null = null;
-    if (receipt) {
-      const enteredReason = window.prompt("Ingresa el motivo de cancelación.");
-      if (enteredReason === null) return;
-      cancellationReason = enteredReason.trim();
-      if (!cancellationReason) {
-        setChargeError("El motivo de cancelación es obligatorio.");
-        return;
-      }
-      const cardStatus = receipt.cardAmount > 0
-        ? `Tarjeta: ${formatPrice(receipt.cardAmount)} (reembolso pendiente de procesar en la terminal).`
-        : "Sin reembolso de tarjeta.";
-      if (!window.confirm(
-        `Folio ${receipt.folio}\nImporte a devolver: ${formatPrice(receipt.total)}\n` +
-        `Efectivo: ${formatPrice(receipt.cashAmount)}\n${cardStatus}\n¿Confirmar cancelación?`,
-      )) return;
-    }
-
-    setIsSaving(true);
-    try {
-      if (receipt) {
-        await salesHistoryService.cancelSale(receipt.folio, cancellationReason ?? "");
-      } else {
-        await salesHistoryService.createCancellation({
-          visitDate: draft.visitDate,
-          items: saleItems.map(({ tariffId, quantity }) => ({ tariffId, quantity })),
-        });
-      }
-      navigate('/taquilla/dashboard');
-    } catch {
-      setChargeError('No se pudo registrar la cancelación en el servidor. Verifica tu sesión, el turno y la conexión e inténtalo de nuevo.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="layout-container">
       <Sidebar userName={userName} userRole={userRole} />
