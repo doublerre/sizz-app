@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/SideBarBox";
 import { useAuth } from "../context/AuthContext";
+import { isBoxOfficeShiftOpen, setBoxOfficeShiftOpen } from "../utils/boxOfficeShiftFlag";
 import { ticketbootService, type ActiveShift } from "../services/ticketboot.service";
 import "./OpenShift.css";
 
@@ -45,7 +46,10 @@ export default function StartShift() {
 
 		ticketbootService.getDashboard()
 			.then((dashboard) => {
-				if (isActive) setActiveShift(dashboard.activeShift);
+				if (isActive) {
+					setActiveShift(dashboard.activeShift);
+					if (dashboard.activeShift) setBoxOfficeShiftOpen(true);
+				}
 			})
 			.catch(() => {
 				if (isActive) setError("No se pudo verificar si ya tienes un turno abierto. Intenta de nuevo.");
@@ -76,6 +80,7 @@ export default function StartShift() {
 		setIsOpeningShift(true);
 		try {
 			await ticketbootService.openShift({ openingAmount: fund, notes: notes.trim() || null });
+			setBoxOfficeShiftOpen(true);
 			navigate("/taquilla/dashboard", { replace: true });
 		} catch (requestError) {
 			const message = isAxiosError<{ message?: string }>(requestError)
@@ -86,6 +91,10 @@ export default function StartShift() {
 			setIsOpeningShift(false);
 		}
 	};
+
+	if (isBoxOfficeShiftOpen()) {
+		return <Navigate to="/taquilla/dashboard" replace />;
+	}
 
 	return (
 		<div className="start-shift-page">

@@ -1,9 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { isAxiosError } from "axios";
 import { Banknote, CreditCard, Printer, Ticket, Wallet } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/SideBarBox";
 import { useAuth } from "../context/AuthContext";
+import { setBoxOfficeShiftOpen } from "../utils/boxOfficeShiftFlag";
 import { ticketbootService, type ShiftSummary } from "../services/ticketboot.service";
 import "./CashClosing.css";
 
@@ -221,6 +222,7 @@ export default function CashClosing() {
     reportWindow.document.close();
     reportWindow.addEventListener("afterprint", () => {
       reportWindow.close();
+      setBoxOfficeShiftOpen(false);
       navigate("/taquilla/inicio-turno", { replace: true });
     }, { once: true });
     reportWindow.focus();
@@ -280,26 +282,7 @@ export default function CashClosing() {
   }
 
   if (!summary) {
-    return (
-      <div className="cash-closing-page">
-        <Sidebar userName={user?.sub ?? "Cajero"} userRole="Taquilla" />
-        <main className="cash-closing-main">
-          <header className="cash-closing-header">
-            <h1>Corte de caja</h1>
-            <p>No hay un turno abierto para cerrar.</p>
-          </header>
-          <div className="cash-closing-body">
-            <div className="cash-closing-panel" style={{ maxWidth: "720px" }}>
-              <h2 className="cash-closing-section-title">Sin turno activo</h2>
-              <p className="cash-closing-date">Abre un turno de caja para poder revisar ventas, efectivo y cerrar el día.</p>
-              <button type="button" className="cash-close-button" onClick={() => navigate("/taquilla/inicio-turno")} style={{ marginTop: "1.5rem" }}>
-                Ir a inicio de turno
-              </button>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <Navigate to="/taquilla/inicio-turno" replace />;
   }
 
   const paymentRows = [

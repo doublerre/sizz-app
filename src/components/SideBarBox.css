@@ -16,6 +16,12 @@
     z-index: 100;
 }
 
+.sidebar-shift-error {
+    margin: 0.75rem 0 0;
+    color: #c92d3a;
+    font-size: 0.8rem;
+}
+
 /* Logo section */
 .sidebar-logo img {
     width: 100%;
@@ -59,10 +65,15 @@
     transition: all 0.15s ease;
 }
 
-.sidebar-link:hover,
+.sidebar-link:hover:not(.sidebar-link-disabled),
 .sidebar-link.active { /*Función para que la opción del sideBar se quede en azul*/
     background-color: #eaf2fc;
     color: #0065b3;
+}
+
+.sidebar-link-disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 /*Bloque de usuario*/
@@ -160,7 +171,7 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
     .sidebar-toggle-btn {
         display: inline-flex !important;
         align-items: center;
@@ -194,7 +205,7 @@
 }
 
 /* Comportamiento móvil (pantallas menores a 1024px) */
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
     .sidebar-toggle-btn {
         display: inline-flex;
         align-items: center;
@@ -223,7 +234,7 @@
     }
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1080px) {
     .sidebar-close-menu {
         display: block;
     }

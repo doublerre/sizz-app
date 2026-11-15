@@ -11,14 +11,14 @@
     display:flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 1rem  1.5rem 1.5rem;
+    box-sizing: border-box;
+    padding: 1.25rem 2.5rem;
     background: #ffff;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
     .reservation-fee-header {
-        padding-left: 4.5rem;
-        box-sizing: border-box;
+        padding: 4rem 1.5rem 1rem 4.5rem;
     }
 }
 .reservation-back-button{
@@ -31,12 +31,13 @@
 .reservation-fee-header h1{
     margin: 0;
     color: var(--color-text-dark);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    line-height: 1.25;
 }
 .reservation-fee-header p{
     margin: 0.15rem 0 0;
     color:var(--color-text-muted);
-    font-size: 0.7rem;
+    font-size: 0.85rem;
 }
 .reservation-fee-grid{
     display: grid;
@@ -330,9 +331,9 @@
     text-align: center;
 }
 /* Tablet (≤ 860px) */
-@media (max-width: 860px) {
+@media (max-width: 1080px) {
     .reservation-fee-header{
-    padding: 4rem 1.5rem 1rem;
+    padding: 4rem 1.5rem 1rem 4.5rem;
 }
 .reservation-back-button{ 
     display: inline-flex; 

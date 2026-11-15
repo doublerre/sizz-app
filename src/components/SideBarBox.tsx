@@ -1,7 +1,12 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo_zigzag_main.png';
 import './SideBarBox.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  isBoxOfficeShiftOpen,
+  subscribeToBoxOfficeShiftFlag,
+} from '@/utils/boxOfficeShiftFlag';
+import { ticketbootService } from '@/services/ticketboot.service';
 
 interface SidebarProps {
   userName: string;
@@ -32,10 +37,56 @@ const MENU = [
 
 //Bloque para iniciales del usuario en la parte de abajo
 export const Sidebar = ({ userName, userRole }: SidebarProps) => {
+  const { pathname } = useLocation();
+  const isBoxOfficeRoute = pathname.startsWith('/taquilla');
   const[isOpen, setIsOpen] = useState(false);
+  const [isShiftOpen, setIsShiftOpen] = useState<boolean | null>(
+    null,
+  );
+  const [cachedShiftOpen, setCachedShiftOpen] = useState(isBoxOfficeShiftOpen);
+  const [shiftStatusError, setShiftStatusError] = useState(false);
   const toggleSidebar=()=>{
     setIsOpen(!isOpen);
   }
+
+  useEffect(() => {
+    let isActive = true;
+    let requestId = 0;
+    const refreshShiftStatus = async () => {
+      const currentRequestId = ++requestId;
+      setIsShiftOpen(null);
+      setShiftStatusError(false);
+
+      try {
+        const dashboard = await ticketbootService.getDashboard();
+        if (isActive && currentRequestId === requestId) {
+          setIsShiftOpen(Boolean(dashboard.activeShift));
+        }
+      } catch {
+        if (isActive && currentRequestId === requestId) {
+          setShiftStatusError(true);
+        }
+      }
+    };
+
+    const unsubscribe = subscribeToBoxOfficeShiftFlag(() => {
+      setCachedShiftOpen(isBoxOfficeShiftOpen());
+      if (isBoxOfficeRoute) void refreshShiftStatus();
+    });
+    if (isBoxOfficeRoute) void refreshShiftStatus();
+
+    return () => {
+      isActive = false;
+      unsubscribe();
+    };
+  }, [isBoxOfficeRoute]);
+
+  const canShowStartShift = isBoxOfficeRoute
+    ? isShiftOpen === false
+    : cachedShiftOpen !== true;
+  const canAccessCashClosing = isBoxOfficeRoute
+    ? isShiftOpen === true
+    : cachedShiftOpen;
 
   // Iniciales del nombre
   const initials = userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -77,22 +128,31 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
           </div>
 
         <nav className="sidebar-nav">
+          {shiftStatusError && (
+            <p className="sidebar-shift-error" role="alert">
+              No se pudo verificar el turno activo. Actualiza la página para volver a intentar.
+            </p>
+          )}
           {MENU.map(({ section, links }) => (
             <div key={section}>
               <p className="sidebar-section-title">{section}</p>
               <ul>
-                {links.map(({ to, label, color }) => (
-                  <li key={to}>
-                    <NavLink
-                      to={to}
-                      end
-                      className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                    >
-                      <span className="sidebar-dot" style={{ backgroundColor: color }} />
-                      <span>{label}</span>
-                    </NavLink>
-                  </li>
-                ))}
+                {links
+                  .filter(({ to }) =>
+                    (to !== '/taquilla/inicio-turno' || canShowStartShift)
+                    && (to !== '/taquilla/corte' || canAccessCashClosing))
+                  .map(({ to, label, color }) => (
+                    <li key={to}>
+                      <NavLink
+                        to={to}
+                        end
+                        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                      >
+                        <span className="sidebar-dot" style={{ backgroundColor: color }} />
+                        <span>{label}</span>
+                      </NavLink>
+                    </li>
+                  ))}
               </ul>
             </div>
           ))}
