@@ -124,7 +124,7 @@ export default function AppRouter() {
             >
                 <Route path="/app" element={<AppLayout />}>
                     {/* Módulos exclusivos de ADMIN */}
-                    <Route element={<PrivateRoute allowedRoles={["ADMIN", "CASHIER"]} />}>
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
                         <Route index element={<AdminDashboard />} />
                         <Route
                             path="experiences"
@@ -198,8 +198,8 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Taquilla: solo ADMIN */}
-            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+            {/* Taquilla: ADMIN y CASHIER */}
+            <Route element={<PrivateRoute allowedRoles={["ADMIN", "CASHIER"]} />}>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />

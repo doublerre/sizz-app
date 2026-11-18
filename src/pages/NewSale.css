@@ -7,6 +7,7 @@
 
 .main-content {
   flex: 1;
+  min-width: 0;
   padding: 0;
   max-width: 1400px;
 }
@@ -244,12 +245,12 @@
 }
 
 .counter-btn-plus {
-  background:#F1F4F6;
-  color:var(--color-text-medium);
+  background: #F1F4F6;
+  color: var(--color-text-medium);
 }
 
 .counter-btn-plus:hover {
-  background:#D7E2FF
+  background: #D7E2FF
 }
 
 .counter-box span {
@@ -360,7 +361,7 @@
 }
 
 .visit-badge span {
-  color:var(--color-text-light);
+  color: var(--color-text-light);
   font-size: 0.8rem;
 }
 
@@ -388,6 +389,19 @@
   opacity: 0.6;
 }
 
+/* Tablet horizontal: el menú queda fijo y el resumen sigue a la derecha */
+@media (max-width: 1180px) {
+  .sale-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 1rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .ticket-category-card {
+    grid-template-columns: 1fr;
+  }
+}
+
 /*Bloque responsivo*/
 @media (max-width: 1024px) {
   .header-title {
@@ -399,9 +413,10 @@
 
 /* Tablet (≤ 860px) */
 @media (max-width: 860px) {
-  .header-title{
+  .header-title {
     padding-left: 4rem;
   }
+
   .sale-grid {
     grid-template-columns: 1fr;
   }
