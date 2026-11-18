@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { CalendarDays, Clock, MapPin, Ticket, Users, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Clock, MapPin, Ticket, Users, X } from "lucide-react";
 import type { ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle } from "@/data/eventCategories";
-import { formatCost, formatLongDate, formatTimeRange } from "@/utils/eventFormat";
+import { formatCost, formatLongDate, formatTimeRange, hasEnded } from "@/utils/eventFormat";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
 import "./EventDetailModal.css";
 
@@ -18,21 +18,31 @@ export default function EventDetailModal({
 }) {
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
+    const finished = hasEnded(event.startDate, event.endDate);
+
+    // Dos pasos en la misma ventana: primero la información y luego el formulario
+    const [step, setStep] = useState<"info" | "form">(goToForm && !finished ? "form" : "info");
+
     const modalRef = useRef<HTMLDivElement>(null);
     const closeRef = useRef<HTMLButtonElement>(null);
+    const bodyRef = useRef<HTMLDivElement>(null);
+    const ctaRef = useRef<HTMLButtonElement>(null);
+    const registerRef = useRef<HTMLDivElement>(null);
+    const opened = useRef(false);
 
     // Al cerrar, el foco regresa al botón que abrió el modal
     useEffect(() => {
         const opener = document.activeElement as HTMLElement | null;
         return () => opener?.focus();
     }, []);
-    // Si se abrió con el botón Inscribirme, el cursor queda en el formulario
-    // (y en celular, donde el formulario queda abajo, la ventana baja hasta él)
-    const registerRef = useRef<HTMLDivElement>(null);
+
+    // Al cambiar de paso: arriba del todo y el foco donde corresponde
     useEffect(() => {
-        if (goToForm) registerRef.current?.querySelector("input")?.focus();
-        else closeRef.current?.focus();
-    }, [goToForm]);
+        bodyRef.current?.scrollTo({ top: 0 });
+        if (step === "form") registerRef.current?.querySelector("input")?.focus();
+        else (opened.current ? ctaRef.current : closeRef.current)?.focus();
+        opened.current = true;
+    }, [step]);
 
     // true cuando hay datos escritos en el formulario sin enviar
     const dirtyRef = useRef(false);
@@ -50,10 +60,12 @@ export default function EventDetailModal({
             if (e.key === "Escape") return requestClose();
             if (e.key !== "Tab" || !modalRef.current) return;
 
-            // Tab no sale del modal: del último salta al primero y al revés
-            const focusables = modalRef.current.querySelectorAll<HTMLElement>(
-                "button:not([disabled]), input:not([disabled]), select, textarea, a[href]"
-            );
+            // Tab no sale del modal; se saltan los elementos del paso oculto
+            const focusables = [
+                ...modalRef.current.querySelectorAll<HTMLElement>(
+                    "button:not([disabled]), input:not([disabled]), select, textarea, a[href]"
+                ),
+            ].filter((el) => !el.closest("[hidden]"));
             const first = focusables[0];
             const last = focusables[focusables.length - 1];
             if (e.shiftKey && document.activeElement === first) {
@@ -103,8 +115,9 @@ export default function EventDetailModal({
                     {event.audience && <p>{event.audience}</p>}
                 </header>
 
-                <div className="event-modal-body">
-                    <div className="event-modal-info">
+                <div className="event-modal-body" ref={bodyRef}>
+                    {/* Paso 1: información del evento */}
+                    <div hidden={step !== "info"}>
                         {event.description && <p className="event-modal-description">{event.description}</p>}
                         <dl className="event-modal-facts">
                             <div>
@@ -142,11 +155,25 @@ export default function EventDetailModal({
                                 <dd>{formatCost(event.cost)}</dd>
                             </div>
                         </dl>
+
+                        {finished ? (
+                            <p className="event-modal-finished">Este evento ya terminó.</p>
+                        ) : (
+                            <button type="button" className="event-modal-cta" ref={ctaRef} onClick={() => setStep("form")}>
+                                Inscribirme
+                            </button>
+                        )}
                     </div>
 
-                    <div className="event-modal-register" ref={registerRef}>
-                        <EventRegistrationForm eventId={event.id} onDirtyChange={handleDirtyChange} />
-                    </div>
+                    {/* Paso 2: formulario. Solo se oculta, así no se borra lo escrito al regresar */}
+                    {!finished && (
+                        <div className="event-modal-register" ref={registerRef} hidden={step !== "form"}>
+                            <button type="button" className="event-modal-back" onClick={() => setStep("info")}>
+                                <ArrowLeft size={16} /> Volver al evento
+                            </button>
+                            <EventRegistrationForm eventId={event.id} onDirtyChange={handleDirtyChange} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

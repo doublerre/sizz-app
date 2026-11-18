@@ -165,6 +165,25 @@
     cursor: not-allowed;
 }
 
+.event-detail-form-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--bg-brand-default);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.event-detail-form-back:hover {
+    text-decoration: underline;
+}
+
 /*mensajess*/
 .event-detail-message {
     padding: 64px 0;

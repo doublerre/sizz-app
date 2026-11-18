@@ -27,3 +27,8 @@ export function formatTimeRange(start: string | null, end: string | null): strin
     const endDay = new Date(end).toLocaleDateString("es-MX", { day: "numeric", month: "short" });
     return `${hour(start)} h (termina el ${endDay}, ${hour(end)} h)`;
 }
+
+export function hasEnded(startDate: string | null, endDate: string | null): boolean {
+    const reference = endDate ?? startDate;
+    return reference !== null && new Date(reference).getTime() < Date.now();
+}
