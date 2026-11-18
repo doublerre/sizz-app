@@ -1,0 +1,266 @@
+.app-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-default);
+    z-index: 100;
+}
+
+/* Las opciones ocupan el espacio libre; si no caben se desplazan, sin la barra gris encima */
+.app-sidebar-menu {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.app-sidebar-menu::-webkit-scrollbar {
+    display: none;
+}
+
+.app-sidebar-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 20px 12px 8px;
+}
+
+.app-sidebar-header img {
+    width: 100%;
+    max-width: 170px;
+}
+
+.app-sidebar-system {
+    margin: 6px 0 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-blue);
+}
+
+.app-sidebar-group {
+    margin: 14px 0 4px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.app-sidebar-item {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.app-sidebar-item:hover {
+    background-color: var(--bg-canvas);
+}
+
+.app-sidebar-item.active {
+    background-color: var(--bg-item-active);
+    color: var(--text-item-active);
+}
+
+.app-sidebar-item-disabled {
+    color: var(--text-muted);
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.app-sidebar-item-disabled:hover {
+    background-color: transparent;
+}
+
+.app-sidebar-dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.app-sidebar-user {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 12px;
+    padding: 10px 12px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background-color: var(--bg-canvas);
+}
+
+/* min-width: 0 deja que el texto largo se recorte */
+.app-sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.app-sidebar-user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.app-sidebar-user-role {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.app-sidebar-user-more {
+    display: flex;
+    padding: 4px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.app-sidebar-user-more:hover {
+    background-color: var(--bg-surface);
+}
+
+/* Se abre hacia arriba, porque la tarjeta está al pie del menú */
+.app-sidebar-user-menu {
+    position: absolute;
+    right: 8px;
+    bottom: calc(100% + 6px);
+    padding: 4px;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.app-sidebar-user-menu button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.app-sidebar-user-menu button:hover {
+    background-color: var(--bg-item-active);
+}
+
+.app-sidebar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50%;
+    background-color: var(--bg-brand-default);
+    color: var(--text-inverse);
+}
+
+/* ---- pantallas chicas: el menú se abre con un botón ---- */
+.app-sidebar-toggle,
+.app-sidebar-close,
+.app-sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .app-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .app-sidebar-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 101;
+        padding: 8px;
+        border: 1px solid var(--border-default);
+        border-radius: 8px;
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+    .app-sidebar-close {
+        display: inline-flex;
+        padding: 4px;
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        cursor: pointer;
+    }
+
+    .app-sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 99;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+}
+
+@media (pointer: coarse) {
+    .app-sidebar-item {
+        height: 44px;
+    }
+
+    .app-sidebar-user-more,
+    .app-sidebar-close {
+        padding: 10px;
+    }
+
+    .app-sidebar-toggle {
+        padding: 10px;
+    }
+}
