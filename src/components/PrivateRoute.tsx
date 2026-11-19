@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth, type AuthUser } from "../context/useAuth";
+import { homeForRole } from "@/data/navigation";
 
 interface PrivateRouteProps {
   requiredRole?: AuthUser["role"];
@@ -35,8 +36,8 @@ export default function PrivateRoute({
     (roleLists.length > 0 &&
       (!user || roleLists.some((roles) => !roles.includes(user.role))))
   ) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={user ? homeForRole(user.role) : "/"} replace />;
   }
 
-  return <Outlet />;
+  return <Outlet />
 }

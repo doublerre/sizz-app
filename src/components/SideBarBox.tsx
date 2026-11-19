@@ -7,10 +7,13 @@ import {
   subscribeToBoxOfficeShiftFlag,
 } from '@/utils/boxOfficeShiftFlag';
 import { ticketbootService } from '@/services/ticketboot.service';
+import type { FC } from "react";
+import AppSidebar from "@/components/AppSidebar";
+
 
 interface SidebarProps {
-  userName: string;
-  userRole: string;
+  userName?: string;
+  userRole?: string;
 }
 
 //Bloque de  componentes de la barra lateral
@@ -178,3 +181,4 @@ export const Sidebar = ({ userName, userRole }: SidebarProps) => {
     </>
   );
 };
+export const Sidebar: FC<SidebarProps> = () => <AppSidebar />;

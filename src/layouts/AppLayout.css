@@ -2,129 +2,15 @@
     display: flex;
 }
 
-.admin-sidebar {
-    width: 260px;
-    background-color: var(--bg-surface);
-    border-right: 1px var(--border-default) solid;
-    padding: 0 12px;
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    align-self: flex-start;
-}
 
 .admin-content {
     flex: 1;
-}
-
-.admin-sidebar-item {
-    height: 48px;
-    padding: 0 8px;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-primary);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-}
-
-.admin-sidebar-group {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    padding: 0 16px;
-    margin: 24px 0 8px;
-}
-
-.admin-sidebar-item-disabled {
-    color: var(--text-muted);
-    cursor: not-allowed;
-}
-
-.admin-sidebar-item.active {
-    background-color: var(--bg-item-active);
-    color: var(--text-item-active);
-    border-radius: 8px;
-}
-
-.admin-sidebar-item:hover {
-    background-color: var(--bg-canvas);
-}
-
-.admin-sidebar-item-disabled:hover {
-    background-color: transparent;
-}
-
-.admin-sidebar-header {
-    padding: 24px 16px;
-}
-
-.admin-sidebar-header img {
-    width: 100%;
-}
-
-.admin-sidebar-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 12px;
-    flex-shrink: 0;
-}
-
-.admin-sidebar-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 8px;
-    margin-top: auto;
-    font-weight: 700;
-    font-size: 12px;
-    border: 1px solid var(--border-default);
-    border-radius: 8px;
-    color: var(--text-muted);
-}
-
-.admin-sidebar-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--bg-brand-default);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.admin-sidebar-user > div:last-child {
     min-width: 0;
 }
 
-/* Un correo largo se recorta con "…" */
-.admin-sidebar-user-email {
-    font-size: 11px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
-.admin-sidebar-logout {
-    margin: 8px 0 16px;
-    padding: 10px;
-    background: none;
-    border: 1px solid var(--border-default);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.admin-sidebar-logout:hover {
-    background-color: var(--bg-item-active);
+@media (max-width: 1024px) {
+    .admin-content {
+        padding-top: 56px;
+    }
 }

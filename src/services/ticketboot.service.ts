@@ -1,4 +1,5 @@
 import api from "./api";
+import { shiftStatus } from "./shiftStatus";
 
 export interface ActiveShift {
   id: string;
@@ -97,14 +98,24 @@ export interface CloseShiftPayload {
   countedAmount: number;
   notes: string | null;
 }
-
+// Petición al panel que está en curso; se comparte entre quienes la piden a la vez
+let dashboardRequest: Promise<TicketbootDashboard> | null = null;
 export const ticketbootService = {
-  getDashboard: async (): Promise<TicketbootDashboard> => {
-    const { data } = await api.get<TicketbootDashboard>("/ticketboot/dashboard");
-    return data;
+  getDashboard: (): Promise<TicketbootDashboard> => {
+    dashboardRequest ??= api
+      .get<TicketbootDashboard>("/ticketboot/dashboard")
+      .then(({ data }) => {
+        shiftStatus.set(data.activeShift !== null);
+        return data;
+      })
+      .finally(() => {
+        dashboardRequest = null;
+      });
+    return dashboardRequest;
   },
   openShift: async (payload: OpenShiftPayload): Promise<ActiveShift> => {
     const { data } = await api.post<ActiveShift>("/ticketboot/dashboard/shifts", payload);
+    shiftStatus.set(true);
     return data;
   },
   getShiftSummary: async (shiftId: string): Promise<ShiftSummary> => {
@@ -116,6 +127,7 @@ export const ticketbootService = {
       `/ticketboot/dashboard/shifts/${encodeURIComponent(shiftId)}/close`,
       payload,
     );
+    shiftStatus.set(false);
     return data;
   },
 };
