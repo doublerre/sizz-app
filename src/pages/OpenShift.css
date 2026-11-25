@@ -336,7 +336,7 @@
 }
 
 /* Responsivo */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
     .start-shift-header {
         padding: 4rem 1.5rem 1rem;
     }

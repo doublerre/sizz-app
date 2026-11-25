@@ -47,7 +47,7 @@ const formSchema = z
             .refine((v) => v === "" || (/^\d+$/.test(v) && Number(v) > 0), "Debe ser un número entero mayor a 0"),
         cost: z
             .string()
-            .refine((v) => v === "" || /^\d{1,8}(\.\d{1,2})?$/.test(v), "Monto inválido (hasta 2 decimales)"),
+            .refine((v) => v === "" || (/^\d{1,9}$/.test(v) && Number(v) <= 100_000_000), "Solo pesos enteros"),
     })
     .refine((d) => !d.startDay || !!d.startTime, { message: "Elige la hora de inicio", path: ["startTime"] })
     .refine((d) => !d.startTime || !!d.startDay, { message: "Elige el día de inicio", path: ["startDay"] })
@@ -490,7 +490,7 @@ export default function EventsAdminPage() {
                             <input
                                 id="ev-cost"
                                 type="text"
-                                inputMode="decimal"
+                                inputMode="numeric"
                                 placeholder="0 = gratis"
                                 {...register("cost")}
                                 className={errors.cost ? "admin-event-input--error" : ""}
