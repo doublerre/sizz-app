@@ -12,7 +12,13 @@ export type ApiEvent = {
     capacity: number | null;
     cost: number;
     status: "DRAFT" | "PUBLISHED" | "CLOSED" | "CANCELLED";
+    closesAt: string | null;    // cierre de inscripciones
+    imageIds: string[];         // galería en orden; la primera es la portada
 };
+
+export function eventImageUrl(eventId: string, imageId: string): string {
+    return `/api/events/${eventId}/images/${imageId}`;
+}
 
 export async function getEvents(): Promise<ApiEvent[]> {
     const response = await fetch("/api/events");
@@ -67,6 +73,25 @@ export async function updateEvent(id: string, payload: EventPayload): Promise<Ap
 
 export async function deleteEvent(id: string): Promise<void> {
     await api.delete(`/events/${id}`);
+}
+// Las tres regresan el evento actualizado
+export async function uploadEventImage(eventId: string, image: Blob): Promise<ApiEvent> {
+    const form = new FormData();
+    form.append("file", image, "imagen.jpg");
+    const { data } = await api.post<ApiEvent>(`/events/${eventId}/images`, form, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+}
+
+export async function makeEventCover(eventId: string, imageId: string): Promise<ApiEvent> {
+    const { data } = await api.patch<ApiEvent>(`/events/${eventId}/images/${imageId}/cover`);
+    return data;
+}
+
+export async function deleteEventImage(eventId: string, imageId: string): Promise<ApiEvent> {
+    const { data } = await api.delete<ApiEvent>(`/events/${eventId}/images/${imageId}`);
+    return data;
 }
 
 

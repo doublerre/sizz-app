@@ -177,6 +177,72 @@
     outline-offset: 0;
 }
 
+/* Día y hora: dos cajas con ícono, en vez del campo nativo de fecha y hora */
+.admin-event-when {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+}
+
+.admin-event-when legend {
+    margin-bottom: 6px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.admin-event-when-row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 8px;
+}
+
+.admin-event-when-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+    color: var(--bg-brand-default);
+    cursor: pointer;
+}
+
+.admin-event-when-box:focus-within {
+    outline: 2px solid var(--bg-brand-default);
+}
+
+
+.admin-event-field .admin-event-when-box input,
+.admin-event-field .admin-event-when-box select {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+}
+
+
+.admin-event-when-box input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+
+.admin-event-when-box select,
+.admin-event-when-box input[type="date"] {
+    color-scheme: light;
+}
+
+.admin-event-when-box select option {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+}
+
 .admin-event-input--error {
     border-color: var(--brand-red);
 }

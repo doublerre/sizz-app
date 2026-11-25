@@ -32,3 +32,7 @@ export function hasEnded(startDate: string | null, endDate: string | null): bool
     const reference = endDate ?? startDate;
     return reference !== null && new Date(reference).getTime() < Date.now();
 }
+// true si ya pasó la fecha de cierre de inscripciones
+export function registrationClosed(closesAt: string | null): boolean {
+    return closesAt !== null && new Date(closesAt).getTime() < Date.now();
+}

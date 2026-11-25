@@ -4,9 +4,11 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, Clock, MapPin, Ticket, Users } from "lucide-react";
 import { getEvent, type ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle } from "@/data/eventCategories";
-import { formatCost, formatLongDate, formatTimeRange, hasEnded } from "@/utils/eventFormat";
+import { formatCost, formatLongDate, formatTimeRange, hasEnded, registrationClosed } from "@/utils/eventFormat";
+import EventGallery from "@/components/EventGallery";
 import "./EventDetailPage.css";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
+
 
 type Result = {
     id: string;
@@ -68,6 +70,7 @@ export default function EventDetailPage() {
     }
 
     const { event, finished } = result;
+    const closed = !finished && registrationClosed(event.closesAt);
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
 
@@ -101,6 +104,7 @@ export default function EventDetailPage() {
 
             <div className="container event-detail-body">
                 <section className="event-detail-main">
+                    <EventGallery eventId={event.id} imageIds={event.imageIds} title={event.title} />
                     <h2>Sobre este evento</h2>
                     <p>
                         {event.description ??
@@ -111,9 +115,9 @@ export default function EventDetailPage() {
                 <aside className="event-detail-card">
                     {/* Paso 1: datos del evento */}
                     <div hidden={registering}>
-                        {finished && (
+                        {(finished || closed) && (
                             <p className="event-detail-finished">
-                                Este evento ya terminó.
+                                {finished ? "Este evento ya terminó." : "Las inscripciones ya cerraron."}
                             </p>
                         )}
 
@@ -163,7 +167,7 @@ export default function EventDetailPage() {
                             </div>
                         </dl>
 
-                        {!finished && (
+                        {!finished && !closed && (
                             <button
                                 type="button"
                                 className="event-detail-cta"
@@ -175,7 +179,7 @@ export default function EventDetailPage() {
                     </div>
 
                     {/* Paso 2: formulario. Solo se oculta, así no se borra lo escrito al regresar */}
-                    {!finished && (
+                    {!finished && !closed && (
                         <div hidden={!registering}>
                             <button
                                 type="button"

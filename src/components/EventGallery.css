@@ -1,0 +1,77 @@
+.event-gallery {
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: var(--bg-canvas);
+}
+
+.event-gallery-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    aspect-ratio: 16 / 9;
+}
+
+.event-gallery-track::-webkit-scrollbar {
+    display: none;
+}
+
+.event-gallery-track img {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scroll-snap-align: start;
+}
+
+.event-gallery-arrow {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.event-gallery-arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.event-gallery-arrow--prev {
+    left: 10px;
+}
+
+.event-gallery-arrow--next {
+    right: 10px;
+}
+
+.event-gallery-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.event-gallery-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.55);
+}
+
+.event-gallery-dots span.is-active {
+    background-color: var(--bg-surface);
+}

@@ -3,9 +3,11 @@ import type { CSSProperties } from "react";
 import { ArrowLeft, CalendarDays, Clock, MapPin, Ticket, Users, X } from "lucide-react";
 import type { ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle } from "@/data/eventCategories";
-import { formatCost, formatLongDate, formatTimeRange, hasEnded } from "@/utils/eventFormat";
+import { formatCost, formatLongDate, formatTimeRange, hasEnded, registrationClosed } from "@/utils/eventFormat";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
+import EventGallery from "@/components/EventGallery";
 import "./EventDetailModal.css";
+
 
 export default function EventDetailModal({
     event,
@@ -19,9 +21,11 @@ export default function EventDetailModal({
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
     const finished = hasEnded(event.startDate, event.endDate);
+    const closed = !finished && registrationClosed(event.closesAt);
+    const canRegister = !finished && !closed;
 
     // Dos pasos en la misma ventana: primero la información y luego el formulario
-    const [step, setStep] = useState<"info" | "form">(goToForm && !finished ? "form" : "info");
+    const [step, setStep] = useState<"info" | "form">(goToForm && canRegister ? "form" : "info");
 
     const modalRef = useRef<HTMLDivElement>(null);
     const closeRef = useRef<HTMLButtonElement>(null);
@@ -61,11 +65,11 @@ export default function EventDetailModal({
             if (e.key !== "Tab" || !modalRef.current) return;
 
             // Tab no sale del modal; se saltan los elementos del paso oculto
-            const focusables = [
-                ...modalRef.current.querySelectorAll<HTMLElement>(
+            const focusables = Array.from(
+                modalRef.current.querySelectorAll<HTMLElement>(
                     "button:not([disabled]), input:not([disabled]), select, textarea, a[href]"
-                ),
-            ].filter((el) => !el.closest("[hidden]"));
+                )
+            ).filter((el) => !el.closest("[hidden]"));
             const first = focusables[0];
             const last = focusables[focusables.length - 1];
             if (e.shiftKey && document.activeElement === first) {
@@ -118,6 +122,7 @@ export default function EventDetailModal({
                 <div className="event-modal-body" ref={bodyRef}>
                     {/* Paso 1: información del evento */}
                     <div hidden={step !== "info"}>
+                        <EventGallery eventId={event.id} imageIds={event.imageIds} title={event.title} />
                         {event.description && <p className="event-modal-description">{event.description}</p>}
                         <dl className="event-modal-facts">
                             <div>
@@ -156,8 +161,10 @@ export default function EventDetailModal({
                             </div>
                         </dl>
 
-                        {finished ? (
-                            <p className="event-modal-finished">Este evento ya terminó.</p>
+                        {!canRegister ? (
+                            <p className="event-modal-finished">
+                                {finished ? "Este evento ya terminó." : "Las inscripciones ya cerraron."}
+                            </p>
                         ) : (
                             <button type="button" className="event-modal-cta" ref={ctaRef} onClick={() => setStep("form")}>
                                 Inscribirme
@@ -166,7 +173,7 @@ export default function EventDetailModal({
                     </div>
 
                     {/* Paso 2: formulario. Solo se oculta, así no se borra lo escrito al regresar */}
-                    {!finished && (
+                    {!canRegister && (
                         <div className="event-modal-register" ref={registerRef} hidden={step !== "form"}>
                             <button type="button" className="event-modal-back" onClick={() => setStep("info")}>
                                 <ArrowLeft size={16} /> Volver al evento
