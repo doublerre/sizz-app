@@ -34,19 +34,6 @@ export default function DocumentFields({
     }
   }
 
-  async function removeFile(fileId: string) {
-    setBusy(fileId);
-    try {
-      await api.deleteFile(application.id, fileId);
-      toast.success("Documento eliminado.");
-      onUpdate();
-    } catch (error) {
-      toast.error(apiMessage(error));
-    } finally {
-      setBusy("");
-    }
-  }
-
   async function review(fileId: string, approved: boolean) {
     const comment = comments[fileId] ?? "";
     if (!approved && !comment.trim()) {
@@ -121,16 +108,6 @@ export default function DocumentFields({
                           </ScholarshipButton>
                           <StatusBadge status={file.status} />
                         </div>
-                        {editable && (
-                          <ScholarshipButton
-                            tone="danger"
-                            disabled={!!busy}
-                            onClick={() => removeFile(file.id)}
-                            title="Eliminar este archivo"
-                          >
-                            ✕ Eliminar
-                          </ScholarshipButton>
-                        )}
                       </div>
 
                       {file.reviewComment && (

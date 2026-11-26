@@ -129,8 +129,6 @@ export const scholarshipService = {
         responseType: "blob",
       })
       .then((r) => r.data),
-  deleteFile: (id: string, fileId: string) =>
-    api.delete(`${root}/applications/${id}/files/${fileId}`).then((r) => r.data),
   submit: (id: string) =>
     api
       .post<ScholarshipApplication>(`${root}/applications/${id}/submit`)
