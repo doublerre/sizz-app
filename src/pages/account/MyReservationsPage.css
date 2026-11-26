@@ -22,84 +22,7 @@
     background: #f4f8fb;
 }
 
-.account-header{
-    display: grid;
-    grid-template-columns:1fr 1fr 1fr;
-    align-items:center;
-    min-height: 88px;
-    padding: 0.75rem max(32px, calc((100% - 1280px) / 2));
-    background: #fff;
-    border: none;
-    border-bottom: none;
-    box-shadow: none;
-}
-.account-brand{
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-}
-.account-brand img{
-    display: block;
-    width: 140px;
-    height: auto;
-}
-.account-nav{
-    display: flex;
-    justify-content:center;
-    align-items: center;
-    gap: clamp(20px, 4vw, 52px);
-    height: 100%;
-    white-space:nowrap;
-}
-.account-nav a,
-.account-nav span{
-    color: #43566a;
-    text-decoration: none;
-    font-size: .72rem;
-    font-weight: 600;
-}
-.account-nav a.active{
-    color: #0868b7;
-    font-weight: 700;
-}
-.account-nav span[aria-disabled="true"]{
-    color: #43566a;
-}
-.account-user{ 
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap: .55rem;
-}
-.account-avatar{
-    display: grid;
-    place-items:center;
-    width: 36px;
-    height:36px;
-    border-radius:50%;
-    background: #0868b7;
-    color: #fff;
-    font-size: .6rem;
-    font-weight: 700;
-}
-.account-user-copy{
-    display: flex;
-    flex-direction: column;
-    gap: .15rem;
-}
-.account-user-copy strong{
-    color: #172536;
-    font-size: .62rem;
-}
-.account-user-copy small{
-    color: #43566a;
-    font-size: .55rem;
-}
-.account-user-copy a{
-    color: #94a3b8;
-    font-size: .55rem;
-    text-decoration: none;
-}
+/* ── Header styles moved to AccountNavBar.css ── */
 .account-reservations-content{
     width: min(1060px,calc(100% - 64px));
     margin: 42px auto 0;
@@ -208,15 +131,22 @@
     white-space:
     nowrap;
 }
-.status-en-revisión{
+.status-pending,
+.status-pending-validation{
     background: #fff5d7;
     color: #a67b10;
 }
-.status-aprobada{
+.status-confirmed,
+.status-attended{
     background: #edf8e9;
     color: #55a92e;
 }
-.status-pagada{
+.status-cancelled,
+.status-no-show{
+    background: #fde8e8;
+    color: #c53030;
+}
+.status-pending-validation{
     background:#eaf4fc;
     color: #0868b7;
 }
@@ -271,6 +201,89 @@
     .account-brand {
         margin-left: 3.25rem; 
     }
+
+.account-reservations-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.account-reservations-heading h1,
+.account-reservations-heading p {
+    margin: 0;
+}
+
+.account-reservations-heading h1 {
+    color: #10243a;
+    font-size: 1.4rem;
+}
+
+.account-reservations-heading p {
+    color: #708096;
+    font-size: 0.8rem;
+}
+
+.account-reservations-heading a,
+.reservation-folio-lookup button {
+    padding: 0.65rem 1rem;
+    border: 0;
+    border-radius: 8px;
+    background: #0868b7;
+    color: white;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.reservation-folio-lookup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 0.75rem 0 1.25rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e0eaf1;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.reservation-folio-lookup label {
+    color: #34485c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.reservation-folio-lookup input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid #dfe6ed;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.reservation-folio-lookup p {
+    flex-basis: 100%;
+    color: #b42332;
+    font-size: 0.75rem;
+}
+
+.reservation-folio-lookup button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .account-reservations-heading,
+    .reservation-folio-lookup {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
 
     .account-header{
         grid-template-columns:auto 1fr auto;

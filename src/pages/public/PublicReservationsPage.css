@@ -1,0 +1,435 @@
+/* ── Page wrapper ── */
+.reservations-page {
+  background-color: #f5f8fb;
+  min-height: 100%;
+}
+
+/* ── Container ── */
+.reservations-page .container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 84px;
+}
+
+@media (max-width: 1024px) {
+  .reservations-page .container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .reservations-page .container {
+    padding: 0 16px;
+  }
+}
+
+/* ══════════════════════════════════════
+   HERO BANNER
+   ══════════════════════════════════════ */
+.reservations-hero {
+  position: relative;
+  background-color: #0868b7;
+  overflow: hidden;
+  padding: 52px 84px 68px;
+}
+
+@media (max-width: 1024px) {
+  .reservations-hero {
+    padding: 40px 32px 56px;
+  }
+}
+
+@media (max-width: 640px) {
+  .reservations-hero {
+    padding: 32px 16px 48px;
+  }
+}
+
+/* Decorative circles */
+.reservations-hero-decoration {
+  position: absolute;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+.reservations-hero-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.reservations-hero-circle--teal {
+  right: 45px;
+  top: 8px;
+  width: 296px;
+  height: 292px;
+  background-color: #1d7778;
+  opacity: 0.42;
+}
+
+.reservations-hero-circle--yellow {
+  right: 205px;
+  top: 152px;
+  width: 260px;
+  height: 260px;
+  background-color: #fbc400;
+  opacity: 0.18;
+}
+
+@media (max-width: 768px) {
+  .reservations-hero-circle--teal {
+    right: -40px;
+    width: 200px;
+    height: 200px;
+  }
+  .reservations-hero-circle--yellow {
+    right: -20px;
+    top: 100px;
+    width: 160px;
+    height: 160px;
+  }
+}
+
+/* Hero content */
+.reservations-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+}
+
+.reservations-hero-eyebrow {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbc400;
+  margin: 0 0 16px;
+  letter-spacing: 0.5px;
+}
+
+.reservations-hero-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 15px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .reservations-hero-title {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reservations-hero-title {
+    font-size: 24px;
+  }
+}
+
+.reservations-hero-subtitle {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  color: #e5f2fa;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+.reservations-hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.reservations-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: filter 0.2s, opacity 0.2s;
+}
+
+.reservations-hero-btn:hover {
+  filter: brightness(0.92);
+}
+
+.reservations-hero-btn--primary {
+  background-color: #fbc400;
+  color: #10243a;
+  min-width: 206px;
+}
+
+.reservations-hero-btn--secondary {
+  background-color: #ffffff;
+  color: #0868b7;
+  min-width: 148px;
+}
+
+/* ══════════════════════════════════════
+   HOW IT WORKS — STEPS
+   ══════════════════════════════════════ */
+.reservations-how {
+  padding: 48px 0 0;
+}
+
+.reservations-section-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  color: #10243a;
+  margin: 0 0 32px;
+}
+
+.reservations-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .reservations-steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .reservations-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reservations-step-card {
+  background-color: #ffffff;
+  border: 1px solid #dde7ef;
+  border-radius: 16px;
+  padding: 20px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reservations-step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.reservations-step-number-circle {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Step 3 has dark text on yellow bg */
+.reservations-step-card:nth-child(3) .reservations-step-number-circle {
+  color: #10243a;
+}
+
+.reservations-step-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #10243a;
+  margin: 0;
+}
+
+.reservations-step-desc {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  color: #708096;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════
+   DETAILS — SCHEDULES + CHECKLIST
+   ══════════════════════════════════════ */
+.reservations-details {
+  padding: 40px 0 60px;
+}
+
+.reservations-details .container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .reservations-details .container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Schedules (left) ── */
+.reservations-schedules {
+  background-color: #ffffff;
+  border: 1px solid #dde7ef;
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reservations-schedules-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #10243a;
+  margin: 0 0 8px;
+}
+
+.reservations-schedules-subtitle {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  color: #708096;
+  margin: 0 0 28px;
+}
+
+.reservations-schedules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 500px) {
+  .reservations-schedules-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reservations-schedule-card {
+  padding: 20px 24px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reservations-schedule-card--weekday {
+  background-color: #eaf4fc;
+}
+
+.reservations-schedule-card--weekend {
+  background-color: #edf8e9;
+}
+
+.reservations-schedule-label {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.reservations-schedule-card--weekday .reservations-schedule-label {
+  color: #0868b7;
+}
+
+.reservations-schedule-card--weekend .reservations-schedule-label {
+  color: #55b82c;
+}
+
+.reservations-schedule-time {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #10243a;
+}
+
+.reservations-schedules-note {
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #708096;
+  margin: 0;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+/* ── Checklist (right) ── */
+.reservations-checklist {
+  background-color: #0b3154;
+  border-radius: 16px;
+  padding: 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reservations-checklist-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.reservations-checklist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reservations-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.reservations-checklist-item .lucide {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background-color: #0868b7;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reservations-checklist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 100%;
+  background-color: #fbc400;
+  color: #10243a;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: filter 0.2s;
+  margin-top: auto;
+}
+
+.reservations-checklist-btn:hover {
+  filter: brightness(0.92);
+}
