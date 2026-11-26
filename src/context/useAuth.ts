@@ -4,8 +4,12 @@ import type { TokenResponse } from "../services/auth.service";
 export interface AuthUser {
   sub: string;
   uid: string;
-  role: "USER" | "ADMIN" | "GUIDE" | "CASHIER" | "SCHOLARSHIP_MANAGER";
+  role: "USER" | "ADMIN" | "GUIDE" | "CASHIER" | "SCHOLARSHIP_MANAGER" | "CONTROL" | "REPORT";
   exp: number;
+  // Optional JWT claims that the backend may include
+  given_name?: string;
+  family_name?: string;
+  email?: string;
 }
 export interface AuthContextValue {
   user: AuthUser | null;

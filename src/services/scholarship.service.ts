@@ -114,9 +114,13 @@ export const scholarshipService = {
         answers,
       })
       .then((r) => r.data),
-  upload: (id: string, key: string, file: File) => {
+  upload: (id: string, key: string, fileOrFiles: File | File[]) => {
     const body = new FormData();
-    body.append("file", file);
+    if (Array.isArray(fileOrFiles)) {
+      fileOrFiles.forEach((f) => body.append("files", f));
+    } else {
+      body.append("file", fileOrFiles);
+    }
     return api.post(
       `${root}/applications/${id}/files/${encodeURIComponent(key)}`,
       body,
@@ -129,6 +133,14 @@ export const scholarshipService = {
         responseType: "blob",
       })
       .then((r) => r.data),
+  view: (id: string, fileId: string) =>
+    api
+      .get<Blob>(`${root}/applications/${id}/files/${fileId}/view`, {
+        responseType: "blob",
+      })
+      .then((r) => r.data),
+  deleteFile: (id: string, fileId: string) =>
+    api.delete(`${root}/applications/${id}/files/${fileId}`).then((r) => r.data),
   submit: (id: string) =>
     api
       .post<ScholarshipApplication>(`${root}/applications/${id}/submit`)
