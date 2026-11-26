@@ -16,8 +16,8 @@ const exploreLinks: FooterLink[] = [
 
 const helpLinks: FooterLink[] = [
     { label: "Preguntas frecuentes", to: "/ayuda", available: true },
-    { label: "Consulta tu folio", to: "/folio", available: true },
-    { label: "Aviso de privacidad", to: "/aviso-de-privacidad", available: true },
+    { label: "Consulta tu folio", to: "/cuenta/reservaciones", available: true },
+    { label: "Aviso de privacidad", to: "/aviso-de-privacidad", available: false },
 ];
 
 function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {

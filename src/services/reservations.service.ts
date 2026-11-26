@@ -246,9 +246,25 @@ export const reservationsService = {
   },
 
   async getMyReservations(page = 0, size = 20): Promise<ReservationPage<ReservationResponse>> {
-    const { data } = await api.get<ReservationPage<ReservationResponse>>("/reservations/my-reservations", {
+    const { data } = await api.get<ReservationPage<ReservationResponse> | ReservationResponse[]>("/reservations/my-reservations", {
       params: { page, size },
     });
+    if (Array.isArray(data)) {
+      const start = page * size;
+      const content = data.slice(start, start + size);
+      const totalPages = Math.ceil(data.length / size);
+      return {
+        content,
+        number: page,
+        size,
+        totalElements: data.length,
+        totalPages,
+        first: page === 0,
+        last: page >= totalPages - 1,
+        numberOfElements: content.length,
+        empty: content.length === 0,
+      };
+    }
     return data;
   },
 

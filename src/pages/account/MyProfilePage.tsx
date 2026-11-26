@@ -5,6 +5,8 @@ import { profileService, type UserProfile } from "../../services/profile.service
 import { User, Mail, Phone, Building, Shield, Camera, Save, X } from "lucide-react";
 import "./MyProfilePage.css";
 import {Link} from "react-router-dom";
+import { useToast } from "../../context/useToast";
+import { apiMessage } from "../../hooks/useApiResource";
 
 const roleLabels: Record<string, string> = {
     ADMIN: "Administrador",
@@ -16,6 +18,7 @@ const roleLabels: Record<string, string> = {
 
 export default function MyProfilePage() {
     const { user, logout } = useAuth();
+    const toast = useToast();
 
     // Profile data fetched from API
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -53,17 +56,32 @@ export default function MyProfilePage() {
     const initials = userName.slice(0, 2).toUpperCase();
 
     const handleSave = async () => {
+        const nextFirstName = firstName.trim();
+        const nextLastName = lastName.trim();
+        if (!nextFirstName || !nextLastName || nextFirstName.length > 100 || nextLastName.length > 100) {
+            toast.error("El nombre y los apellidos son obligatorios y deben tener máximo 100 caracteres.");
+            return;
+        }
         try {
-            await profileService.updateMyProfile({
-                firstName,
-                lastName,
-                phone,
-                institution,
+            const updated = await profileService.updateMyProfile({
+                firstName: nextFirstName,
+                lastName: nextLastName,
             });
+            const savedProfile = {
+                ...updated,
+                phone: updated.phone ?? profile?.phone,
+                institution: updated.institution ?? profile?.institution,
+            };
+            setProfile(savedProfile);
+            setFirstName(savedProfile.firstName);
+            setLastName(savedProfile.lastName);
+            setEmail(savedProfile.email);
+            setPhone(savedProfile.phone ?? "");
+            setInstitution(savedProfile.institution ?? "");
             setIsEditing(false);
-        } catch {
-            // TODO: show error toast
-            setIsEditing(false);
+            toast.success("Perfil actualizado correctamente.");
+        } catch (error) {
+            toast.error(apiMessage(error));
         }
     };
 
@@ -152,6 +170,8 @@ export default function MyProfilePage() {
                                             value={firstName}
                                             onChange={(e) => setFirstName(e.target.value)}
                                             disabled={!isEditing}
+                                            required
+                                            maxLength={100}
                                         />
                                     </div>
                                     <div className="profile-field">
@@ -166,6 +186,8 @@ export default function MyProfilePage() {
                                             value={lastName}
                                             onChange={(e) => setLastName(e.target.value)}
                                             disabled={!isEditing}
+                                            required
+                                            maxLength={100}
                                         />
                                     </div>
                                     <div className="profile-field">
@@ -178,8 +200,7 @@ export default function MyProfilePage() {
                                             type="email"
                                             className="profile-input"
                                             value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            disabled={!isEditing}
+                                            disabled
                                         />
                                     </div>
                                     <div className="profile-field">
@@ -192,8 +213,7 @@ export default function MyProfilePage() {
                                             type="tel"
                                             className="profile-input"
                                             value={phone}
-                                            onChange={(e) => setPhone(e.target.value)}
-                                            disabled={!isEditing}
+                                            disabled
                                         />
                                     </div>
                                     <div className="profile-field">
@@ -206,8 +226,7 @@ export default function MyProfilePage() {
                                             type="text"
                                             className="profile-input"
                                             value={institution}
-                                            onChange={(e) => setInstitution(e.target.value)}
-                                            disabled={!isEditing}
+                                            disabled
                                         />
                                     </div>
                                     <div className="profile-field">

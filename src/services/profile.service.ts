@@ -19,7 +19,7 @@ export const profileService = {
     },
 
     /** Actualiza el perfil del usuario: PUT /users/me */
-    async updateMyProfile(profile: Partial<UserProfile>): Promise<UserProfile> {
+    async updateMyProfile(profile: Pick<UserProfile, "firstName" | "lastName">): Promise<UserProfile> {
         const res = await api.put<UserProfile>("/users/me", profile);
         return res.data;
     },

@@ -24,7 +24,7 @@ export default function DocumentFields({
   async function viewFile(fileId: string) {
     setBusy(fileId);
     try {
-      const blob = await api.view(application.id, fileId);
+      const blob = await api.download(application.id, fileId);
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
     } catch (error) {
@@ -102,7 +102,7 @@ export default function DocumentFields({
               <p>{field.helpText}</p>
               <small>
                 {field.allowedFileTypes.join(" / ")} · Máximo{" "}
-                {Math.round((field.maxFileBytes ?? 10485760) / 1048576)} MB por archivo (admite múltiples archivos)
+                {Math.round((field.maxFileBytes ?? 10485760) / 1048576)} MB por archivo
               </small>
 
               {fieldFiles.length > 0 && (
@@ -177,11 +177,10 @@ export default function DocumentFields({
               {editable && (
                 <label className="sch-field" style={{ marginTop: "0.75rem" }}>
                   <span>
-                    {fieldFiles.length > 0 ? "Agregar más documentos" : "Cargar documento(s)"}
+                    {fieldFiles.length > 0 ? "Reemplazar documento" : "Cargar documento"}
                   </span>
                   <input
                     type="file"
-                    multiple
                     disabled={!!busy}
                     accept={field.allowedFileTypes
                       .map((type) =>
@@ -192,20 +191,18 @@ export default function DocumentFields({
                       .join(",")}
                     onChange={async (e) => {
                       const input = e.currentTarget;
-                      const selectedFiles = Array.from(input.files ?? []);
-                      if (selectedFiles.length === 0) return;
-                      for (const selected of selectedFiles) {
-                        const validation = validateFile(field, selected);
-                        if (validation) {
-                          toast.error(`${selected.name}: ${validation}`);
-                          input.value = "";
-                          return;
-                        }
+                      const selectedFile = input.files?.[0];
+                      if (!selectedFile) return;
+                      const validation = validateFile(field, selectedFile);
+                      if (validation) {
+                        toast.error(`${selectedFile.name}: ${validation}`);
+                        input.value = "";
+                        return;
                       }
                       setBusy(field.key);
                       try {
-                        await api.upload(application.id, field.key, selectedFiles);
-                        toast.success(`${selectedFiles.length} documento(s) cargado(s).`);
+                        await api.upload(application.id, field.key, selectedFile);
+                        toast.success("Documento cargado o reemplazado.");
                         onUpdate();
                       } catch (error) {
                         toast.error(apiMessage(error));
