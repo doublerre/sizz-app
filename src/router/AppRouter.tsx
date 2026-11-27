@@ -4,16 +4,24 @@ import HomePage from "@/pages/public/HomePage";
 import ExperiencesPage from "@/pages/public/ExperiencesPage";
 import EventsPage from "@/pages/public/EventsPage";
 import EventDetailPage from "@/pages/public/EventDetailPage";
+import PublicReservationsPage from "@/pages/public/PublicReservationsPage";
+import PublicHelpPage from "@/pages/public/PublicHelpPage";
 import LoginPage from "@/pages/public/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 import PublicLayout from "@/layouts/PublicLayout.tsx";
 import AccountLayout from "@/layouts/AccountLayout.tsx";
 import BoxOfficePage from "@/pages/app/BoxOfficePage.tsx";
-import ReservationsPage from "@/pages/app/ReservationsPage.tsx";
+import AdminReservations from "@/pages/app/reservations/AdminReservations.tsx";
+import AdminReservationDetail from "@/pages/app/reservations/AdminReservationDetailPage.tsx";
+import AdminReservationForms from "@/pages/app/reservations/AdminReservationForms.tsx";
+import AdminReservationSchedule from "@/pages/app/reservations/AdminReservationSchedule.tsx";
 import EventsAdminPage from "@/pages/app/EventsAdminPage.tsx";
 import EventParticipantsPage from "@/pages/app/EventParticipantsPage.tsx";
 import MyReservationsPage from "@/pages/account/MyReservationsPage.tsx";
+import AccountReservationDetailPage from "@/pages/account/AccountReservationDetailPage.tsx";
+import NewReservationPage from "@/pages/account/NewReservationPage.tsx";
+import MyProfilePage from "@/pages/account/MyProfilePage.tsx";
 import Register from "@/pages/auth/Register.tsx";
 import Verify from "@/pages/auth/Verify.tsx";
 import Dashboard from "@/pages/Dashboard";
@@ -60,14 +68,14 @@ export default function AppRouter() {
     return (
         <Routes>
             {/* Públicas */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/experiencias" element={<ExperiencesPage />} />
-
             <Route element={<PublicLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/experiencias" element={<ExperiencesPage />} />
                 <Route path="/eventos" element={<EventsPage />} />
                 <Route path="/eventos/:id" element={<EventDetailPage />} />
+                <Route path="/reservaciones" element={<PublicReservationsPage />} />
+                <Route path="/ayuda" element={<PublicHelpPage />} />
             </Route>
-
             <Route path="/login" element={<LoginPage />} />
             <Route
                 path="/recuperar-contrasena"
@@ -124,7 +132,7 @@ export default function AppRouter() {
             >
                 <Route path="/app" element={<AppLayout />}>
                     {/* Módulos exclusivos de ADMIN */}
-                    <Route element={<PrivateRoute allowedRoles={["ADMIN", "CASHIER"]} />}>
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
                         <Route index element={<AdminDashboard />} />
                         <Route
                             path="experiences"
@@ -149,13 +157,26 @@ export default function AppRouter() {
                         />
                         <Route
                             path="reservaciones"
-                            element={<ReservationsPage />}
+                            element={<AdminReservations />}
                         />
-                        {/* Eventos: ADMIN y CONTROL */}
-                        <Route element={<PrivateRoute allowedRoles={["ADMIN", "CONTROL"]} />}>
-                            <Route path="eventos" element={<EventsAdminPage />} />
-                            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
-                        </Route>
+                        <Route
+                            path="reservaciones/agenda"
+                            element={<AdminReservationSchedule />}
+                        />
+                        <Route
+                            path="reservaciones/:id"
+                            element={<AdminReservationDetail />}
+                        />
+                        <Route
+                            path="reservaciones/formularios/:formId?"
+                            element={<AdminReservationForms />}
+                        />
+
+                    </Route>
+                    {/* Eventos: ADMIN y CONTROL */}
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN", "CONTROL"]} />}>
+                        <Route path="eventos" element={<EventsAdminPage />} />
+                        <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
                     </Route>
 
                     {/* Becas admin: ADMIN y SCHOLARSHIP_MANAGER */}
@@ -198,8 +219,8 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Taquilla: solo ADMIN */}
-            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+            {/* Taquilla: ADMIN y CASHIER */}
+            <Route element={<PrivateRoute allowedRoles={["ADMIN", "CASHIER"]} />}>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
@@ -224,8 +245,20 @@ export default function AppRouter() {
             <Route element={<PrivateRoute />}>
                 <Route path="/cuenta" element={<AccountLayout />}>
                     <Route
+                        path="perfil"
+                        element={<MyProfilePage />}
+                    />
+                    <Route
                         path="reservaciones"
                         element={<MyReservationsPage />}
+                    />
+                    <Route
+                        path="reservaciones/:id"
+                        element={<AccountReservationDetailPage />}
+                    />
+                    <Route
+                        path="nueva-reservacion"
+                        element={<NewReservationPage />}
                     />
                 </Route>
             </Route>

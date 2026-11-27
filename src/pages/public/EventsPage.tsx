@@ -2,9 +2,10 @@ import "./EventsPage.css"
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { ArrowRight } from "lucide-react";
-import { getEvents, type ApiEvent } from "@/services/eventsApi";
+import { eventImageUrl, getEvents, type ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle, normalize } from "@/data/eventCategories";
 import EventDetailModal from "@/components/EventDetailModal";
+
 
 
 function formatDate(iso: string | null): string {
@@ -111,13 +112,25 @@ export default function EventsPage() {
                                     key={event.id}
                                     style={{ "--event-color": category.color } as CSSProperties}
                                 >
-                                    <div className="event-banner">
-                                        <div className="event-circle"></div>
-                                        <span className="event-category">{category.name}</span>
-                                        <div className="event-icon">
-                                            <Icon size={22} />
+                                    {event.imageIds.length > 0 ? (
+                                        <div className="event-banner event-banner--photo">
+                                            <img
+                                                className="event-banner-img"
+                                                src={eventImageUrl(event.id, event.imageIds[0])}
+                                                alt=""
+                                                loading="lazy"
+                                            />
+                                            <span className="event-category">{category.name}</span>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="event-banner">
+                                            <div className="event-circle"></div>
+                                            <span className="event-category">{category.name}</span>
+                                            <div className="event-icon">
+                                                <Icon size={22} />
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="event-body">
                                         <h3>{event.title}</h3>
                                         {event.description && (

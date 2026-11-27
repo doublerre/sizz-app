@@ -10,9 +10,9 @@ const navLinks = [
     { label: "Inicio", to: "/", available: true },
     { label: "Experiencias", to: "/experiencias", available: true },
     { label: "Becas", to: "/becas", available: true },
-    { label: "Reservaciones", to: "/cuenta/reservaciones", available: true },
+    { label: "Reservaciones", to: "/reservaciones", available: true },
     { label: "Eventos", to: "/eventos", available: true },
-    { label: "Ayuda", to: "/ayuda", available: false },
+    { label: "Ayuda", to: "/ayuda", available: true },
 ];
 
 export default function Navbar() {
@@ -58,13 +58,13 @@ export default function Navbar() {
                 <div className="navbar-actions">
                     {user ? (
                         <>
-                            <Link className="navbar-login" to={user.role === "ADMIN" || user.role === "SCHOLARSHIP_MANAGER" ? "/app/becas" : "/cuenta/becas"} onClick={closeMenu}>Mi cuenta</Link>
+                            <Link className="navbar-login" to="/cuenta/perfil" onClick={closeMenu}>Mi cuenta</Link>
                             <button type="button" className="navbar-cta" onClick={() => { logout(); closeMenu(); }}>Cerrar sesión</button>
                         </>
                     ) : (
                         <>
                             <Link className="navbar-login" to="/login" onClick={closeMenu}>Iniciar sesión</Link>
-                            <Link className="navbar-cta" to="/cuenta/reservaciones" onClick={closeMenu}>Planear visita</Link>
+                            <Link className="navbar-cta" to="/reservaciones" onClick={closeMenu}>Planear visita</Link>
                         </>
                     )}
                 </div>

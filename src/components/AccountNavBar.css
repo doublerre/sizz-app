@@ -1,0 +1,147 @@
+/* ── Account NavBar Header ── */
+.account-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    min-height: 86px;
+    padding: 0;
+    background: #fff;
+    border: none;
+    border-bottom: none;
+    box-shadow: none;
+    width: 100%;
+}
+
+.account-brand {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding-left: max(32px, calc((100% - 1280px) / 2));
+}
+
+.account-brand img {
+    display: block;
+    width: 140px;
+    height: auto;
+}
+
+.account-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(20px, 4vw, 52px);
+    height: 100%;
+    white-space: nowrap;
+}
+
+.account-nav a {
+    color: #10243a;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: "Montserrat", sans-serif;
+    transition: color 0.2s ease;
+}
+
+.account-nav a:hover {
+    color: #0868b7;
+}
+
+.account-nav a.active {
+    color: #0868b7;
+    font-weight: 700;
+}
+
+.account-user {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.55rem;
+    position: relative;
+    padding-right: max(32px, calc((100% - 1280px) / 2));
+}
+
+.account-user-trigger {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.55rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.account-user-trigger:hover {
+    background: rgba(8, 104, 183, 0.08);
+}
+
+.account-avatar {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0868b7;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.account-user-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    text-align: left;
+}
+
+.account-user-copy strong {
+    color: #10243a;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.account-user-copy small {
+    color: #708096;
+    font-size: 0.75rem;
+}
+
+.account-user-chevron {
+    color: #708096;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+/* ── Dropdown ── */
+.account-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 0.5rem 0;
+    min-width: 180px;
+    z-index: 100;
+    margin-top: 0.25rem;
+}
+
+.account-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    color: #708096;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-family: "Montserrat", sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.account-dropdown-item:hover {
+    background: rgba(8, 104, 183, 0.08);
+    color: #10243a;
+}

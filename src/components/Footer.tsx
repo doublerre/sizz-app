@@ -8,17 +8,15 @@ type FooterLink = {
     available: boolean;
 };
 
-// Igual que en el menú lateral: los que aún no tienen página se muestran
-// pero no navegan, para no mandar al usuario a un 404.
 const exploreLinks: FooterLink[] = [
-    { label: "Experiencias", to: "/experiencias", available: false },
+    { label: "Experiencias", to: "/experiencias", available: true },
     { label: "Eventos", to: "/eventos", available: true },
-    { label: "Reservaciones", to: "/reservaciones", available: false },
+    { label: "Reservaciones", to: "/reservaciones", available: true },
 ];
 
 const helpLinks: FooterLink[] = [
-    { label: "Preguntas frecuentes", to: "/preguntas-frecuentes", available: false },
-    { label: "Consulta tu folio", to: "/folio", available: false },
+    { label: "Preguntas frecuentes", to: "/ayuda", available: true },
+    { label: "Consulta tu folio", to: "/cuenta/reservaciones", available: true },
     { label: "Aviso de privacidad", to: "/aviso-de-privacidad", available: false },
 ];
 
@@ -46,28 +44,28 @@ function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) 
 export default function Footer() {
     return (
         <footer className="footer">
-            <div className="container footer-top">
-                <div className="footer-brand">
-                    <img src={logo} alt="Zigzag Zacatecas" className="footer-logo" />
-                    <p className="footer-brand-name">
-                        Centro Interactivo de Ciencia y Tecnología Zigzag · Zacatecas
-                    </p>
-                    <p className="footer-brand-text">
-                        Consulta experiencias, reservaciones y eventos desde SIZZ.
-                    </p>
+            <div className="container">
+                <div className="footer-top">
+                    <div className="footer-brand">
+                        <img src={logo} alt="Zigzag Zacatecas" className="footer-logo" />
+                        <p className="footer-brand-name">
+                            Centro Interactivo de Ciencia y Tecnología Zigzag · Zacatecas
+                        </p>
+                        <p className="footer-brand-text">
+                            Consulta experiencias, reservaciones y eventos desde SIZZ.
+                        </p>
+                    </div>
+
+                    <div className="footer-nav">
+                        <FooterColumn title="EXPLORA" links={exploreLinks} />
+                        <FooterColumn title="AYUDA" links={helpLinks} />
+                        <div className="footer-cta-wrapper">
+                            <Link to="/reservaciones" className="footer-cta">Planear mi visita</Link>
+                        </div>
+                    </div>
                 </div>
 
-                <FooterColumn title="EXPLORA" links={exploreLinks} />
-                <FooterColumn title="AYUDA" links={helpLinks} />
-
-                <div className="footer-cta-wrapper">
-                    {/* Sin ruta todavía; cuando exista la de reservaciones se cambia*/}
-                    <button type="button" className="footer-cta" disabled>Planear mi visita</button>
-                </div>
-            </div>
-
-            <div className="footer-bottom">
-                <div className="container">
+                <div className="footer-bottom">
                     © 2026 Zigzag Zacatecas · Sistema Integral Zigzag
                 </div>
             </div>

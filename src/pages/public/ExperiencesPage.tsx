@@ -1,6 +1,4 @@
 import { useEffect, useState, useMemo } from "react";
-import Navbar from "@/components/Navbar";
-import logo from "../../assets/logo_zigzag_main.png";
 import "./HomePage.css";
 import "./ExperiencesPage.css";
 import {
@@ -297,7 +295,6 @@ export default function ExperiencesPage() {
 
     return (
         <div className="sizz-page exp-page">
-            <Navbar />
 
             <section className="exp-hero" style={{ backgroundColor: C.blueDark }}>
                 <div style={{ position: "absolute", top: "-60px", left: "25%", width: "240px", height: "240px", borderRadius: "50%", backgroundColor: "#2EAF6B", opacity: 0.16, filter: "blur(45px)", pointerEvents: "none" }} />
@@ -628,109 +625,6 @@ export default function ExperiencesPage() {
                 );
             })()}
 
-            <footer
-                style={{
-                    backgroundColor: C.blueNavy,
-                    color: "rgba(255,255,255,0.75)",
-                    padding: "3rem 4% 1.5rem",
-                }}
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "2rem",
-                        flexWrap: "wrap",
-                        marginBottom: "2.5rem",
-                    }}
-                >
-                    <div style={{ flex: "2 1 200px", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                        <img
-                            src={logo}
-                            alt="Zigzag"
-                            style={{
-                                height: "48px",
-                                width: "auto",
-                                filter: "brightness(0) invert(1)",
-                                alignSelf: "flex-start",
-                            }}
-                        />
-                        <p style={{ fontSize: "0.82rem", lineHeight: 1.7, margin: 0, maxWidth: "260px" }}>
-                            Centro interactivo de Ciencia y Tecnología Zigzag · Zacatecas<br />
-                            Consulta experiencias, reservaciones y eventos desde SIZZ.
-                        </p>
-                    </div>
-
-                    <div style={{ flex: "1 1 120px" }}>
-                        <h5 style={{ color: "#fff", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 1rem" }}>
-                            EXPLORA
-                        </h5>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                            {["Experiencias", "Eventos"].map((item) => (
-                                <a
-                                    key={item}
-                                    href={`/${item.toLowerCase()}`}
-                                    style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "0.88rem", transition: "color 0.2s" }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
-                                >
-                                    {item}
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div style={{ flex: "1 1 120px" }}>
-                        <h5 style={{ color: "#fff", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 1rem" }}>
-                            AYUDA
-                        </h5>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                            {["Preguntas frecuentes", "Consulta / Info", "Aviso de privacidad"].map((item) => (
-                                <span
-                                    key={item}
-                                    style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.88rem", cursor: "not-allowed" }}
-                                    title="Próximamente"
-                                >
-                                    {item}
-                                </span>
-                            ))}
-
-                        </div>
-                    </div>
-
-                    <div style={{ flex: "1 1 120px", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                        {/* /reservaciones no existe como ruta pública — enlace deshabilitado */}
-                        <span
-                            style={{
-                                ...btnBase,
-                                backgroundColor: "#A0AEC0",
-                                border: `2px solid #A0AEC0`,
-                                color: "#fff",
-                                textDecoration: "none",
-                                fontSize: "0.9rem",
-                                whiteSpace: "nowrap",
-                                cursor: "not-allowed",
-                                opacity: 0.6,
-                                pointerEvents: "none",
-                            }}
-                            title="Próximamente"
-                        >
-                            Planea tu visita
-                        </span>
-                    </div>
-                </div>
-
-                <div
-                    style={{
-                        borderTop: "1px solid rgba(255,255,255,0.12)",
-                        paddingTop: "1.2rem",
-                        textAlign: "left",
-                        fontSize: "0.78rem",
-                        color: "rgba(255,255,255,0.45)",
-                    }}
-                >
-                    © 2026 Zigzag Zacatecas · Sistema Integral Zigzag
-                </div>
-            </footer>
         </div>
     );
 }

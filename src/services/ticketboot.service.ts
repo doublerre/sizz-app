@@ -98,24 +98,41 @@ export interface CloseShiftPayload {
   countedAmount: number;
   notes: string | null;
 }
-// Petición al panel que está en curso; se comparte entre quienes la piden a la vez
-let dashboardRequest: Promise<TicketbootDashboard> | null = null;
+// Petición al panel en curso y la sesión que la pidió: solo se comparte dentro de la misma sesión
+let dashboardRequest: { token: string | null; promise: Promise<TicketbootDashboard> } | null = null;
+const sessionUser = (): string | null => {
+  const token = localStorage.getItem("sizz_access_token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+    return payload.uid ?? payload.sub ?? null
+  } catch (error) {
+    return null
+  }
+}
+
 export const ticketbootService = {
   getDashboard: (): Promise<TicketbootDashboard> => {
-    dashboardRequest ??= api
+    const token = sessionUser();
+    if (dashboardRequest?.token === token) return dashboardRequest.promise;
+
+    const promise = api
       .get<TicketbootDashboard>("/ticketboot/dashboard")
       .then(({ data }) => {
-        shiftStatus.set(data.activeShift !== null);
+        // Si mientras tanto cambió la sesión, esta respuesta ya no toca el estado del turno
+        if (sessionUser() === token) shiftStatus.set(data.activeShift !== null);
         return data;
       })
       .finally(() => {
-        dashboardRequest = null;
+        if (dashboardRequest?.promise === promise) dashboardRequest = null;
       });
-    return dashboardRequest;
+    dashboardRequest = { token, promise };
+    return promise;
   },
   openShift: async (payload: OpenShiftPayload): Promise<ActiveShift> => {
+    const token = sessionUser();
     const { data } = await api.post<ActiveShift>("/ticketboot/dashboard/shifts", payload);
-    shiftStatus.set(true);
+    if (sessionUser() === token) shiftStatus.set(true);
     return data;
   },
   getShiftSummary: async (shiftId: string): Promise<ShiftSummary> => {
@@ -123,11 +140,12 @@ export const ticketbootService = {
     return data;
   },
   closeShift: async (shiftId: string, payload: CloseShiftPayload): Promise<ShiftSummary> => {
+    const token = sessionUser();
     const { data } = await api.patch<ShiftSummary>(
       `/ticketboot/dashboard/shifts/${encodeURIComponent(shiftId)}/close`,
       payload,
     );
-    shiftStatus.set(false);
+    if (sessionUser() === token) shiftStatus.set(false);
     return data;
   },
 };

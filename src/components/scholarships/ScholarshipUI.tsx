@@ -4,7 +4,8 @@ import { useAuth } from "../../context/useAuth";
 import { statusLabels } from "../../data/scholarships";
 import logo from "../../assets/scholarship-logo.png";
 import "./scholarships.css";
-import PublicNavigation from "../PublicNavigation";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export function ScholarshipButton({
   tone = "primary",
@@ -135,35 +136,13 @@ export function AdminScholarshipNav({ callId }: { callId?: string }) {
 }
 export function ScholarshipPublicLayout() {
   return (
-    <div className="sch-app">
-      <PublicNavigation />
-      <Outlet />
-      <footer className="sch-footer">
-        <div>
-          <img src={logo} alt="Zigzag" />
-          <p>Centro Interactivo de Ciencia y Tecnología Zigzag · Zacatecas</p>
-          <p>Consulta convocatorias, postulaciones y actividades del SIZZ.</p>
-        </div>
-        <nav aria-label="Explora">
-          <strong>EXPLORA</strong>
-          <Link to="/eventos">Eventos</Link>
-          <Link to="/becas">Convocatorias</Link>
-          <Link to="/cuenta/reservaciones">Reservaciones</Link>
-        </nav>
-        <nav aria-label="Mi cuenta">
-          <strong>MI CUENTA</strong>
-          <Link to="/cuenta/becas">Mis postulaciones</Link>
-          <Link to="/cuenta/becas/horas">Mis horas</Link>
-        </nav>
-        <Link className="sch-button sch-button-yellow" to="/eventos">
-          Planear mi visita
-        </Link>
-        <small>
-          © {new Date().getFullYear()} Zigzag Zacatecas · Sistema Integral
-          Zigzag
-        </small>
-      </footer>
-    </div>
+    <>
+      <Navbar />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
   );
 }
 export function GuideLayout() {
