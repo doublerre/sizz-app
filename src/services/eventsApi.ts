@@ -20,12 +20,19 @@ export function eventImageUrl(eventId: string, imageId: string): string {
     return `/api/events/${eventId}/images/${imageId}`;
 }
 
+function normalize(event: ApiEvent): ApiEvent {
+    return {
+        ...event, imageIds: event.imageIds ?? [], closesAt: event.closesAt ?? null
+    };
+}
+
 export async function getEvents(): Promise<ApiEvent[]> {
     const response = await fetch("/api/events");
     if (!response.ok) {
         throw new Error("No se pudieron cargar los eventos");
     }
-    return response.json();
+    const events: ApiEvent[] = await response.json();
+    return events.map(normalize);
 }
 
 export async function getEvent(id: string): Promise<ApiEvent> {
@@ -33,7 +40,7 @@ export async function getEvent(id: string): Promise<ApiEvent> {
     if (!response.ok) {
         throw new Error("No se pudo cargar el evento");
     }
-    return response.json();
+    return normalize(await response.json())
 }
 
 // Lo que se manda al crear un evento (coincide con EventRequest del backend)
@@ -52,22 +59,22 @@ export type EventPayload = {
 // Todos los eventos
 export async function getAllEvents(): Promise<ApiEvent[]> {
     const { data } = await api.get<ApiEvent[]>("/events/manage");
-    return data;
+    return data.map(normalize);
 }
 
 // El evento queda como borrador
 export async function createEvent(payload: EventPayload): Promise<ApiEvent> {
     const { data } = await api.post<ApiEvent>("/events", payload);
-    return data;
+    return normalize(data);
 }
 
 export async function publishEvent(id: string): Promise<ApiEvent> {
     const { data } = await api.patch<ApiEvent>(`/events/${id}/publish`);
-    return data;
+    return normalize(data);
 }
 export async function updateEvent(id: string, payload: EventPayload): Promise<ApiEvent> {
     const { data } = await api.put<ApiEvent>(`/events/${id}`, payload);
-    return data;
+    return normalize(data);
 }
 
 
@@ -81,7 +88,7 @@ export async function uploadEventImage(eventId: string, image: Blob): Promise<Ap
     const { data } = await api.post<ApiEvent>(`/events/${eventId}/images`, form, {
         headers: { "Content-Type": "multipart/form-data" },
     });
-    return data;
+    return normalize(data);
 }
 
 // Vista previa para la consola 
@@ -92,12 +99,12 @@ export async function getEventImagePreview(eventId: string, imageId: string): Pr
 
 export async function makeEventCover(eventId: string, imageId: string): Promise<ApiEvent> {
     const { data } = await api.patch<ApiEvent>(`/events/${eventId}/images/${imageId}/cover`);
-    return data;
+    return normalize(data);
 }
 
 export async function deleteEventImage(eventId: string, imageId: string): Promise<ApiEvent> {
     const { data } = await api.delete<ApiEvent>(`/events/${eventId}/images/${imageId}`);
-    return data;
+    return normalize(data);
 }
 
 

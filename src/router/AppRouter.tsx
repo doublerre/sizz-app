@@ -151,11 +151,12 @@ export default function AppRouter() {
                             path="reservaciones"
                             element={<ReservationsPage />}
                         />
-                        {/* Eventos: ADMIN y CONTROL */}
-                        <Route element={<PrivateRoute allowedRoles={["ADMIN", "CONTROL"]} />}>
-                            <Route path="eventos" element={<EventsAdminPage />} />
-                            <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
-                        </Route>
+
+                    </Route>
+                    {/* Eventos: ADMIN y CONTROL */}
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN", "CONTROL"]} />}>
+                        <Route path="eventos" element={<EventsAdminPage />} />
+                        <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
                     </Route>
 
                     {/* Becas admin: ADMIN y SCHOLARSHIP_MANAGER */}
