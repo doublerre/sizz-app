@@ -173,7 +173,7 @@ export default function EventDetailModal({
                     </div>
 
                     {/* Paso 2: formulario. Solo se oculta, así no se borra lo escrito al regresar */}
-                    {!canRegister && (
+                    {canRegister && (
                         <div className="event-modal-register" ref={registerRef} hidden={step !== "form"}>
                             <button type="button" className="event-modal-back" onClick={() => setStep("info")}>
                                 <ArrowLeft size={16} /> Volver al evento
