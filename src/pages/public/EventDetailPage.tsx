@@ -1,13 +1,14 @@
-
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, Clock, MapPin, Ticket, Users } from "lucide-react";
 import { getEvent, type ApiEvent } from "@/services/eventsApi";
 import { getCategoryStyle } from "@/data/eventCategories";
-import { formatCost, formatLongDate, formatTimeRange } from "@/utils/eventFormat";
+import { formatCost, formatLongDate, formatTimeRange, hasEnded, registrationClosed } from "@/utils/eventFormat";
+import EventGallery from "@/components/EventGallery";
 import "./EventDetailPage.css";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
+
 
 type Result = {
     id: string;
@@ -18,6 +19,8 @@ type Result = {
 export default function EventDetailPage() {
     const { id } = useParams();
     const [result, setResult] = useState<Result | null>(null);
+    // Igual que en la ventana: primero la información
+    const [registering, setRegistering] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -27,13 +30,7 @@ export default function EventDetailPage() {
         getEvent(id)
             .then((event) => {
                 if (cancelled) return;
-
-                const reference = event.endDate ?? event.startDate;
-                const finished =
-                    reference !== null &&
-                    new Date(reference).getTime() < Date.now();
-
-                setResult({ id, event, finished });
+                setResult({ id, event, finished: hasEnded(event.startDate, event.endDate) });
             })
             .catch(() => {
                 if (!cancelled) {
@@ -73,6 +70,7 @@ export default function EventDetailPage() {
     }
 
     const { event, finished } = result;
+    const closed = !finished && registrationClosed(event.closesAt);
     const category = getCategoryStyle(event.category);
     const Icon = category.icon;
 
@@ -106,6 +104,7 @@ export default function EventDetailPage() {
 
             <div className="container event-detail-body">
                 <section className="event-detail-main">
+                    <EventGallery eventId={event.id} imageIds={event.imageIds} title={event.title} />
                     <h2>Sobre este evento</h2>
                     <p>
                         {event.description ??
@@ -114,60 +113,83 @@ export default function EventDetailPage() {
                 </section>
 
                 <aside className="event-detail-card">
-                    {finished && (
-                        <p className="event-detail-finished">
-                            Este evento ya terminó.
-                        </p>
-                    )}
-
-                    <dl className="event-detail-facts">
-                        <div>
-                            <dt>
-                                <CalendarDays size={16} /> Fecha
-                            </dt>
-                            <dd>{formatLongDate(event.startDate)}</dd>
-                        </div>
-
-                        <div>
-                            <dt>
-                                <Clock size={16} /> Horario
-                            </dt>
-                            <dd>
-                                {formatTimeRange(
-                                    event.startDate,
-                                    event.endDate
-                                )}
-                            </dd>
-                        </div>
-
-                        {event.venue && (
-                            <div>
-                                <dt>
-                                    <MapPin size={16} /> Sede
-                                </dt>
-                                <dd>{event.venue}</dd>
-                            </div>
+                    {/* Paso 1: datos del evento */}
+                    <div hidden={registering}>
+                        {(finished || closed) && (
+                            <p className="event-detail-finished">
+                                {finished ? "Este evento ya terminó." : "Las inscripciones ya cerraron."}
+                            </p>
                         )}
 
-                        {event.capacity !== null && (
+                        <dl className="event-detail-facts">
                             <div>
                                 <dt>
-                                    <Users size={16} /> Aforo
+                                    <CalendarDays size={16} /> Fecha
                                 </dt>
-                                <dd>{event.capacity} personas</dd>
+                                <dd>{formatLongDate(event.startDate)}</dd>
                             </div>
+
+                            <div>
+                                <dt>
+                                    <Clock size={16} /> Horario
+                                </dt>
+                                <dd>
+                                    {formatTimeRange(
+                                        event.startDate,
+                                        event.endDate
+                                    )}
+                                </dd>
+                            </div>
+
+                            {event.venue && (
+                                <div>
+                                    <dt>
+                                        <MapPin size={16} /> Sede
+                                    </dt>
+                                    <dd>{event.venue}</dd>
+                                </div>
+                            )}
+
+                            {event.capacity !== null && (
+                                <div>
+                                    <dt>
+                                        <Users size={16} /> Aforo
+                                    </dt>
+                                    <dd>{event.capacity} personas</dd>
+                                </div>
+                            )}
+
+                            <div>
+                                <dt>
+                                    <Ticket size={16} /> Costo
+                                </dt>
+                                <dd>{formatCost(event.cost)}</dd>
+                            </div>
+                        </dl>
+
+                        {!finished && !closed && (
+                            <button
+                                type="button"
+                                className="event-detail-cta"
+                                onClick={() => setRegistering(true)}
+                            >
+                                Inscribirme
+                            </button>
                         )}
+                    </div>
 
-                        <div>
-                            <dt>
-                                <Ticket size={16} /> Costo
-                            </dt>
-                            <dd>{formatCost(event.cost)}</dd>
+                    {/* Paso 2: formulario. Solo se oculta, así no se borra lo escrito al regresar */}
+                    {!finished && !closed && (
+                        <div hidden={!registering}>
+                            <button
+                                type="button"
+                                className="event-detail-form-back"
+                                onClick={() => setRegistering(false)}
+                            >
+                                <ArrowLeft size={16} /> Volver al evento
+                            </button>
+                            <EventRegistrationForm eventId={event.id} />
                         </div>
-                    </dl>
-
-                    {finished ? null : (
-                        <EventRegistrationForm eventId={event.id} />
                     )}
                 </aside>
             </div>

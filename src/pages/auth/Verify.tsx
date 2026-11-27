@@ -5,6 +5,7 @@ import { isAxiosError } from "axios"
 import { AuthBanner } from "../../components/AuthBanner"
 import { authService } from "../../services/auth.service"
 import { useAuth } from "../../context/useAuth"
+import { homeForRole } from "@/data/navigation";
 import "../../General.css"
 import "../auth/Register.css"
 import "./Verify.css"
@@ -89,7 +90,7 @@ export default function Verify() {
                 code,
             })
             const claims = loginWithTokens(tokens)
-            navigate(claims.role === "ADMIN" ? "/app" : "/", { replace: true })
+            navigate(homeForRole(claims.role), { replace: true })
         } catch (err) {
             if (isAxiosError(err)) {
                 const msg = err.response?.data?.message

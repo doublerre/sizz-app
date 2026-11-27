@@ -4,7 +4,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import * as z from "zod";
-import { Plus } from "lucide-react";
+import { CalendarDays, Clock, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
     createEvent,
@@ -12,11 +12,24 @@ import {
     getAllEvents,
     publishEvent,
     updateEvent,
+    uploadEventImage,
     type ApiEvent,
     type EventPayload,
 } from "@/services/eventsApi";
+import { resizeImage } from "@/utils/resizeImage";
 import { categories } from "@/data/eventCategories";
+import EventImagesManager from "@/components/EventImagesManager";
 import "./EventsAdminPage.css";
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+
+const joinDate = (day: string, time: string) => (day && time ? new Date(`${day}T${time}`) : null);
+
+const openPicker = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.showPicker?.();
+
+
+const timeOptions = Array.from({ length: 72 }, (_, i) => `${pad(6 + Math.floor(i / 4))}:${pad((i % 4) * 15)}`);
 
 const formSchema = z
     .object({
@@ -25,8 +38,10 @@ const formSchema = z
         audience: z.string().max(60, "Máximo 60 caracteres"),
         venue: z.string().max(200, "Máximo 200 caracteres"),
         description: z.string(),
-        startDate: z.string(),
-        endDate: z.string(),
+        startDay: z.string(),
+        startTime: z.string(),
+        endDay: z.string(),
+        endTime: z.string(),
         capacity: z
             .string()
             .refine((v) => v === "" || (/^\d+$/.test(v) && Number(v) > 0), "Debe ser un número entero mayor a 0"),
@@ -34,14 +49,21 @@ const formSchema = z
             .string()
             .refine((v) => v === "" || /^\d{1,8}(\.\d{1,2})?$/.test(v), "Monto inválido (hasta 2 decimales)"),
     })
-    .refine((d) => !d.endDate || !!d.startDate, {
-        message: "Indica primero la fecha de inicio",
-        path: ["startDate"],
+    .refine((d) => !d.startDay || !!d.startTime, { message: "Elige la hora de inicio", path: ["startTime"] })
+    .refine((d) => !d.startTime || !!d.startDay, { message: "Elige el día de inicio", path: ["startDay"] })
+    .refine((d) => !d.endDay || !!d.endTime, { message: "Elige la hora de fin", path: ["endTime"] })
+    .refine((d) => !(d.endDay || d.endTime) || !!d.startDay, {
+        message: "Indica primero el inicio",
+        path: ["startDay"],
     })
-    .refine((d) => !d.endDate || !d.startDate || new Date(d.endDate) >= new Date(d.startDate), {
-        message: "La fecha de fin no puede ser anterior a la de inicio",
-        path: ["endDate"],
-    });
+    .refine(
+        (d) => {
+            const start = joinDate(d.startDay, d.startTime);
+            const end = joinDate(d.endDay || d.startDay, d.endTime);
+            return !start || !end || end > start;
+        },
+        { message: "El fin debe ser después del inicio", path: ["endTime"] }
+    );
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -51,8 +73,10 @@ const emptyForm: FormValues = {
     audience: "",
     venue: "",
     description: "",
-    startDate: "",
-    endDate: "",
+    startDay: "",
+    startTime: "",
+    endDay: "",
+    endTime: "",
     capacity: "",
     cost: "0",
 };
@@ -94,26 +118,35 @@ function formatCost(cost: number): string {
 
 const emptyToNull = (v: string) => (v.trim() === "" ? null : v.trim());
 
-const toIso = (v: string) => (v ? new Date(v).toISOString() : null);
+const toIso = (d: Date | null) => (d ? d.toISOString() : null);
 
-const toLocalInput = (iso: string | null) => {
-    if (!iso) return "";
+const splitDate = (iso: string | null) => {
+    if (!iso) return { day: "", time: "" };
     const d = new Date(iso);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return {
+        day: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+        time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+    };
 };
 
-const valuesFromEvent = (e: ApiEvent): FormValues => ({
-    title: e.title,
-    category: e.category ?? "",
-    audience: e.audience ?? "",
-    venue: e.venue ?? "",
-    description: e.description ?? "",
-    startDate: toLocalInput(e.startDate),
-    endDate: toLocalInput(e.endDate),
-    capacity: e.capacity === null ? "" : String(e.capacity),
-    cost: String(e.cost),
-});
+const valuesFromEvent = (e: ApiEvent): FormValues => {
+    const start = splitDate(e.startDate);
+    const end = splitDate(e.endDate);
+    return {
+        title: e.title,
+        category: e.category ?? "",
+        audience: e.audience ?? "",
+        venue: e.venue ?? "",
+        description: e.description ?? "",
+        startDay: start.day,
+        startTime: start.time,
+        // Si termina el mismo día, el día de fin se deja vacío
+        endDay: end.day === start.day ? "" : end.day,
+        endTime: end.time,
+        capacity: e.capacity === null ? "" : String(e.capacity),
+        cost: String(e.cost),
+    };
+};
 
 type Notice = { type: "success" | "error"; text: string };
 
@@ -126,6 +159,7 @@ export default function EventsAdminPage() {
     const [notice, setNotice] = useState<Notice | null>(null);
     const [apiError, setApiError] = useState<string | null>(null);
     const [publishingId, setPublishingId] = useState<string | null>(null);
+    const [pendingImages, setPendingImages] = useState<File[]>([]);
 
     const {
         register,
@@ -138,8 +172,10 @@ export default function EventsAdminPage() {
         defaultValues: emptyForm,
     });
 
-    const [refreshKey, setRefreshKey] = useState(0);
-    const reload = () => setRefreshKey((k) => k + 1);
+    // Cada acción regresa el evento actualizado: se cambia en la lista sin volver a pedirla
+    const replaceEvent = (updated: ApiEvent) =>
+        setEvents((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+    const editingEvent = events.find((e) => e.id === editingId) ?? null;
 
     useEffect(() => {
         let cancelled = false;
@@ -160,12 +196,13 @@ export default function EventsAdminPage() {
         return () => {
             cancelled = true;
         };
-    }, [refreshKey]);
+    }, []);
 
     const openForm = () => {
         setNotice(null);
         setApiError(null);
         setEditingId(null);
+        setPendingImages([]);
         reset(emptyForm);
         setShowForm(true);
     };
@@ -174,6 +211,7 @@ export default function EventsAdminPage() {
         setNotice(null);
         setApiError(null);
         setEditingId(event.id);
+        setPendingImages([]);
         reset(valuesFromEvent(event));
         setShowForm(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -181,6 +219,7 @@ export default function EventsAdminPage() {
 
     const closeForm = () => {
         setShowForm(false);
+        setPendingImages([]);
         setApiError(null);
     };
 
@@ -193,24 +232,39 @@ export default function EventsAdminPage() {
             category: emptyToNull(values.category),
             audience: emptyToNull(values.audience),
             venue: emptyToNull(values.venue),
-            startDate: toIso(values.startDate),
-            endDate: toIso(values.endDate),
+            startDate: toIso(joinDate(values.startDay, values.startTime)),
+            endDate: toIso(joinDate(values.endDay || values.startDay, values.endTime)),
             capacity: values.capacity ? Number(values.capacity) : null,
             cost: values.cost ? Number(values.cost) : 0,
         };
 
         try {
             if (editingId) {
-                await updateEvent(editingId, payload);
+                replaceEvent(await updateEvent(editingId, payload));
                 setNotice({ type: "success", text: "Cambios guardados." });
+                setShowForm(false);
+                setEditingId(null);
             } else {
-                await createEvent(payload);
+                let saved = await createEvent(payload);
+                try {
+                    // De una en una: el backend cuenta el límite con cada subida
+                    for (const file of pendingImages) {
+                        saved = await uploadEventImage(saved.id, await resizeImage(file));
+                    }
+                } catch (err) {
+                    // El evento ya existe: se queda abierto en edición para reintentar las imágenes
+                    setEvents((prev) => [saved, ...prev]);
+                    setEditingId(saved.id);
+                    setPendingImages([]);
+                    reset(valuesFromEvent(saved));
+                    setApiError(`El evento se guardó, pero no se pudieron subir todas las imágenes. ${errorMessage(err)}`);
+                    return;
+                }
+                setEvents((prev) => [saved, ...prev]);
+                setPendingImages([]);
                 setNotice({ type: "success", text: "Evento creado como borrador. Publícalo cuando esté listo." });
+                setShowForm(false);
             }
-
-            setShowForm(false);
-            setEditingId(null);
-            reload();
         } catch (err) {
             setApiError(errorMessage(err));
         }
@@ -223,8 +277,8 @@ export default function EventsAdminPage() {
 
         try {
             await deleteEvent(event.id);
+            setEvents((prev) => prev.filter((e) => e.id !== event.id));
             setNotice({ type: "success", text: `Borrador "${event.title}" eliminado.` });
-            reload();
         } catch (err) {
             setNotice({ type: "error", text: errorMessage(err) });
         }
@@ -237,9 +291,8 @@ export default function EventsAdminPage() {
         setNotice(null);
 
         try {
-            await publishEvent(event.id);
+            replaceEvent(await publishEvent(event.id));
             setNotice({ type: "success", text: `"${event.title}" ya es visible en el portal.` });
-            reload();
         } catch (err) {
             setNotice({ type: "error", text: errorMessage(err) });
         } finally {
@@ -248,6 +301,9 @@ export default function EventsAdminPage() {
     };
 
     const currentCategory = useWatch({ control, name: "category" });
+    const [startTime, endTime] = useWatch({ control, name: ["startTime", "endTime"] });
+    const hoursFor = (current: string) =>
+        current && !timeOptions.includes(current) ? [...timeOptions, current].sort() : timeOptions;
     const isLegacyCategory = currentCategory !== "" && !categories.some((c) => c.name === currentCategory);
 
     const published = events.filter((e) => e.status === "PUBLISHED").length;
@@ -362,27 +418,55 @@ export default function EventsAdminPage() {
                     <h3>Fechas</h3>
 
                     <div className="admin-event-grid">
-                        <div className="admin-event-field">
-                            <label htmlFor="ev-start">Inicio</label>
-                            <input
-                                id="ev-start"
-                                type="datetime-local"
-                                {...register("startDate")}
-                                className={errors.startDate ? "admin-event-input--error" : ""}
-                            />
-                            {errors.startDate && <span className="admin-event-error">{errors.startDate.message}</span>}
-                        </div>
+                        <fieldset className="admin-event-field admin-event-when">
+                            <legend>Inicio</legend>
+                            <div className="admin-event-when-row">
+                                <label className={`admin-event-when-box${errors.startDay ? " admin-event-input--error" : ""}`}>
+                                    <CalendarDays size={18} aria-hidden="true" />
+                                    <input type="date" aria-label="Día de inicio" onClick={openPicker} {...register("startDay")} />
+                                </label>
+                                <label className={`admin-event-when-box${errors.startTime ? " admin-event-input--error" : ""}`}>
+                                    <Clock size={18} aria-hidden="true" />
+                                    <select aria-label="Hora de inicio" {...register("startTime")}>
+                                        <option value="">Hora</option>
+                                        {hoursFor(startTime).map((t) => (
+                                            <option key={t} value={t}>
+                                                {t}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+                            {(errors.startDay || errors.startTime) && (
+                                <span className="admin-event-error">{(errors.startDay ?? errors.startTime)?.message}</span>
+                            )}
+                        </fieldset>
 
-                        <div className="admin-event-field">
-                            <label htmlFor="ev-end">Fin</label>
-                            <input
-                                id="ev-end"
-                                type="datetime-local"
-                                {...register("endDate")}
-                                className={errors.endDate ? "admin-event-input--error" : ""}
-                            />
-                            {errors.endDate && <span className="admin-event-error">{errors.endDate.message}</span>}
-                        </div>
+                        <fieldset className="admin-event-field admin-event-when">
+                            <legend>Fin (opcional)</legend>
+                            <div className="admin-event-when-row">
+                                <label className={`admin-event-when-box${errors.endDay ? " admin-event-input--error" : ""}`}>
+                                    <CalendarDays size={18} aria-hidden="true" />
+                                    <input type="date" aria-label="Día de fin" onClick={openPicker} {...register("endDay")} />
+                                </label>
+                                <label className={`admin-event-when-box${errors.endTime ? " admin-event-input--error" : ""}`}>
+                                    <Clock size={18} aria-hidden="true" />
+                                    <select aria-label="Hora de fin" {...register("endTime")}>
+                                        <option value="">Hora</option>
+                                        {hoursFor(endTime).map((t) => (
+                                            <option key={t} value={t}>
+                                                {t}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+                            {errors.endDay || errors.endTime ? (
+                                <span className="admin-event-error">{(errors.endDay ?? errors.endTime)?.message}</span>
+                            ) : (
+                                <span className="admin-event-hint">Si termina el mismo día, solo elige la hora.</span>
+                            )}
+                        </fieldset>
                     </div>
 
                     <h3>Aforo y costo</h3>
@@ -414,6 +498,14 @@ export default function EventsAdminPage() {
                             {errors.cost && <span className="admin-event-error">{errors.cost.message}</span>}
                         </div>
                     </div>
+                    <h3>Imágenes</h3>
+
+                    <EventImagesManager
+                        event={editingEvent}
+                        onChange={replaceEvent}
+                        pending={pendingImages}
+                        onPendingChange={setPendingImages}
+                    />
 
                     {apiError && (
                         <p className="admin-event-notice admin-event-notice--error" role="alert">

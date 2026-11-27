@@ -126,13 +126,13 @@ export default function AppRouter() {
             <Route
                 element={
                     <PrivateRoute
-                        allowedRoles={["ADMIN", "SCHOLARSHIP_MANAGER"]}
+                        allowedRoles={["ADMIN", "SCHOLARSHIP_MANAGER", "CONTROL"]}
                     />
                 }
             >
                 <Route path="/app" element={<AppLayout />}>
                     {/* Módulos exclusivos de ADMIN */}
-                    <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
                         <Route index element={<AdminDashboard />} />
                         <Route
                             path="experiences"
@@ -171,10 +171,12 @@ export default function AppRouter() {
                             path="reservaciones/formularios/:formId?"
                             element={<AdminReservationForms />}
                         />
-                        <Route
-                            path="eventos"
-                            element={<EventsAdminPage />}
-                        />
+
+                    </Route>
+                    {/* Eventos: ADMIN y CONTROL */}
+                    <Route element={<PrivateRoute allowedRoles={["ADMIN", "CONTROL"]} />}>
+                        <Route path="eventos" element={<EventsAdminPage />} />
+                        <Route path="eventos/:id/inscritos" element={<EventParticipantsPage />} />
                     </Route>
 
                     {/* Becas admin: ADMIN y SCHOLARSHIP_MANAGER */}
@@ -217,8 +219,8 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Taquilla: solo ADMIN */}
-            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+            {/* Taquilla: ADMIN y CASHIER */}
+            <Route element={<PrivateRoute allowedRoles={["ADMIN", "CASHIER"]} />}>
                 <Route path="/taquilla" element={<BoxOfficePage />}>
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
@@ -238,13 +240,6 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Inscritos a eventos: solo ADMIN */}
-            <Route element={<PrivateRoute requiredRole="ADMIN" />}>
-                <Route
-                    path="/app/eventos/:id/inscritos"
-                    element={<EventParticipantsPage />}
-                />
-            </Route>
 
             {/* Autenticados: cualquier rol */}
             <Route element={<PrivateRoute />}>

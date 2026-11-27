@@ -7,6 +7,7 @@ import { isAxiosError } from 'axios';
 import * as z from 'zod';
 import logo from '../assets/logo_zigzag.png';
 import { useAuth } from '../context/useAuth';
+import { homeForRole } from '@/data/navigation';
 import { authService } from '../services/auth.service';
 import './Login.css';
 
@@ -39,12 +40,12 @@ export const Login = () => {
             if (typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
                 navigate(returnTo, { replace: true });
             } else {
-                navigate(claims.role === 'ADMIN' ? '/app' : '/', { replace: true });
+                navigate(homeForRole(claims.role), { replace: true });
             }
         } catch (err) {
             if (isAxiosError(err)) {
                 const code = err.response?.data?.code;
-                const msg  = err.response?.data?.message;
+                const msg = err.response?.data?.message;
 
                 // Cuenta registrada pero sin verificar → reenviar código y redirigir
                 if (code === 'ACCOUNT_NOT_VERIFIED') {
@@ -114,7 +115,7 @@ export const Login = () => {
                             </button>
                         </div>
                         {errors.password && <span className="login-field-error">{errors.password.message}</span>}
-                        <div style={{textAlign: 'right', marginTop: '0.4rem'}}>
+                        <div style={{ textAlign: 'right', marginTop: '0.4rem' }}>
                             <Link to="/recuperar-contrasena" style={{ fontSize: '0.78rem', color: '#0868b7', textDecoration: 'none', fontWeight: 600 }}>
                                 ¿Olvidaste tu contraseña?
                             </Link>

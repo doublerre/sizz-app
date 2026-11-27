@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Download } from "lucide-react";
@@ -70,11 +69,8 @@ export default function EventParticipantsPage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (!id) {
-            setError("No se encontró el identificador del evento.");
-            setLoading(false);
-            return;
-        }
+        // La ruta /app/eventos/:id/inscritos siempre trae id
+        if (!id) return;
 
         // Evita actualizar el estado si el componente se desmonta.
         let cancelled = false;
