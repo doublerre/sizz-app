@@ -100,18 +100,27 @@ export interface CloseShiftPayload {
 }
 // Petición al panel en curso y la sesión que la pidió: solo se comparte dentro de la misma sesión
 let dashboardRequest: { token: string | null; promise: Promise<TicketbootDashboard> } | null = null;
-const sessionToken = () => localStorage.getItem("sizz_access_token");
+const sessionUser = (): string | null => {
+  const token = localStorage.getItem("sizz_acces_token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+    return payload.uid ?? payload.sub ?? null
+  } catch (error) {
+    return null
+  }
+}
 
 export const ticketbootService = {
   getDashboard: (): Promise<TicketbootDashboard> => {
-    const token = sessionToken();
+    const token = sessionUser();
     if (dashboardRequest?.token === token) return dashboardRequest.promise;
 
     const promise = api
       .get<TicketbootDashboard>("/ticketboot/dashboard")
       .then(({ data }) => {
         // Si mientras tanto cambió la sesión, esta respuesta ya no toca el estado del turno
-        if (sessionToken() === token) shiftStatus.set(data.activeShift !== null);
+        if (sessionUser() === token) shiftStatus.set(data.activeShift !== null);
         return data;
       })
       .finally(() => {
@@ -121,9 +130,9 @@ export const ticketbootService = {
     return promise;
   },
   openShift: async (payload: OpenShiftPayload): Promise<ActiveShift> => {
-    const token = sessionToken();
+    const token = sessionUser();
     const { data } = await api.post<ActiveShift>("/ticketboot/dashboard/shifts", payload);
-    if (sessionToken() === token) shiftStatus.set(true);
+    if (sessionUser() === token) shiftStatus.set(true);
     return data;
   },
   getShiftSummary: async (shiftId: string): Promise<ShiftSummary> => {
@@ -131,12 +140,12 @@ export const ticketbootService = {
     return data;
   },
   closeShift: async (shiftId: string, payload: CloseShiftPayload): Promise<ShiftSummary> => {
-    const token = sessionToken();
+    const token = sessionUser();
     const { data } = await api.patch<ShiftSummary>(
       `/ticketboot/dashboard/shifts/${encodeURIComponent(shiftId)}/close`,
       payload,
     );
-    if (sessionToken() === token) shiftStatus.set(false);
+    if (sessionUser() === token) shiftStatus.set(false);
     return data;
   },
 };
