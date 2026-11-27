@@ -101,7 +101,7 @@ export interface CloseShiftPayload {
 // Petición al panel en curso y la sesión que la pidió: solo se comparte dentro de la misma sesión
 let dashboardRequest: { token: string | null; promise: Promise<TicketbootDashboard> } | null = null;
 const sessionUser = (): string | null => {
-  const token = localStorage.getItem("sizz_acces_token");
+  const token = localStorage.getItem("sizz_access_token");
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
