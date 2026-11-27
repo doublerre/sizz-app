@@ -121,8 +121,9 @@ export const ticketbootService = {
     return promise;
   },
   openShift: async (payload: OpenShiftPayload): Promise<ActiveShift> => {
+    const token = sessionToken();
     const { data } = await api.post<ActiveShift>("/ticketboot/dashboard/shifts", payload);
-    shiftStatus.set(true);
+    if (sessionToken() === token) shiftStatus.set(true);
     return data;
   },
   getShiftSummary: async (shiftId: string): Promise<ShiftSummary> => {
@@ -130,11 +131,12 @@ export const ticketbootService = {
     return data;
   },
   closeShift: async (shiftId: string, payload: CloseShiftPayload): Promise<ShiftSummary> => {
+    const token = sessionToken();
     const { data } = await api.patch<ShiftSummary>(
       `/ticketboot/dashboard/shifts/${encodeURIComponent(shiftId)}/close`,
       payload,
     );
-    shiftStatus.set(false);
+    if (sessionToken() === token) shiftStatus.set(false);
     return data;
   },
 };
