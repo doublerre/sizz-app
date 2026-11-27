@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 import { ImagePlus, Star, Trash2 } from "lucide-react";
 import {
     deleteEventImage,
-    eventImageUrl,
+    getEventImagePreview,
     makeEventCover,
     uploadEventImage,
     type ApiEvent,
@@ -14,6 +14,34 @@ import "./EventImagesManager.css";
 // Mismo límite que el backend
 const MAX_IMAGES = 8;
 
+// Vistas previas ya descargadas: al reabrir el formulario no se vuelven a pedir
+const previewCache = new Map<string, Promise<string>>();
+
+function loadPreview(eventId: string, imageId: string): Promise<string> {
+    let url = previewCache.get(imageId);
+    if (!url) {
+        url = getEventImagePreview(eventId, imageId).then((blob) => URL.createObjectURL(blob));
+        // Si falla, se quita para poder reintentar
+        url.catch(() => previewCache.delete(imageId));
+        previewCache.set(imageId, url);
+    }
+    return url;
+}
+
+// La imagen de un evento en la consola: puede ser de un borrador, así que se pide con el token
+function PreviewImage({ eventId, imageId, alt }: { eventId: string; imageId: string; alt: string }) {
+    const [src, setSrc] = useState<string>();
+    useEffect(() => {
+        let active = true;
+        loadPreview(eventId, imageId)
+            .then((url) => active && setSrc(url))
+            .catch(() => { });
+        return () => {
+            active = false;
+        };
+    }, [eventId, imageId]);
+    return src ? <img src={src} alt={alt} /> : null;
+}
 function errorMessage(err: unknown): string {
     if (isAxiosError(err)) return err.response?.data?.message ?? "No se pudo completar. Intenta de nuevo.";
     return "No se pudo leer la imagen.";
@@ -40,8 +68,8 @@ export default function EventImagesManager({
     useEffect(() => () => pendingUrls.forEach((url) => URL.revokeObjectURL(url)), [pendingUrls]);
 
     const images = event
-        ? event.imageIds.map((id) => ({ key: id, src: eventImageUrl(event.id, id) }))
-        : pending.map((file, i) => ({ key: `${file.name}-${file.lastModified}-${i}`, src: pendingUrls[i] }));
+        ? event.imageIds.map((id) => ({ key: id, imageId: id, src: "" }))
+        : pending.map((file, i) => ({ key: `${file.name}-${file.lastModified}-${i}`, imageId: "", src: pendingUrls[i] }));
     const remaining = MAX_IMAGES - images.length;
 
     const handleFiles = async (files: FileList | null) => {
@@ -105,7 +133,11 @@ export default function EventImagesManager({
                 <ul className="event-images-grid">
                     {images.map((image, index) => (
                         <li key={image.key} className="event-images-item">
-                            <img src={image.src} alt={`Imagen ${index + 1}`} loading="lazy" />
+                            {event ? (
+                                <PreviewImage eventId={event.id} imageId={image.imageId} alt={`Imagen ${index + 1}`} />
+                            ) : (
+                                <img src={image.src} alt={`Imagen ${index + 1}`} />
+                            )}
                             {index === 0 && <span className="event-images-cover">Portada</span>}
                             <div className="event-images-actions">
                                 {index > 0 && (

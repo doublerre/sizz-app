@@ -84,6 +84,12 @@ export async function uploadEventImage(eventId: string, image: Blob): Promise<Ap
     return data;
 }
 
+// Vista previa para la consola 
+export async function getEventImagePreview(eventId: string, imageId: string): Promise<Blob> {
+    const { data } = await api.get<Blob>(`/events/${eventId}/images/${imageId}/preview`, { responseType: "blob" });
+    return data;
+}
+
 export async function makeEventCover(eventId: string, imageId: string): Promise<ApiEvent> {
     const { data } = await api.patch<ApiEvent>(`/events/${eventId}/images/${imageId}/cover`);
     return data;
